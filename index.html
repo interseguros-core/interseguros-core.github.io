@@ -1,12 +1,827 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interseguros</title>
+    <title>Core Interseguros — Descripción de Módulos</title>
+    <link rel="stylesheet" href="index.css">
 </head>
 <body>
-    <h1>Welcome to Interseguros</h1>
-    <p>Your trusted insurance partner.</p>
+
+<!-- ========================================================
+     SIDEBAR
+     ======================================================== -->
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <div class="logo-title">⚙ Core Interseguros</div>
+        <div class="logo-sub">Plataforma Multicompañía</div>
+        <div class="logo-badge">v1.0 — Documentación</div>
+    </div>
+    <nav>
+        <div class="nav-group-label">Inicio</div>
+        <a href="#overview" class="active"><span class="nav-icon">🏠</span> Resumen del Sistema</a>
+
+        <div class="nav-group-label">Núcleo del Core</div>
+        <a href="#companias"><span class="nav-icon">🏢</span> Gestión de Compañías</a>
+        <a href="#productos"><span class="nav-icon">📋</span> Productos (Pólizas)</a>
+        <a href="#suscripcion"><span class="nav-icon">✍️</span> Suscripción y Emisión</a>
+        <a href="#certificados"><span class="nav-icon">📄</span> Emisión de Certificados</a>
+
+        <div class="nav-group-label">Operaciones</div>
+        <a href="#siniestros"><span class="nav-icon">🚨</span> Módulo de Siniestros</a>
+        <a href="#cobranzas"><span class="nav-icon">💳</span> Cobranzas</a>
+        <a href="#banca"><span class="nav-icon">🏦</span> Conectividad Bancaria</a>
+
+        <div class="nav-group-label">Inteligencia</div>
+        <a href="#consultas360"><span class="nav-icon">🔍</span> Consultas 360</a>
+        <a href="#comisiones"><span class="nav-icon">💰</span> Reportería — Comisiones</a>
+        <a href="#reporteria"><span class="nav-icon">📊</span> Reportería Avanzada</a>
+        <a href="#trazabilidad"><span class="nav-icon">🔗</span> Trazabilidad Comercial</a>
+    </nav>
+</aside>
+
+<!-- ========================================================
+     MAIN
+     ======================================================== -->
+<div class="main">
+    <header class="topbar">
+        <span class="page-title">Core Interseguros — Descripción de Módulos</span>
+        <span class="topbar-version">Documento técnico · Abril 2026</span>
+    </header>
+
+    <div class="content">
+
+        <!-- ============================================================
+             HERO / OVERVIEW
+             ============================================================ -->
+        <section id="overview">
+            <div class="hero">
+                <h1>Core Interseguros</h1>
+                <p>
+                    Plataforma central para la gestión integral de un broker de seguros multicompañía.
+                    Permite crear productos pactados con aseguradoras, emitir certificados a los asegurados
+                    y operar como sistema completo para compañías que no disponen de plataforma propia.
+                </p>
+                <div class="hero-flow">
+                    <div class="flow-step">🏢 Compañía</div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">📋 Producto / Póliza</div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">👤 Asegurado</div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">📄 Certificado</div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">💳 Cobranza</div>
+                </div>
+            </div>
+
+            <div class="flow-cards">
+                <a class="flow-card" href="#companias">
+                    <div class="fc-icon">🏢</div>
+                    <div class="fc-title">Gestión de Compañías</div>
+                    <div class="fc-desc">Alta y configuración de aseguradoras. Soporte total para compañías sin sistema propio.</div>
+                </a>
+                <a class="flow-card" href="#productos">
+                    <div class="fc-icon">📋</div>
+                    <div class="fc-title">Productos y Pólizas</div>
+                    <div class="fc-desc">Creación de productos pactados entre el broker y cada compañía aseguradora.</div>
+                </a>
+                <a class="flow-card" href="#suscripcion">
+                    <div class="fc-icon">✍️</div>
+                    <div class="fc-title">Suscripción y Emisión</div>
+                    <div class="fc-desc">Cotización multicompañía, emisión de pólizas y gestión de estados del proceso.</div>
+                </a>
+                <a class="flow-card" href="#certificados">
+                    <div class="fc-icon">📄</div>
+                    <div class="fc-title">Emisión de Certificados</div>
+                    <div class="fc-desc">Generación, validación y distribución de certificados basados en los productos vigentes.</div>
+                </a>
+                <a class="flow-card" href="#siniestros">
+                    <div class="fc-icon">🚨</div>
+                    <div class="fc-title">Siniestros con IA</div>
+                    <div class="fc-desc">Recepción, triaje, análisis de fraude y liquidación asistida con inteligencia artificial.</div>
+                </a>
+                <a class="flow-card" href="#cobranzas">
+                    <div class="fc-icon">💳</div>
+                    <div class="fc-title">Cobranzas</div>
+                    <div class="fc-desc">Planes de pago, control de recibos, mora y conciliación con aseguradoras.</div>
+                </a>
+            </div>
+        </section>
+
+        <!-- ============================================================
+             GESTIÓN DE COMPAÑÍAS
+             ============================================================ -->
+        <section id="companias">
+            <div class="module-section">
+                <div class="module-header">
+                    <div class="mod-icon blue">🏢</div>
+                    <div>
+                        <div class="mod-title">Gestión de Compañías Aseguradoras</div>
+                        <div class="mod-subtitle">Núcleo multicompañía — Alta, configuración y acceso operativo</div>
+                    </div>
+                </div>
+                <div class="module-body">
+                    <p>
+                        El core permite registrar múltiples compañías aseguradoras con las que el broker opera.
+                        Para aseguradoras que <strong>no disponen de sistema propio</strong>, la plataforma actúa como su core completo,
+                        dándoles acceso para gestionar su operación íntegra desde Interseguros.
+                    </p>
+
+                    <div class="flow-diagram">
+                        <div class="flow-box">
+                            <span class="fb-icon">🏢</span>
+                            <span class="fb-label">Alta de Compañía</span>
+                            <span class="fb-sub">Datos, logo, reglas</span>
+                        </div>
+                        <div class="flow-connector">→</div>
+                        <div class="flow-box">
+                            <span class="fb-icon">⚙️</span>
+                            <span class="fb-label">Configuración</span>
+                            <span class="fb-sub">Ramos, tasas, BRE</span>
+                        </div>
+                        <div class="flow-connector">→</div>
+                        <div class="flow-box">
+                            <span class="fb-icon">🔗</span>
+                            <span class="fb-label">Integración</span>
+                            <span class="fb-sub">API / Manual</span>
+                        </div>
+                        <div class="flow-connector">→</div>
+                        <div class="flow-box">
+                            <span class="fb-icon">👥</span>
+                            <span class="fb-label">Acceso</span>
+                            <span class="fb-sub">Portal compañía</span>
+                        </div>
+                    </div>
+
+                    <div class="sub-grid">
+                        <div class="sub-card">
+                            <h4><span class="num">1</span> Registro y Alta de Compañía</h4>
+                            <ul>
+                                <li>Datos institucionales (razón social, NIT, logo, contactos clave).</li>
+                                <li>Ramos habilitados por compañía (Vehículos, Vida, Salud, Hogar, etc.).</li>
+                                <li>Monedas aceptadas (BOB / USD).</li>
+                                <li>Clasificación: <em>Integrada</em> (con API propia) o <em>Manual</em> (sin sistema propio).</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">2</span> Motor de Reglas de Negocio (BRE)</h4>
+                            <ul>
+                                <li>Reglas específicas por compañía y ramo.</li>
+                                <li>Ejemplo: "Compañía A no asegura vehículos anteriores a 2010".</li>
+                                <li>Validaciones automáticas al cotizar o emitir.</li>
+                                <li>Gestión de inspección física obligatoria según límites de suma asegurada.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">3</span> Compañías sin Sistema Propio</h4>
+                            <ul>
+                                <li>Acceso al portal Interseguros como sistema completo.</li>
+                                <li>Gestión de su cartera, emisión, siniestros y cobranza desde el core.</li>
+                                <li>Panel diferenciado por compañía con datos aislados.</li>
+                                <li>Roles y permisos específicos para ejecutivos de la compañía.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">4</span> Capa de Integración (Middleware)</h4>
+                            <ul>
+                                <li>Conexión via REST / SOAP con los sistemas de compañías externas.</li>
+                                <li>Sistema de colas (RabbitMQ / Kafka) para reintentos ante fallos.</li>
+                                <li>Webhooks de recepción de respuestas (número de póliza, aprobaciones).</li>
+                                <li>Logs transaccionales de cada petición/respuesta por compañía.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+             PRODUCTOS / PÓLIZAS PACTADAS
+             ============================================================ -->
+        <section id="productos">
+            <div class="module-section">
+                <div class="module-header">
+                    <div class="mod-icon orange">📋</div>
+                    <div>
+                        <div class="mod-title">Gestión de Productos (Pólizas Pactadas)</div>
+                        <div class="mod-subtitle">Configuración de los productos acordados entre el broker y cada aseguradora</div>
+                    </div>
+                </div>
+                <div class="module-body">
+                    <p>
+                        Un <strong>Producto</strong> es un acuerdo formal entre Interseguros y una compañía aseguradora.
+                        Define las condiciones, coberturas, tasas y plantillas bajo las cuales se emitirán los certificados
+                        a los asegurados. Es la fuente de verdad para todo el proceso de emisión.
+                    </p>
+
+                    <div class="flow-diagram">
+                        <div class="flow-box">
+                            <span class="fb-icon">🤝</span>
+                            <span class="fb-label">Acuerdo</span>
+                            <span class="fb-sub">Broker + Compañía</span>
+                        </div>
+                        <div class="flow-connector">→</div>
+                        <div class="flow-box">
+                            <span class="fb-icon">📋</span>
+                            <span class="fb-label">Producto</span>
+                            <span class="fb-sub">Ramo + cobertura</span>
+                        </div>
+                        <div class="flow-connector">→</div>
+                        <div class="flow-box">
+                            <span class="fb-icon">💲</span>
+                            <span class="fb-label">Tarifa</span>
+                            <span class="fb-sub">Primas + comisiones</span>
+                        </div>
+                        <div class="flow-connector">→</div>
+                        <div class="flow-box">
+                            <span class="fb-icon">📄</span>
+                            <span class="fb-label">Plantilla</span>
+                            <span class="fb-sub">Para certificados</span>
+                        </div>
+                    </div>
+
+                    <div class="sub-grid">
+                        <div class="sub-card">
+                            <h4><span class="num">1</span> Ficha del Producto</h4>
+                            <ul>
+                                <li>Nombre, ramo y compañía aseguradora asociada.</li>
+                                <li>Rango de vigencia del acuerdo (fecha inicio / expiración del producto).</li>
+                                <li>Tipo de póliza: individual, colectiva o masiva.</li>
+                                <li>Moneda y modalidad de pago admitida.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">2</span> Coberturas y Condicionado</h4>
+                            <ul>
+                                <li>Coberturas incluidas y exclusiones específicas.</li>
+                                <li>Límites de suma asegurada por tipo de riesgo.</li>
+                                <li>Cláusulas legales dinámicas por aseguradora o por canal de distribución.</li>
+                                <li>Vínculo a la plantilla de póliza / certificado oficial.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">3</span> Tarificación y Comisiones</h4>
+                            <ul>
+                                <li>Tablas de tarifas parametrizables (por edad, suma asegurada, riesgo).</li>
+                                <li>Porcentaje de comisión pactado (base bruta / neta).</li>
+                                <li>Sobrecomisiones (overrides) para gerentes o canales especiales.</li>
+                                <li>Vínculo directo con el motor de comisiones para liquidación automática.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">4</span> Campos Dinámicos del Producto</h4>
+                            <ul>
+                                <li>Formulario configurable de datos requeridos por la compañía.</li>
+                                <li>Campos obligatorios y opcionales por ramo.</li>
+                                <li>Integración con SAI para prellenado de datos del cliente.</li>
+                                <li>Reglas de validación cruzada específicas por producto.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="callout info">
+                        <span class="callout-icon">ℹ️</span>
+                        <div>Un producto <strong>activo y vigente</strong> es requisito previo para emitir cualquier certificado. El sistema bloquea la emisión si el producto está vencido o la compañía tiene integración inactiva.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+             MÓDULO DE SUSCRIPCIÓN Y EMISIÓN
+             ============================================================ -->
+        <section id="suscripcion">
+            <div class="module-section">
+                <div class="module-header">
+                    <div class="mod-icon purple">✍️</div>
+                    <div>
+                        <div class="mod-title">Módulo de Suscripción y Emisión Multicompañía</div>
+                        <div class="mod-subtitle">Cotización, suscripción y emisión de pólizas desde formulario unificado</div>
+                    </div>
+                </div>
+                <div class="module-body">
+                    <p>
+                        Permite a los ejecutivos realizar todo el ciclo desde la cotización hasta la emisión de la póliza,
+                        desde un único formulario adaptable a la compañía y producto seleccionado.
+                    </p>
+
+                    <div class="badges">
+                        <span class="badge gray">En creación</span>
+                        <span class="badge blue">En proceso</span>
+                        <span class="badge orange">Con error</span>
+                        <span class="badge green">Emitida</span>
+                    </div>
+
+                    <div class="sub-grid">
+                        <div class="sub-card">
+                            <h4><span class="num">1</span> Cotización Centralizada</h4>
+                            <ul>
+                                <li>Cotización simultánea a múltiples aseguradoras en tiempo real.</li>
+                                <li>Formulario único con campos dinámicos según compañía y ramo.</li>
+                                <li>Prellenado de datos desde el SAI (cliente existente).</li>
+                                <li>Comparativo de primas entre compañías disponibles.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">2</span> Workflows de Autorización</h4>
+                            <ul>
+                                <li><strong>Suscripción Automática:</strong> emisión directa si cumple todas las reglas BRE.</li>
+                                <li><strong>Suscripción Manual:</strong> bandeja de revisión para analistas o ejecutivos.</li>
+                                <li>Gestión de requisitos previos: fotografías, formularios médicos, DNI.</li>
+                                <li>Generación del formulario UIF parametrizado por compañía.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">3</span> Emisión de la Póliza</h4>
+                            <ul>
+                                <li>Binding transaccional: inyección en el core de la aseguradora y retorno del N° de póliza.</li>
+                                <li>Para compañías sin sistema: emisión y numeración propia de Interseguros.</li>
+                                <li>Generación automática del PDF de póliza (sin papel preimpreso).</li>
+                                <li>Firma electrónica del asegurado integrada.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">4</span> Registro y Trazabilidad</h4>
+                            <ul>
+                                <li>Creación automática de oportunidad vinculada a la emisión.</li>
+                                <li>Asociación contacto → oportunidad → póliza en un único registro.</li>
+                                <li>Log de quién cotizó, cuándo y qué parámetros usó.</li>
+                                <li>Almacenamiento de todos los datos relevantes en la oportunidad.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+             MÓDULO DE EMISIÓN DE CERTIFICADOS
+             ============================================================ -->
+        <section id="certificados">
+            <div class="module-section">
+                <div class="module-header">
+                    <div class="mod-icon green">📄</div>
+                    <div>
+                        <div class="mod-title">Módulo de Emisión de Certificados</div>
+                        <div class="mod-subtitle">Generación, autenticación y distribución de certificados por producto</div>
+                    </div>
+                </div>
+                <div class="module-body">
+                    <p>
+                        Una vez que un producto (póliza) está vigente, el core genera los certificados individuales
+                        para cada asegurado. Soporta emisión individual, masiva por lotes y distribución omnicanal automática.
+                    </p>
+
+                    <div class="sub-grid">
+                        <div class="sub-card">
+                            <h4><span class="num">1</span> Motor de Plantillas Multicompañía</h4>
+                            <ul>
+                                <li>Plantillas base en PDF / HTML con variables dinámicas.</li>
+                                <li>Variables: <code>[Nombre_Asegurado]</code>, <code>[Vigencia]</code>, <code>[Placa]</code>, <code>[Logo_Compañía]</code>.</li>
+                                <li>Cláusulas legales condicionales por red médica o canal.</li>
+                                <li>Identidad visual por compañía.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">2</span> Emisión Masiva (Batch Processing)</h4>
+                            <ul>
+                                <li>Importación de tramas Excel / CSV con múltiples asegurados.</li>
+                                <li>Procesamiento asíncrono en segundo plano.</li>
+                                <li>Notificación y descarga ZIP al finalizar el lote.</li>
+                                <li>SLA objetivo: 1,000 certificados en máx. 5 minutos.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">3</span> Autenticidad y Anti-Fraude</h4>
+                            <ul>
+                                <li>Código QR único encriptado por certificado.</li>
+                                <li>Landing page de verificación: <em>Vigente / Anulado / Vencido</em>.</li>
+                                <li>Firma electrónica y sellado de tiempo (PDF inalterable).</li>
+                                <li>Log de cada consulta al QR (quién y cuándo lo escaneó).</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">4</span> Distribución y Ciclo de Vida</h4>
+                            <ul>
+                                <li>Envío automático por email / WhatsApp al asegurado.</li>
+                                <li>Autogestión 24/7 desde portal o app móvil.</li>
+                                <li>Anulación automática al dar de baja al asegurado en la póliza.</li>
+                                <li>Historial de reimpresiones y reenvíos por usuario.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="callout success">
+                        <span class="callout-icon">✅</span>
+                        <div>El certificado refleja en tiempo real el estado del producto. Si la póliza madre es anulada o endosada, el certificado actualiza su validez automáticamente en el sistema del QR.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+             MÓDULO DE SINIESTROS
+             ============================================================ -->
+        <section id="siniestros">
+            <div class="module-section">
+                <div class="module-header">
+                    <div class="mod-icon red">🚨</div>
+                    <div>
+                        <div class="mod-title">Módulo de Siniestros</div>
+                        <div class="mod-subtitle">IA asistida — Modelo Human-in-the-Loop</div>
+                    </div>
+                </div>
+                <div class="module-body">
+                    <p>
+                        Los Empleados IA asisten en cada etapa del proceso de siniestros, siempre bajo supervisión humana.
+                        El cliente debe saber claramente cuándo interactúa con un asistente virtual y cuándo con un asesor humano.
+                    </p>
+
+                    <div class="sub-grid">
+                        <div class="sub-card">
+                            <h4><span class="num">1</span> Recepción y Triaje (FNOL)</h4>
+                            <ul>
+                                <li>Captura por lenguaje natural: audio/texto desde WhatsApp.</li>
+                                <li>Extracción automática de datos (fecha, ubicación, tipo de evento).</li>
+                                <li>Fast-track para siniestros menores; alerta prioridad alta para graves.</li>
+                                <li>Geolocalización de asistencias (ambulancia, grúa).</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">2</span> Análisis y Prevención de Fraude</h4>
+                            <ul>
+                                <li>Visión computacional para evaluar daños en fotos/videos.</li>
+                                <li>Scoring de fraude: cruce con clima, historial y metadatos de imágenes.</li>
+                                <li>Nivel de riesgo asignado antes de autorizar cualquier pago.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">3</span> Seguimiento Automatizado</h4>
+                            <ul>
+                                <li>Actualizaciones proactivas al cliente, taller y aseguradora.</li>
+                                <li>Gestor de documentos faltantes con contacto automático al cliente.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">4</span> Fast-Track y Copiloto</h4>
+                            <ul>
+                                <li>Liquidación exprés para micro-siniestros dentro del límite de cobertura.</li>
+                                <li>Resumen ejecutivo para el analista humano en casos complejos.</li>
+                                <li>Borradores de cartas de aceptación/rechazo generados por IA.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="callout warning">
+                        <span class="callout-icon">⚠️</span>
+                        <div>Debe quedar explícito en el flujo <strong>cuándo el cliente interactúa con IA</strong> y cuándo se transfiere a un asesor humano, para evitar frustración en situaciones de alta vulnerabilidad emocional.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+             MÓDULO DE COBRANZAS
+             ============================================================ -->
+        <section id="cobranzas">
+            <div class="module-section">
+                <div class="module-header">
+                    <div class="mod-icon teal">💳</div>
+                    <div>
+                        <div class="mod-title">Módulo de Cobranzas</div>
+                        <div class="mod-subtitle">Planes de pago, mora, conciliación y liquidación a aseguradoras</div>
+                    </div>
+                </div>
+                <div class="module-body">
+                    <p>
+                        El cerebro financiero del core. Administra tanto los ingresos de la corredora (comisiones) como
+                        el dinero de terceros (primas de aseguradoras). Un error en esta capa puede dejar a un cliente sin cobertura.
+                    </p>
+
+                    <div class="sub-grid">
+                        <div class="sub-card">
+                            <h4><span class="num">1</span> Planes de Pago (Cuotificación)</h4>
+                            <ul>
+                                <li>Creación automática de la cuenta corriente al emitir la póliza.</li>
+                                <li>Soporta: contado, mensual, trimestral, planes especiales.</li>
+                                <li>Gestión multimoneda BOB/USD con tipo de cambio del día.</li>
+                                <li>Recargos y gastos administrativos automáticos.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">2</span> Control de Recibos y Estados</h4>
+                            <ul>
+                                <li>Recibos provisionales y avisos de vencimiento.</li>
+                                <li>Vista Cuenta Corriente 360: total, pagado, pendiente, vencimiento.</li>
+                                <li>Aplicación de pagos parciales con reglas de negocio configurables.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">3</span> Cobranza Preventiva y Reactiva</h4>
+                            <ul>
+                                <li>Recordatorio automático D-5 por WhatsApp/Email con enlace de pago.</li>
+                                <li>Escalamiento en mora: D+1 notificación, D+15 alerta ejecutivo, D+30 aviso suspensión.</li>
+                                <li>Registro de promesas de pago con pausa de alertas automáticas.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">4</span> Anulaciones por Falta de Pago (APFP)</h4>
+                            <ul>
+                                <li>Monitor de políticas de suspensión por compañía.</li>
+                                <li>Solicitudes de anulación/rehabilitación automáticas a la aseguradora.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">5</span> Liquidación a Aseguradoras</h4>
+                            <ul>
+                                <li>Corte de caja diario por sucursal, canal y método de pago.</li>
+                                <li>Planillas de rendición: prima neta a transferir + comisión retenida.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="callout danger">
+                        <span class="callout-icon">🔴</span>
+                        <div><strong>Jerarquía de aplicación de pagos:</strong> Si un cliente tiene múltiples pólizas y realiza un depósito sin especificar, el sistema aplica a la cuota más próxima a vencer de cualquier ramo, evitando anulaciones involuntarias.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+             CONECTIVIDAD BANCARIA
+             ============================================================ -->
+        <section id="banca">
+            <div class="module-section">
+                <div class="module-header">
+                    <div class="mod-icon yellow">🏦</div>
+                    <div>
+                        <div class="mod-title">Módulo de Conectividad con Banca Digital</div>
+                        <div class="mod-subtitle">Recaudo multicanal, conciliación automática y cumplimiento PCI-DSS</div>
+                    </div>
+                </div>
+                <div class="module-body">
+                    <div class="sub-grid">
+                        <div class="sub-card">
+                            <h4><span class="num">1</span> Pasarela de Recaudo</h4>
+                            <ul>
+                                <li>Tarjetas crédito/débito (Red Enlace) y QR interoperable (QR Simple).</li>
+                                <li>Pay-by-Link: enlace de cobro enviado por WhatsApp/Email.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">2</span> Conciliación Automática</h4>
+                            <ul>
+                                <li>Webhooks bancarios: estado "Pendiente → Pagado" en tiempo real.</li>
+                                <li>Importación de extractos multibanco (MT940, CSV).</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">3</span> Pagos Recurrentes</h4>
+                            <ul>
+                                <li>Tokenización de tarjetas para débito automático mensual.</li>
+                                <li>Alertas preventivas de cobranza ante fallo de débito.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">4</span> Seguridad y Compliance</h4>
+                            <ul>
+                                <li>PCI-DSS: no se almacenan datos completos de tarjetas ni CVV.</li>
+                                <li>Audit Trail inalterable de toda transacción y modificación.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+             CONSULTAS 360
+             ============================================================ -->
+        <section id="consultas360">
+            <div class="module-section">
+                <div class="module-header">
+                    <div class="mod-icon blue">🔍</div>
+                    <div>
+                        <div class="mod-title">Módulo de Consultas 360</div>
+                        <div class="mod-subtitle">Base de conocimiento, expediente unificado y búsqueda semántica</div>
+                    </div>
+                </div>
+                <div class="module-body">
+                    <div class="sub-grid">
+                        <div class="sub-card">
+                            <h4><span class="num">1</span> Base de Conocimiento</h4>
+                            <ul>
+                                <li>Taxonomía: Compañía + Ramo + Tipo de Proceso.</li>
+                                <li>Soporte a manuales, flujogramas, comparativos y directorios.</li>
+                                <li>Control de versiones con alertas de obsolescencia.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">2</span> Expediente Unificado del Cliente</h4>
+                            <ul>
+                                <li>Portafolio completo: pólizas vigentes de todas las compañías.</li>
+                                <li>Estado de cuenta, histórico de siniestros y renovaciones pendientes.</li>
+                                <li>Línea de tiempo cronológica de interacciones.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">3</span> Búsqueda Semántica</h4>
+                            <ul>
+                                <li>Lenguaje natural: "choque" → artículos de Siniestro Automotor.</li>
+                                <li>Autocompletado y sugerencias de consultas frecuentes.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">4</span> Asistencia Contextual</h4>
+                            <ul>
+                                <li>Panel lateral de FAQ disponible dentro del módulo de suscripción.</li>
+                                <li>Tooltips contextuales sin abandonar la transacción activa.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+             REPORTERÍA — COMISIONES
+             ============================================================ -->
+        <section id="comisiones">
+            <div class="module-section">
+                <div class="module-header">
+                    <div class="mod-icon orange">💰</div>
+                    <div>
+                        <div class="mod-title">Módulo de Reportería — Comisiones</div>
+                        <div class="mod-subtitle">Cálculo multinivel, conciliación y proyección de flujo de caja</div>
+                    </div>
+                </div>
+                <div class="module-body">
+                    <div class="sub-grid">
+                        <div class="sub-card">
+                            <h4><span class="num">1</span> Motor de Cálculo</h4>
+                            <ul>
+                                <li>Matrices configurables por compañía y ramo.</li>
+                                <li>Cálculo sobre prima neta o bruta según aseguradora.</li>
+                                <li>Split de comisiones entre ejecutivos (ej. 50/50).</li>
+                                <li>Gestión de estornos (clawbacks) proporcionales.</li>
+                                <li>3 tipos de comisión para seguros masivos.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">2</span> Conciliación Automática</h4>
+                            <ul>
+                                <li>Importación de liquidaciones (Excel, CSV, tramas) desde las aseguradoras.</li>
+                            </ul>
+                            <table class="semaphore-table">
+                                <thead><tr><th>Estado</th><th>Descripción</th></tr></thead>
+                                <tbody>
+                                    <tr><td><span class="semaphore-dot dot-green"></span>Verde</td><td>Lo esperado coincide con lo pagado.</td></tr>
+                                    <tr><td><span class="semaphore-dot dot-yellow"></span>Amarillo</td><td>Pago parcial (cliente pagó una cuota de tres).</td></tr>
+                                    <tr><td><span class="semaphore-dot dot-red"></span>Rojo</td><td>Fuga de ingresos: la aseguradora no pagó la comisión.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">3</span> Proyecciones y Forecasting</h4>
+                            <ul>
+                                <li>Comisiones devengadas vs. percibidas.</li>
+                                <li>Proyección de renovaciones próximas y dinero en riesgo.</li>
+                                <li>Cuenta por cobrar para primas fraccionadas en 12 meses.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">4</span> Dashboards BI</h4>
+                            <ul>
+                                <li>Vista gerencial: rentabilidad por aseguradora y ramo.</li>
+                                <li>Vista ejecutivo: mis pólizas, ganado este mes y comisiones retenidas.</li>
+                                <li>Visor Power BI embebido en la plataforma.</li>
+                                <li>Integración ERP (SAP, Oracle, sistemas locales).</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+             REPORTERÍA AVANZADA
+             ============================================================ -->
+        <section id="reporteria">
+            <div class="module-section">
+                <div class="module-header">
+                    <div class="mod-icon purple">📊</div>
+                    <div>
+                        <div class="mod-title">Módulo de Reportería Avanzada</div>
+                        <div class="mod-subtitle">Data Warehouse, KPIs del sector y analítica predictiva</div>
+                    </div>
+                </div>
+                <div class="module-body">
+                    <div class="sub-grid">
+                        <div class="sub-card">
+                            <h4><span class="num">1</span> Arquitectura de Datos</h4>
+                            <ul>
+                                <li>Separación de base transaccional y analítica (Data Warehouse / Data Lake).</li>
+                                <li>ETL: limpieza y centralización de datos de todas las compañías.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">2</span> Self-Service BI</h4>
+                            <ul>
+                                <li>Constructor drag-and-drop de reportes y tablas dinámicas.</li>
+                                <li>Drill-down multidimensional por ramo, sucursal y ejecutivo.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">3</span> KPIs del Sector</h4>
+                            <ul>
+                                <li><strong>Churn Rate:</strong> pólizas vencidas que se renovaron.</li>
+                                <li><strong>Loss Ratio:</strong> primas cobradas vs. siniestros pagados.</li>
+                                <li><strong>Hit Rate:</strong> cotizaciones convertidas en emisiones.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">4</span> Cross-Selling y Forecasting</h4>
+                            <ul>
+                                <li>Matrices: clientes con Vehículo y Salud sin Hogar.</li>
+                                <li>Proyección de cumplimiento de cuota mensual por quincena.</li>
+                                <li>Distribución programada de reportes (lunes 8:00 a.m. a directivos).</li>
+                                <li>Alertas por umbral: caída de producción &gt;20% en una sucursal.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+             TRAZABILIDAD COMERCIAL
+             ============================================================ -->
+        <section id="trazabilidad">
+            <div class="module-section">
+                <div class="module-header">
+                    <div class="mod-icon slate">🔗</div>
+                    <div>
+                        <div class="mod-title">Trazabilidad de Contactos y Oportunidades</div>
+                        <div class="mod-subtitle">Pipeline de ventas, automatización comercial y lead scoring</div>
+                    </div>
+                </div>
+                <div class="module-body">
+                    <div class="sub-grid">
+                        <div class="sub-card">
+                            <h4><span class="num">1</span> Embudo de Ventas (Pipeline)</h4>
+                            <ul>
+                                <li>Tableros Kanban: Lead → Cotización → Negociación → Ganado/Perdido.</li>
+                                <li>Múltiples embudos con etapas personalizadas por ramo.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">2</span> Expediente Cronológico</h4>
+                            <ul>
+                                <li>Registro de llamadas, reuniones y correos.</li>
+                                <li>Integración con WhatsApp Business y centralita telefónica.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">3</span> Automatización Comercial</h4>
+                            <ul>
+                                <li>Follow-up automático si cotización no tiene respuesta en 48h.</li>
+                                <li>Oportunidad de renovación creada D-60 antes del vencimiento.</li>
+                                <li>Reportes de vencimientos mejorados.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">4</span> Lead Scoring y Análisis</h4>
+                            <ul>
+                                <li>Round-Robin o por especialidad para asignación de leads digitales.</li>
+                                <li>Semáforo de prioridad por monto de prima y fecha de decisión.</li>
+                                <li>Captura obligatoria de "Motivo de Pérdida" al cerrar como perdido.</li>
+                                <li>Win Rate y ciclo de venta promedio por ramo.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div><!-- /.content -->
+</div><!-- /.main -->
+
+<script>
+    // Sidebar active link highlight on scroll
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.sidebar nav a');
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(s => {
+            if (window.scrollY >= s.offsetTop - 80) current = s.id;
+        });
+        navLinks.forEach(a => {
+            a.classList.remove('active');
+            if (a.getAttribute('href') === '#' + current) a.classList.add('active');
+        });
+    }, { passive: true });
+</script>
 </body>
 </html>
