@@ -1,0 +1,1 @@
+# interseguros-core.github.io
