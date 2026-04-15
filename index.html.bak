@@ -1,0 +1,1885 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Core Interseguros — Plataforma Integral</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════
+     SIDEBAR
+════════════════════════════════════════════ -->
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <img src="img/logo.png" alt="Interseguros" class="logo-img">
+        <div class="logo-title">Core Interseguros</div>
+        <div class="logo-badge">v2.0</div>
+    </div>
+    <nav>
+        <div class="nav-group-label">Inicio</div>
+        <a href="#overview" class="active"><span class="nav-icon">🏠</span> Vista General</a>
+
+        <div class="nav-group-label">Flujo por Compañía</div>
+        <a href="#step-companias"> <span class="step-dot">1</span> Alta de Compañía</a>
+        <a href="#step-contactos"> <span class="step-dot">2</span> Contactos y Clientes</a>
+        <a href="#step-productos"> <span class="step-dot">3</span> Productos Pactados</a>
+        <a href="#step-certificados"><span class="step-dot">4</span> Emisión de Certificados</a>
+        <a href="#step-pagos">     <span class="step-dot">5</span> Plan de Pagos</a>
+        <a href="#step-cobranzas"> <span class="step-dot">6</span> Cobranzas Avanzadas</a>
+        <a href="#step-siniestros"><span class="step-dot">7</span> Siniestros</a>
+
+        <div class="nav-group-label">4 Pilares con IA</div>
+        <a href="#pilar-crm"><span class="nav-icon">🤖</span> CRM con IA</a>
+        <a href="#pilar-certificados"><span class="nav-icon">📄</span> Certificados</a>
+        <a href="#pilar-siniestros"><span class="nav-icon">🚨</span> Siniestros con IA</a>
+        <a href="#pilar-cobranzas"><span class="nav-icon">💳</span> Cobranzas Avanzadas</a>
+
+        <div class="nav-group-label">Módulos Core</div>
+        <a href="#registro-anulaciones"><span class="nav-icon">📋</span> Registro y Anulaciones</a>
+        <a href="#whatsapp-hub"><span class="nav-icon">📱</span> WhatsApp IA Hub</a>
+        <a href="#cotizadores"><span class="nav-icon">🧮</span> Cotizadores Param.</a>
+        <a href="#firma-digital"><span class="nav-icon">🔒</span> Firma Digital</a>
+        <a href="#vencimientos-docs"><span class="nav-icon">📂</span> Venc. Documentos</a>
+
+        <div class="nav-group-label">Operaciones</div>
+        <a href="#suscripcion"><span class="nav-icon">✍️</span> Suscripción y Emisión</a>
+        <a href="#comisiones"><span class="nav-icon">💰</span> Comisiones Avanzadas</a>
+        <a href="#conciliaciones"><span class="nav-icon">⚖️</span> Conciliaciones</a>
+        <a href="#reporteria"><span class="nav-icon">📊</span> Reportería BI</a>
+        <a href="#trazabilidad"><span class="nav-icon">🔗</span> Trazabilidad Comercial</a>
+        <a href="#consultas360"><span class="nav-icon">🔍</span> Consultas 360</a>
+
+        <div class="nav-group-label">Config. y Seguridad</div>
+        <a href="#branding-config"><span class="nav-icon">🎨</span> Branding y Config.</a>
+        <a href="#roles-permisos"><span class="nav-icon">👥</span> Roles y Permisos</a>
+        <a href="#integraciones"><span class="nav-icon">🔌</span> Integraciones</a>
+        <a href="#auditoria-logs"><span class="nav-icon">🗂️</span> Auditoría y Logs</a>
+    </nav>
+</aside>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- ════════════════════════════════════════════
+     MAIN
+════════════════════════════════════════════ -->
+<div class="main">
+    <header class="topbar">
+        <button class="hamburger-btn" id="hamburgerBtn" aria-label="Abrir menú">
+            <span></span><span></span><span></span>
+        </button>
+        <span class="page-title">Core Interseguros — Documentación Técnica</span>
+        <span class="topbar-version">Abril 2026 · v2.0</span>
+    </header>
+
+    <div class="content">
+
+        <!-- ───────────────────────────────────────
+             HERO / OVERVIEW
+        ─────────────────────────────────────── -->
+        <section id="overview">
+            <div class="hero">
+                <div class="hero-text">
+                    <div class="hero-eyebrow">Plataforma Multicompañía</div>
+                    <h1>Core Interseguros</h1>
+                    <p>
+                        Sistema central de gestión para brokers de seguros. La operación siempre comienza
+                        con la <strong>creación de una compañía</strong> y desde allí fluye hacia contactos,
+                        productos, certificados, cobranzas y siniestros — todo potenciado con IA.
+                    </p>
+                    <div class="hero-pills">
+                        <span class="pill orange">🤖 CRM con IA</span>
+                        <span class="pill blue">📄 Certificados</span>
+                        <span class="pill red">🚨 Siniestros</span>
+                        <span class="pill green">🏦 Banco Económico</span>
+                        <span class="pill orange">📱 WhatsApp IA</span>
+                        <span class="pill blue">🔒 Firma Digital</span>
+                        <span class="pill green">🔌 Cloud Broker</span>
+                        <span class="pill red">⚖️ Conciliaciones</span>
+                    </div>
+                </div>
+                <div class="hero-steps">
+                    <div class="hs-step"><span class="hs-num">1</span><span class="hs-label">Compañía</span></div>
+                    <div class="hs-arrow">↓</div>
+                    <div class="hs-step"><span class="hs-num">2</span><span class="hs-label">Contactos</span></div>
+                    <div class="hs-arrow">↓</div>
+                    <div class="hs-step"><span class="hs-num">3</span><span class="hs-label">Productos</span></div>
+                    <div class="hs-arrow">↓</div>
+                    <div class="hs-step"><span class="hs-num">4</span><span class="hs-label">Certificados</span></div>
+                    <div class="hs-arrow">↓</div>
+                    <div class="hs-step"><span class="hs-num">5</span><span class="hs-label">Plan de Pagos</span></div>
+                    <div class="hs-arrow">↓</div>
+                    <div class="hs-step"><span class="hs-num">6</span><span class="hs-label">Cobranzas</span></div>
+                    <div class="hs-arrow">↓</div>
+                    <div class="hs-step"><span class="hs-num">7</span><span class="hs-label">Siniestros</span></div>
+                </div>
+            </div>
+
+            <!-- 4 PILLARS -->
+            <div class="section-label">Los 4 Pilares Fundamentales</div>
+            <div class="pillars-grid">
+                <a class="pillar-card p-orange" href="#pilar-crm">
+                    <div class="pc-icon">🤖</div>
+                    <div class="pc-title">CRM con IA</div>
+                    <div class="pc-desc">Gestión inteligente de clientes, recordatorio de vencimientos, recuperación de perdidos y atención 24/7.</div>
+                </a>
+                <a class="pillar-card p-blue" href="#pilar-certificados">
+                    <div class="pc-icon">📄</div>
+                    <div class="pc-title">Emisión de Certificados</div>
+                    <div class="pc-desc">Emisión desde la plataforma con integración directa a compañías que disponen de API propia.</div>
+                </a>
+                <a class="pillar-card p-red" href="#pilar-siniestros">
+                    <div class="pc-icon">🚨</div>
+                    <div class="pc-title">Siniestros con IA</div>
+                    <div class="pc-desc">Gestión manual y asistida por IA. Seguimiento en tiempo real para la compañía y el asegurado.</div>
+                </a>
+                <a class="pillar-card p-green" href="#pilar-cobranzas">
+                    <div class="pc-icon">💳</div>
+                    <div class="pc-title">Cobranzas Avanzadas</div>
+                    <div class="pc-desc">Integrada con Banco Económico: QR, tarjetas y débito automático. El broker nunca toca el dinero.</div>
+                </a>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════
+             FLUJO POR COMPAÑÍA
+        ═══════════════════════════════════════════ -->
+        <div class="flow-section-header">
+            <div class="fsh-label">Flujo por Compañía</div>
+            <div class="fsh-title">Todo comienza creando una Compañía</div>
+            <div class="fsh-sub">El alta de una compañía aseguradora es el paso uno y obligatorio. El resto del sistema opera dentro del contexto de cada compañía registrada.</div>
+        </div>
+
+        <!-- PASO 1 — ALTA DE COMPAÑÍA -->
+        <section id="step-companias">
+            <div class="step-card">
+                <div class="step-number">01</div>
+                <div class="step-content">
+                    <div class="step-header">
+                        <div class="step-icon s-blue">🏢</div>
+                        <div>
+                            <div class="step-title">Alta de Compañía Aseguradora</div>
+                            <div class="step-subtitle">Base del sistema — Sin compañía no hay operación posible</div>
+                        </div>
+                    </div>
+                    <p class="step-desc">
+                        Registra las aseguradoras con las que el broker opera. Para compañías
+                        <strong>sin sistema propio</strong>, el core actúa como su plataforma completa.
+                        Cada compañía debe configurar su integración bancaria y de facturación antes de operar.
+                    </p>
+
+                    <div class="sub-grid">
+                        <div class="sub-card">
+                            <h4><span class="num">1</span> Datos Institucionales</h4>
+                            <ul>
+                                <li>Razón social, NIT, logo y contactos clave.</li>
+                                <li>Ramos habilitados (Vehículos, Vida, Salud, Hogar, etc.).</li>
+                                <li>Monedas aceptadas: BOB / USD.</li>
+                                <li>Clasificación: <em>Integrada</em> (API) o <em>Manual</em> (sin sistema).</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">2</span> Configuración Bancaria</h4>
+                            <ul>
+                                <li>Registro de cuenta Banco Económico de la aseguradora.</li>
+                                <li>Vinculación de llave API del Banco Económico en configuración.</li>
+                                <li>Los pagos de clientes se acreditan directamente en esa cuenta.</li>
+                                <li>Sin esta configuración, la plataforma no puede procesar cobros.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">3</span> Motor de Reglas (BRE)</h4>
+                            <ul>
+                                <li>Reglas de validación específicas por compañía y ramo.</li>
+                                <li>Ejemplo: "no asegura vehículos anteriores a 2010".</li>
+                                <li>Inspección física obligatoria según suma asegurada.</li>
+                                <li>Bloqueos automáticos al cotizar o emitir.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">4</span> Acceso y Roles</h4>
+                            <ul>
+                                <li>Portal diferenciado por compañía con datos aislados.</li>
+                                <li>Roles específicos para ejecutivos de la aseguradora.</li>
+                                <li>Compañías sin sistema: acceso completo al core Interseguros.</li>
+                                <li>Logs transaccionales de cada petición y respuesta.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="integration-compare">
+                        <div class="ic-header">Modos de Integración por Compañía</div>
+                        <div class="ic-grid">
+                            <div class="ic-card ic-blue">
+                                <div class="ic-label">🔗 Compañía con Integración API</div>
+                                <ul>
+                                    <li>Emisión directa en el sistema de la aseguradora.</li>
+                                    <li>Número de póliza oficial retornado automáticamente.</li>
+                                    <li>Factura electrónica generada por la propia compañía (pasarela propia).</li>
+                                    <li>Pagos acreditados a su cuenta Banco Económico configurada.</li>
+                                </ul>
+                            </div>
+                            <div class="ic-card ic-orange">
+                                <div class="ic-label">🏗️ Compañía Sin Sistema Propio</div>
+                                <ul>
+                                    <li>Core Interseguros actúa como sistema completo de la aseguradora.</li>
+                                    <li>Numeración y registro propios de Interseguros.</li>
+                                    <li>Facturación electrónica integrada directamente con el <strong>SIAT</strong>.</li>
+                                    <li>Pagos acreditados a su cuenta Banco Económico configurada.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PASO 2 — CONTACTOS Y CLIENTES -->
+        <section id="step-contactos">
+            <div class="step-card">
+                <div class="step-number">02</div>
+                <div class="step-content">
+                    <div class="step-header">
+                        <div class="step-icon s-indigo">👥</div>
+                        <div>
+                            <div class="step-title">Contactos, Clientes y Prospectos</div>
+                            <div class="step-subtitle">Lista de contactos por compañía — La diferencia la hace el certificado vigente</div>
+                        </div>
+                    </div>
+                    <p class="step-desc">
+                        Cada compañía gestiona su propia lista de contactos. Un contacto se convierte en
+                        <strong>cliente</strong> cuando tiene al menos un certificado vigente.
+                        Los contactos sin certificado vigente son <strong>prospectos</strong>,
+                        disponibles para campañas de marketing y cross-selling.
+                    </p>
+
+                    <div class="contact-split">
+                        <div class="cs-card cs-green">
+                            <div class="cs-header"><span class="cs-badge">🟢 CLIENTES</span></div>
+                            <p>Contactos con <strong>al menos un certificado vigente</strong>. Tienen cobertura activa.</p>
+                            <ul>
+                                <li>Vista 360: pólizas, pagos, siniestros e interacciones.</li>
+                                <li>Portal de autogestión y descarga de certificados 24/7.</li>
+                                <li>Alertas automáticas de vencimiento (D-60, D-30, D-15, D-7).</li>
+                                <li>Seguimiento de siniestros en tiempo real desde el portal.</li>
+                                <li>Historial cronológico completo: llamadas, pagos y reclamos.</li>
+                            </ul>
+                        </div>
+                        <div class="cs-card cs-orange">
+                            <div class="cs-header"><span class="cs-badge">🟡 PROSPECTOS</span></div>
+                            <p>Contactos <strong>sin certificado vigente</strong>. Objetivo de recuperación y marketing.</p>
+                            <ul>
+                                <li>Scoring IA de probabilidad de conversión.</li>
+                                <li>Campañas de reactivación por canal preferido del contacto.</li>
+                                <li>Registro de motivo de no conversión (análisis de churn).</li>
+                                <li>Oportunidades de cross-selling según perfil y productos.</li>
+                                <li>Pipeline comercial: Lead → Cotización → Cierre.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="sub-grid" style="margin-top:14px">
+                        <div class="sub-card">
+                            <h4><span class="num">3</span> Expediente Unificado</h4>
+                            <ul>
+                                <li>Portafolio completo con pólizas de todas las compañías.</li>
+                                <li>Estado de cuenta, siniestros y renovaciones pendientes.</li>
+                                <li>Línea de tiempo cronológica de todas las interacciones.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">4</span> CRM Integrado</h4>
+                            <ul>
+                                <li>Registro de llamadas, reuniones, correos y WhatsApp.</li>
+                                <li>Tareas automáticas de seguimiento y renovación.</li>
+                                <li>Integración con WhatsApp Business y centralita telefónica.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PASO 3 — PRODUCTOS PACTADOS -->
+        <section id="step-productos">
+            <div class="step-card">
+                <div class="step-number">03</div>
+                <div class="step-content">
+                    <div class="step-header">
+                        <div class="step-icon s-orange">📋</div>
+                        <div>
+                            <div class="step-title">Registro de Productos Pactados</div>
+                            <div class="step-subtitle">Acuerdo formal entre broker y compañía — Fuente de verdad para la emisión</div>
+                        </div>
+                    </div>
+                    <p class="step-desc">
+                        Un <strong>Producto</strong> es el acuerdo formal entre Interseguros y una aseguradora:
+                        define coberturas, tasas y plantillas de certificado. Es prerrequisito obligatorio para
+                        emitir cualquier certificado. Un producto vencido bloquea la emisión automáticamente.
+                    </p>
+
+                    <div class="sub-grid">
+                        <div class="sub-card">
+                            <h4><span class="num">1</span> Ficha del Producto</h4>
+                            <ul>
+                                <li>Nombre, ramo y compañía aseguradora asociada.</li>
+                                <li>Vigencia del acuerdo: inicio y fecha de expiración.</li>
+                                <li>Tipo: individual, colectiva o masiva.</li>
+                                <li>Moneda y modalidades de pago admitidas.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">2</span> Coberturas y Condicionado</h4>
+                            <ul>
+                                <li>Coberturas incluidas, exclusiones específicas y límites.</li>
+                                <li>Cláusulas legales dinámicas por aseguradora o canal.</li>
+                                <li>Plantilla oficial de póliza / certificado vinculada.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">3</span> Tarificación y Comisiones</h4>
+                            <ul>
+                                <li>Tablas de tarifas por edad, suma asegurada y tipo de riesgo.</li>
+                                <li>Porcentaje de comisión pactado (prima bruta o neta).</li>
+                                <li>Sobrecomisiones y overrides por canal de distribución.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">4</span> Campos Dinámicos</h4>
+                            <ul>
+                                <li>Formulario configurable por compañía y ramo.</li>
+                                <li>Prellenado automático desde datos del contacto (CRM).</li>
+                                <li>Reglas de validación cruzada específicas por producto.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="callout info">
+                        <span class="callout-icon">ℹ️</span>
+                        <div>Un producto <strong>activo y vigente</strong> es requisito absoluto para emitir certificados. El sistema bloquea la emisión si el producto está vencido o la integración de la compañía está inactiva.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PASO 4 — EMISIÓN DE CERTIFICADOS -->
+        <section id="step-certificados">
+            <div class="step-card">
+                <div class="step-number">04</div>
+                <div class="step-content">
+                    <div class="step-header">
+                        <div class="step-icon s-green">📄</div>
+                        <div>
+                            <div class="step-title">Emisión de Certificados</div>
+                            <div class="step-subtitle">A partir de los productos pactados · Individual, masiva y omnicanal</div>
+                        </div>
+                    </div>
+                    <p class="step-desc">
+                        El core emite certificados individuales o masivos a partir de los productos vigentes.
+                        Para compañías con <strong>integración API</strong>, el certificado se registra en su sistema
+                        y retorna el número oficial. Para compañías sin sistema, Interseguros emite y numera de forma propia.
+                    </p>
+
+                    <div class="sub-grid">
+                        <div class="sub-card">
+                            <h4><span class="num">1</span> Motor de Plantillas</h4>
+                            <ul>
+                                <li>Variables dinámicas: <code>[Nombre]</code>, <code>[Vigencia]</code>, <code>[Placa]</code>.</li>
+                                <li>Cláusulas legales condicionales por red médica o canal.</li>
+                                <li>Identidad visual (logo, colores) por compañía.</li>
+                                <li>PDF inalterable con firma electrónica y sellado de tiempo.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">2</span> Emisión Masiva (Batch)</h4>
+                            <ul>
+                                <li>Importación de tramas Excel / CSV con múltiples asegurados.</li>
+                                <li>Procesamiento asíncrono en segundo plano.</li>
+                                <li>Descarga ZIP al finalizar · SLA: 1,000 certs en &lt; 5 minutos.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">3</span> Anti-Fraude y QR</h4>
+                            <ul>
+                                <li>Código QR único encriptado por cada certificado.</li>
+                                <li>Landing de verificación: Vigente / Anulado / Vencido.</li>
+                                <li>Log de cada escaneo: quién y cuándo lo consultó.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">4</span> Distribución y Ciclo de Vida</h4>
+                            <ul>
+                                <li>Envío automático por Email / WhatsApp al asegurado.</li>
+                                <li>Autogestión 24/7 desde portal o app móvil.</li>
+                                <li>Anulación automática si la póliza madre es endosada o cancelada.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="integration-compare">
+                        <div class="ic-header">Registro del Certificado según tipo de Compañía</div>
+                        <div class="ic-grid">
+                            <div class="ic-card ic-blue">
+                                <div class="ic-label">🔗 Con integración API</div>
+                                <ul>
+                                    <li>El certificado se registra en el sistema de la aseguradora vía API.</li>
+                                    <li>El número oficial de póliza retorna automáticamente.</li>
+                                    <li>La factura electrónica la genera la propia aseguradora.</li>
+                                </ul>
+                            </div>
+                            <div class="ic-card ic-orange">
+                                <div class="ic-label">🏗️ Sin sistema propio</div>
+                                <ul>
+                                    <li>Interseguros emite y numera el certificado de forma propia.</li>
+                                    <li>Facturación electrónica integrada directamente con el SIAT.</li>
+                                    <li>La aseguradora gestiona todo desde el portal Interseguros.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="callout success">
+                        <span class="callout-icon">✅</span>
+                        <div>El estado del QR refleja la realidad en tiempo real. Si la póliza es anulada o vence, el escaneo muestra "Invalidado" de forma inmediata, sin necesidad de reemitir el documento físico.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PASO 5 — PLAN DE PAGOS -->
+        <section id="step-pagos">
+            <div class="step-card">
+                <div class="step-number">05</div>
+                <div class="step-content">
+                    <div class="step-header">
+                        <div class="step-icon s-purple">📅</div>
+                        <div>
+                            <div class="step-title">Creación de Plan de Pagos</div>
+                            <div class="step-subtitle">Generado automáticamente en el momento de la emisión del certificado</div>
+                        </div>
+                    </div>
+                    <p class="step-desc">
+                        Al emitir el certificado, el sistema genera automáticamente la <strong>cuenta corriente</strong>
+                        del asegurado. El plan de pagos define cuotas, fechas de vencimiento y moneda,
+                        y es el punto de partida para todo el flujo de cobranza posterior.
+                    </p>
+
+                    <div class="sub-grid">
+                        <div class="sub-card">
+                            <h4><span class="num">1</span> Motor de Fraccionamiento</h4>
+                            <ul>
+                                <li>Contado, mensual, trimestral o planes especiales configurables.</li>
+                                <li>Recargos y gastos administrativos calculados automáticamente.</li>
+                                <li>Multimoneda BOB/USD con tipo de cambio del día aplicado.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">2</span> Cuenta Corriente 360</h4>
+                            <ul>
+                                <li>Prima total, pagada, pendiente y próximo vencimiento en una vista.</li>
+                                <li>Recibos provisionales como comprobante legal antes de la factura.</li>
+                                <li>Reglas de aplicación de pagos parciales configurables por compañía.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">3</span> Workflow de Mora</h4>
+                            <ul>
+                                <li>Día 1–5: notificación amistosa automática por WhatsApp/Email.</li>
+                                <li>Día 15: alerta al ejecutivo comercial para intervención personal.</li>
+                                <li>Día 30: aviso de posible suspensión de cobertura enviado al cliente.</li>
+                                <li>Registro de promesas de pago: pausa de alertas hasta la fecha acordada.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">4</span> Anulación por Falta de Pago</h4>
+                            <ul>
+                                <li>Monitor de políticas de suspensión configuradas por compañía.</li>
+                                <li>El cliente tiene 30 días para pagar con cobertura activa desde la emisión.</li>
+                                <li>Débito automático: se reintenta todos los días hasta que haya saldo disponible.</li>
+                                <li>Si pasan 60 días sin cobro exitoso en débito automático: anulación automática del certificado.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="integration-compare">
+                        <div class="ic-header">Reglas de Negocio para Débito Automático</div>
+                        <div class="ic-grid">
+                            <div class="ic-card ic-blue">
+                                <div class="ic-label">🔄 Prioridad de Cobro</div>
+                                <ul>
+                                    <li>Cuando hay múltiples pólizas activas, se cobra primero la de vencimiento más próximo.</li>
+                                    <li>Si el saldo no alcanza para todas, se documenta cuáles quedaron pendientes.</li>
+                                    <li>Las reglas de prioridad son configurables por compañía y tipo de producto.</li>
+                                    <li>Posibilidad de que algunas pólizas no se cobren porque el saldo fue consumido por otras.</li>
+                                </ul>
+                            </div>
+                            <div class="ic-card ic-orange">
+                                <div class="ic-label">⚠️ Saldo Insuficiente</div>
+                                <ul>
+                                    <li>Si no hay saldo: no se realiza el cobro ese día, se reintenta al día siguiente.</li>
+                                    <li>Notificación automática al cliente avisando del intento fallido.</li>
+                                    <li>Alertas al ejecutivo en D+15 y D+30 para intervención comercial.</li>
+                                    <li>D+60 sin cobro exitoso: inicio automático del proceso de anulación.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PASO 6 — COBRANZAS AVANZADAS -->
+        <section id="step-cobranzas">
+            <div class="step-card">
+                <div class="step-number">06</div>
+                <div class="step-content">
+                    <div class="step-header">
+                        <div class="step-icon s-teal">💳</div>
+                        <div>
+                            <div class="step-title">Cobranzas y Pagos — Banco Económico</div>
+                            <div class="step-subtitle">El broker nunca recibe el dinero · Pago directo a la cuenta de la aseguradora</div>
+                        </div>
+                    </div>
+                    <p class="step-desc">
+                        La cobranza fluye directamente desde el asegurado a la cuenta bancaria de la aseguradora.
+                        <strong>El broker no toca el dinero</strong>: Interseguros solo orquesta el proceso.
+                        Cada compañía debe registrar su cuenta del Banco Económico y llave API en configuración
+                        antes de poder recibir pagos.
+                    </p>
+
+                    <div class="callout warning">
+                        <span class="callout-icon">🏦</span>
+                        <div><strong>Configuración obligatoria por compañía:</strong> Cada aseguradora debe registrar su cuenta en el Banco Económico y vincular su llave API en el panel de configuración. Sin este paso, la plataforma no procesa cobros hacia esa compañía.</div>
+                    </div>
+
+                    <div class="payment-methods">
+                        <div class="pm-card">
+                            <div class="pm-icon">📱</div>
+                            <div class="pm-title">QR Interoperable</div>
+                            <div class="pm-desc">QR único por cuota. El cliente paga desde la app de cualquier banco boliviano.</div>
+                        </div>
+                        <div class="pm-card">
+                            <div class="pm-icon">💳</div>
+                            <div class="pm-title">Tarjeta de Débito</div>
+                            <div class="pm-desc">Procesada a través de la pasarela del Banco Económico. Acreditación inmediata.</div>
+                        </div>
+                        <div class="pm-card">
+                            <div class="pm-icon">💳</div>
+                            <div class="pm-title">Tarjeta de Crédito</div>
+                            <div class="pm-desc">Procesada por la pasarela del Banco Económico. Cumplimiento PCI-DSS.</div>
+                        </div>
+                        <div class="pm-card pm-highlight">
+                            <div class="pm-icon">🔄</div>
+                            <div class="pm-title">Débito Automático</div>
+                            <div class="pm-desc">Autorizado al contratar. Tokenización segura. Reintentos automáticos ante fallo de cobro.</div>
+                        </div>
+                    </div>
+
+                    <div class="integration-compare" style="margin-top:20px">
+                        <div class="ic-header">Facturación Electrónica según tipo de Compañía</div>
+                        <div class="ic-grid">
+                            <div class="ic-card ic-blue">
+                                <div class="ic-label">🔗 Compañía con integración de pagos</div>
+                                <ul>
+                                    <li>Al recibir el pago, se conecta con la <strong>pasarela propia</strong> de la aseguradora.</li>
+                                    <li>La factura electrónica se genera <strong>automáticamente</strong> por el sistema de la compañía.</li>
+                                    <li>El core Interseguros registra el comprobante como referencia interna.</li>
+                                </ul>
+                            </div>
+                            <div class="ic-card ic-orange">
+                                <div class="ic-label">🏗️ Compañía sin sistema propio</div>
+                                <ul>
+                                    <li>Al recibir el pago, Interseguros se conecta directamente con el <strong>SIAT</strong>.</li>
+                                    <li>La factura electrónica se genera en nombre de la aseguradora configurada.</li>
+                                    <li>El documento fiscal se envía automáticamente al asegurado.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sub-grid" style="margin-top:14px">
+                        <div class="sub-card">
+                            <h4><span class="num">5</span> Pay-by-Link</h4>
+                            <ul>
+                                <li>El ejecutivo o la IA genera un enlace seguro por cuota.</li>
+                                <li>Enviado por WhatsApp o Email. Sin login complejo para el cliente.</li>
+                                <li>Vencimiento configurable del enlace de pago.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">6</span> Conciliación Automática</h4>
+                            <ul>
+                                <li>Webhooks: estado de pago actualizado en tiempo real (Pendiente → Pagado).</li>
+                                <li>Importación de extractos del Banco Económico (MT940, CSV).</li>
+                                <li>Corte de caja diario por sucursal, canal y método de pago.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">7</span> Liquidación a Aseguradoras</h4>
+                            <ul>
+                                <li>Planilla de rendición: prima neta a transferir + comisión retenida.</li>
+                                <li>Detalle póliza por póliza para envío a la aseguradora.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">8</span> Seguridad PCI-DSS</h4>
+                            <ul>
+                                <li>Interseguros nunca almacena datos de tarjetas ni CVV.</li>
+                                <li>Tokens gestionados por entidades certificadas PCI.</li>
+                                <li>Audit Trail inalterable de toda transacción y modificación.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PASO 7 — SINIESTROS -->
+        <section id="step-siniestros">
+            <div class="step-card">
+                <div class="step-number">07</div>
+                <div class="step-content">
+                    <div class="step-header">
+                        <div class="step-icon s-red">🚨</div>
+                        <div>
+                            <div class="step-title">Gestión de Siniestros</div>
+                            <div class="step-subtitle">Cada compañía gestiona sus siniestros · Los clientes hacen seguimiento en tiempo real</div>
+                        </div>
+                    </div>
+                    <p class="step-desc">
+                        Cada compañía gestiona sus propios siniestros desde el core, con diferentes seguimientos
+                        y estados configurables. Los asegurados pueden acceder a la plataforma para
+                        <strong>consultar el estado de su siniestro en tiempo real</strong>, subir documentación
+                        y recibir notificaciones automáticas en cada cambio de estado. La IA asiste
+                        en modo <em>Human-in-the-Loop</em>.
+                    </p>
+
+                    <div class="sub-grid">
+                        <div class="sub-card">
+                            <h4><span class="num">1</span> Recepción y Triaje (FNOL)</h4>
+                            <ul>
+                                <li>Captura por audio o texto desde WhatsApp.</li>
+                                <li>Extracción automática: fecha, ubicación y tipo de evento.</li>
+                                <li>Fast-track para siniestros menores · Alerta alta para graves.</li>
+                                <li>Geolocalización de asistencias: ambulancia, grúa, etc.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">2</span> Análisis de Fraude con IA</h4>
+                            <ul>
+                                <li>Visión computacional: evaluación de daños en fotos y videos.</li>
+                                <li>Scoring de fraude: clima, historial, metadatos de imágenes.</li>
+                                <li>Nivel de riesgo asignado antes de autorizar cualquier pago.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">3</span> Portal de Seguimiento para el Cliente</h4>
+                            <ul>
+                                <li>Estado del siniestro visible 24/7 desde el portal del asegurado.</li>
+                                <li>Notificaciones automáticas en cada cambio de estado.</li>
+                                <li>Carga de documentos faltantes directamente desde el portal.</li>
+                                <li>La IA solicita documentos automáticamente si hay faltantes.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">4</span> Resolución y Copiloto IA</h4>
+                            <ul>
+                                <li>Liquidación exprés para micro-siniestros dentro del límite (Fast-Track).</li>
+                                <li>Resumen ejecutivo para el analista humano en casos complejos.</li>
+                                <li>Borradores de cartas de aceptación / rechazo generados por IA.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="callout warning">
+                        <span class="callout-icon">⚠️</span>
+                        <div>El flujo siempre indicará al asegurado <strong>cuándo interactúa con IA</strong> y cuándo se transfiere a un asesor humano, evitando frustración en situaciones de alta vulnerabilidad emocional.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════
+             4 PILARES — DETALLE
+        ═══════════════════════════════════════════ -->
+        <div class="flow-section-header">
+            <div class="fsh-label">Los 4 Pilares</div>
+            <div class="fsh-title">Capacidades Diferenciadoras del Core</div>
+            <div class="fsh-sub">Cada pilar representa una capacidad estratégica que distingue al core Interseguros en el mercado.</div>
+        </div>
+
+        <!-- PILAR 1 — CRM CON IA -->
+        <section id="pilar-crm">
+            <div class="module-section">
+                <div class="module-header">
+                    <div class="mod-icon indigo">🤖</div>
+                    <div>
+                        <div class="mod-title">CRM con Inteligencia Artificial</div>
+                        <div class="mod-subtitle">Gestión de clientes · Vencimientos · Recuperación de perdidos · Atención 24/7</div>
+                    </div>
+                    <span class="pillar-tag tag-orange">Pilar 1</span>
+                </div>
+                <div class="module-body">
+                    <p>El CRM es la capa de inteligencia relacional del core. Integra IA en cada punto de contacto para anticipar necesidades, automatizar seguimientos y recuperar clientes en riesgo, siempre bajo supervisión humana.</p>
+                    <div class="sub-grid">
+                        <div class="sub-card">
+                            <h4><span class="num">1</span> Gestión de Clientes con IA</h4>
+                            <ul>
+                                <li>Vista 360 por cliente: pólizas, pagos, siniestros y comunicaciones.</li>
+                                <li>Segmentación automática por riesgo, rentabilidad y comportamiento.</li>
+                                <li>Sugerencias de cross-selling según perfil y cartera existente.</li>
+                                <li>Historial unificado: llamadas, emails y WhatsApp en un solo lugar.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">2</span> Recordatorio de Vencimientos</h4>
+                            <ul>
+                                <li>Alertas D-60, D-30, D-15, D-7 por WhatsApp, Email y portal.</li>
+                                <li>Oportunidad de renovación creada automáticamente con oferta precargada.</li>
+                                <li>Panel ejecutivo con semáforo de prioridad verde / amarillo / rojo.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">3</span> Recuperación de Clientes Perdidos</h4>
+                            <ul>
+                                <li>Detección automática de pólizas vencidas sin renovación.</li>
+                                <li>Scoring IA de probabilidad de reactivación según historial.</li>
+                                <li>Campañas de reactivación personalizadas por canal preferido.</li>
+                                <li>Análisis de churn: motivos de pérdida capturados y reportados.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">4</span> Atención de Clientes 24/7</h4>
+                            <ul>
+                                <li>Asistente virtual IA por WhatsApp y portal web.</li>
+                                <li>Respuestas automáticas: estado de póliza, coberturas y pagos.</li>
+                                <li>Escalamiento fluido al asesor humano con contexto completo.</li>
+                                <li>Indicador visible: el cliente siempre sabe si habla con IA o persona real.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PILAR 2 — CERTIFICADOS -->
+        <section id="pilar-certificados">
+            <div class="module-section">
+                <div class="module-header">
+                    <div class="mod-icon green">📄</div>
+                    <div>
+                        <div class="mod-title">Emisión de Certificados — Integración por Compañía</div>
+                        <div class="mod-subtitle">Plataforma propia · Integración con compañías que tienen API · SIAT para las que no</div>
+                    </div>
+                    <span class="pillar-tag tag-blue">Pilar 2</span>
+                </div>
+                <div class="module-body">
+                    <p>La diferenciación clave del módulo de certificados está en la capa de integración: el sistema adapta el flujo según el tipo de compañía, garantizando que la emisión y la facturación sean siempre correctas sin esfuerzo manual.</p>
+                    <div class="integration-compare">
+                        <div class="ic-grid">
+                            <div class="ic-card ic-blue">
+                                <div class="ic-label">🔗 Compañías con API propia</div>
+                                <ul>
+                                    <li>El certificado se inyecta en el sistema de la aseguradora en tiempo real.</li>
+                                    <li>Retorno del número oficial de póliza automáticamente.</li>
+                                    <li>Factura electrónica generada por el sistema de la aseguradora.</li>
+                                    <li>Estado del certificado sincronizado entre ambos sistemas.</li>
+                                </ul>
+                            </div>
+                            <div class="ic-card ic-orange">
+                                <div class="ic-label">🏗️ Compañías sin sistema</div>
+                                <ul>
+                                    <li>Interseguros actúa como core completo de la aseguradora.</li>
+                                    <li>Numeración y registro íntegramente por Interseguros.</li>
+                                    <li>Facturación electrónica directamente con el SIAT integrado.</li>
+                                    <li>La aseguradora gestiona todo desde el portal Interseguros.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="callout success">
+                        <span class="callout-icon">✅</span>
+                        <div>El QR de cada certificado es la fuente de verdad del estado de cobertura. Cualquier cambio en la póliza (endoso, anulación, vencimiento) se refleja instantáneamente en el resultado del escaneo.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PILAR 3 — SINIESTROS CON IA -->
+        <section id="pilar-siniestros">
+            <div class="module-section">
+                <div class="module-header">
+                    <div class="mod-icon red">🚨</div>
+                    <div>
+                        <div class="mod-title">Siniestros con IA — Modelo Human-in-the-Loop</div>
+                        <div class="mod-subtitle">Gestión manual y asistida · Seguimiento público para el asegurado</div>
+                    </div>
+                    <span class="pillar-tag tag-red">Pilar 3</span>
+                </div>
+                <div class="module-body">
+                    <div class="sub-grid">
+                        <div class="sub-card">
+                            <h4><span class="num">1</span> FNOL Inteligente</h4>
+                            <ul>
+                                <li>Audio / texto por WhatsApp. Extracción automática de datos clave.</li>
+                                <li>Triaje: Fast-Track para casos simples, alerta alta para graves.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">2</span> Perito Virtual IA</h4>
+                            <ul>
+                                <li>Visión computacional para evaluación de daños en fotos.</li>
+                                <li>Scoring de fraude: clima, historial y metadatos de imágenes.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">3</span> Gestor de Casos</h4>
+                            <ul>
+                                <li>Notificaciones proactivas al cliente, taller y aseguradora.</li>
+                                <li>Solicitud automática de documentos faltantes al asegurado.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">4</span> Copiloto del Analista</h4>
+                            <ul>
+                                <li>Resumen ejecutivo del caso para el analista humano.</li>
+                                <li>Borradores de cartas legales listos para revisar y firmar.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="callout warning">
+                        <span class="callout-icon">⚠️</span>
+                        <div>La IA asiste y filtra; el humano supervisa y decide en casos complejos. El asegurado siempre sabe en qué etapa está su siniestro y si está siendo atendido por un asistente virtual o un asesor humano.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PILAR 4 — COBRANZAS AVANZADAS -->
+        <section id="pilar-cobranzas">
+            <div class="module-section">
+                <div class="module-header">
+                    <div class="mod-icon teal">💳</div>
+                    <div>
+                        <div class="mod-title">Cobranzas Avanzadas — Banco Económico</div>
+                        <div class="mod-subtitle">QR · Débito / Crédito · Débito automático · El broker no recibe el dinero</div>
+                    </div>
+                    <span class="pillar-tag tag-green">Pilar 4</span>
+                </div>
+                <div class="module-body">
+                    <p>El dinero fluye directamente desde el asegurado a la cuenta Banco Económico de la aseguradora. El broker actúa solo como orquestador: registra la transacción y descuenta su comisión en la planilla de rendición mensual.</p>
+                    <div class="callout success">
+                        <span class="callout-icon">🏦</span>
+                        <div><strong>Flujo directo garantizado:</strong> El pago se acredita en la cuenta Banco Económico de la aseguradora en el momento de la transacción. Interseguros nunca retiene ni maneja fondos de terceros.</div>
+                    </div>
+                    <div class="payment-methods" style="margin-top:14px">
+                        <div class="pm-card">
+                            <div class="pm-icon">📱</div>
+                            <div class="pm-title">QR Interoperable</div>
+                            <div class="pm-desc">Compatible con la app de cualquier banco de Bolivia.</div>
+                        </div>
+                        <div class="pm-card">
+                            <div class="pm-icon">💳</div>
+                            <div class="pm-title">Tarjeta de Débito</div>
+                            <div class="pm-desc">Pasarela Banco Económico. Acreditación inmediata.</div>
+                        </div>
+                        <div class="pm-card">
+                            <div class="pm-icon">💳</div>
+                            <div class="pm-title">Tarjeta de Crédito</div>
+                            <div class="pm-desc">Pasarela Banco Económico. PCI-DSS compliant.</div>
+                        </div>
+                        <div class="pm-card pm-highlight">
+                            <div class="pm-icon">🔄</div>
+                            <div class="pm-title">Débito Automático</div>
+                            <div class="pm-desc">Autorizado al contratar. Token seguro. Reintento automático.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════
+             OPERACIONES
+        ═══════════════════════════════════════════ -->
+        <div class="flow-section-header">
+            <div class="fsh-label">Operaciones</div>
+            <div class="fsh-title">Módulos de Soporte y Gestión Interna</div>
+        </div>
+
+        <!-- SUSCRIPCIÓN Y EMISIÓN -->
+        <section id="suscripcion">
+            <div class="module-section">
+                <div class="module-header">
+                    <div class="mod-icon purple">✍️</div>
+                    <div>
+                        <div class="mod-title">Módulo de Suscripción y Emisión Multicompañía</div>
+                        <div class="mod-subtitle">Cotización centralizada · Workflows de autorización · Binding transaccional</div>
+                    </div>
+                </div>
+                <div class="module-body">
+                    <div class="badges">
+                        <span class="badge gray">En creación</span>
+                        <span class="badge blue">En proceso</span>
+                        <span class="badge orange">Con error</span>
+                        <span class="badge green">Emitida</span>
+                    </div>
+                    <div class="sub-grid">
+                        <div class="sub-card">
+                            <h4><span class="num">1</span> Cotización Centralizada</h4>
+                            <ul>
+                                <li>Cotización simultánea a múltiples aseguradoras en tiempo real.</li>
+                                <li>Formulario único con campos dinámicos por compañía y ramo.</li>
+                                <li>Comparativo de primas entre compañías disponibles.</li>
+                                <li>Prellenado de datos desde el contacto existente en el CRM.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">2</span> Workflows de Autorización</h4>
+                            <ul>
+                                <li><strong>Automática:</strong> emisión directa si cumple todas las reglas BRE.</li>
+                                <li><strong>Manual:</strong> bandeja de revisión para analistas o ejecutivos.</li>
+                                <li>Gestión de requisitos: fotos, formularios médicos, documentos de identidad.</li>
+                                <li>Generación del formulario UIF parametrizado por compañía.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">3</span> Binding Transaccional</h4>
+                            <ul>
+                                <li>Inyección en core de la aseguradora y retorno del Nº de póliza oficial.</li>
+                                <li>Para compañías sin sistema: numeración propia de Interseguros.</li>
+                                <li>Generación PDF final con identidad visual de la compañía.</li>
+                                <li>Firma electrónica del asegurado integrada al proceso.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">4</span> Trazabilidad y Reintentos</h4>
+                            <ul>
+                                <li>Log de quién cotizó, cuándo y con qué parámetros usó.</li>
+                                <li>Oportunidad creada automáticamente vinculada a la emisión.</li>
+                                <li>Sistema de colas (RabbitMQ / Kafka) para reintentos ante fallos de API.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- COMISIONES -->
+        <section id="comisiones">
+            <div class="module-section">
+                <div class="module-header">
+                    <div class="mod-icon orange">💰</div>
+                    <div>
+                        <div class="mod-title">Módulo de Comisiones</div>
+                        <div class="mod-subtitle">Motor multinivel · Conciliación automática · Proyecciones · BI</div>
+                    </div>
+                </div>
+                <div class="module-body">
+                    <div class="sub-grid">
+                        <div class="sub-card">
+                            <h4><span class="num">1</span> Motor de Cálculo</h4>
+                            <ul>
+                                <li>Matrices configurables por compañía y ramo (% sobre prima neta o bruta, deduciendo impuestos).</li>
+                                <li>Split de comisiones entre ejecutivos (ej. 50/50 entre vendedor y gerente).</li>
+                                <li>Sobrecomisiones (overrides) para gerentes y canales especiales.</li>
+                                <li>Estornos (clawbacks) proporcionales calculados automáticamente al anular una póliza.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">2</span> 3 Comisiones en Seguros Masivos</h4>
+                            <ul>
+                                <li>En masivos, la prima total genera 3 comisiones paralelas por estructura de la póliza.</li>
+                                <li><strong>Corredor (Interseguros):</strong> porcentaje o monto fijo pactado con la compañía.</li>
+                                <li><strong>Sponsor (Banco):</strong> comisión definida en el acuerdo colectivo bancario.</li>
+                                <li><strong>Vendedor (Ejecutivo):</strong> comisión individual según producción personal.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">3</span> Tasas de Descuento por Fecha</h4>
+                            <ul>
+                                <li>Definir tasas de descuento por producto dentro de un rango de fechas (ej. promo Día del Padre).</li>
+                                <li>El sistema aplica automáticamente el descuento si la emisión cae en el período configurado.</li>
+                                <li>Histórico de promociones ejecutadas con impacto en prima y comisión.</li>
+                                <li>Alertas al vencimiento de cada promoción para renovar o retirar la oferta.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">4</span> Conciliación con Semáforo</h4>
+                            <ul>
+                                <li>Importación de liquidaciones Excel/CSV desde aseguradoras.</li>
+                            </ul>
+                            <table class="semaphore-table">
+                                <thead><tr><th>Estado</th><th>Descripción</th></tr></thead>
+                                <tbody>
+                                    <tr><td><span class="semaphore-dot dot-green"></span>Verde</td><td>Esperado = Pagado por la aseguradora.</td></tr>
+                                    <tr><td><span class="semaphore-dot dot-yellow"></span>Amarillo</td><td>Pago parcial (cliente pagó 1 de 3 cuotas).</td></tr>
+                                    <tr><td><span class="semaphore-dot dot-red"></span>Rojo</td><td>Fuga de ingresos: comisión no pagada.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">5</span> Proyecciones y Comisión Devengada</h4>
+                            <ul>
+                                <li>Comisiones devengadas (emitidas) vs. percibidas (cobradas) en tiempo real.</li>
+                                <li>Alarma de renovaciones: dinero en riesgo si se pierde la cartera próxima a vencer.</li>
+                                <li>Cuenta por cobrar en primas fraccionadas proyectadas a 12 meses.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">6</span> Dashboards BI y Power BI</h4>
+                            <ul>
+                                <li>Vista gerencial: rentabilidad por aseguradora y ramo.</li>
+                                <li>Vista ejecutivo: pólizas emitidas, metas y comisiones a cobrar.</li>
+                                <li>Visor Power BI embebido como iframe directamente en la plataforma Interseguros.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- REPORTERÍA -->
+        <section id="reporteria">
+            <div class="module-section">
+                <div class="module-header">
+                    <div class="mod-icon purple">📊</div>
+                    <div>
+                        <div class="mod-title">Reportería Avanzada y Analítica Predictiva</div>
+                        <div class="mod-subtitle">Data Warehouse · KPIs del sector · Cross-selling automático · Forecasting</div>
+                    </div>
+                </div>
+                <div class="module-body">
+                    <div class="sub-grid">
+                        <div class="sub-card">
+                            <h4><span class="num">1</span> Arquitectura de Datos</h4>
+                            <ul>
+                                <li>Data Warehouse separado de la base transaccional.</li>
+                                <li>ETL con datos centralizados de todas las compañías operativas.</li>
+                                <li>Self-Service BI: constructor drag-and-drop de reportes.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">2</span> KPIs del Sector</h4>
+                            <ul>
+                                <li><strong>Churn Rate:</strong> pólizas vencidas que renovaron vs. las que no.</li>
+                                <li><strong>Loss Ratio:</strong> primas cobradas vs. siniestros pagados.</li>
+                                <li><strong>Hit Rate:</strong> cotizaciones convertidas en emisiones efectivas.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">3</span> Cross-Selling IA</h4>
+                            <ul>
+                                <li>Matrices automáticas: clientes con Vehículo + Salud pero sin Hogar.</li>
+                                <li>Campañas comerciales disparadas desde la detección del hueco.</li>
+                                <li>Ranking de consultas fallidas para detectar necesidades no cubiertas.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">4</span> Forecasting y Alertas</h4>
+                            <ul>
+                                <li>Proyección de cumplimiento de cuota mensual por quincena.</li>
+                                <li>Alerta automática si producción cae &gt;20% en una sucursal.</li>
+                                <li>Distribución programada de reportes gerenciales (ej. lunes 8 a.m.).</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TRAZABILIDAD COMERCIAL -->
+        <section id="trazabilidad">
+            <div class="module-section">
+                <div class="module-header">
+                    <div class="mod-icon slate">🔗</div>
+                    <div>
+                        <div class="mod-title">Trazabilidad Comercial</div>
+                        <div class="mod-subtitle">Pipeline Kanban · Expediente cronológico · Automatización · Lead scoring</div>
+                    </div>
+                </div>
+                <div class="module-body">
+                    <div class="sub-grid">
+                        <div class="sub-card">
+                            <h4><span class="num">1</span> Pipeline Kanban</h4>
+                            <ul>
+                                <li>Lead → Contacto → Cotización → Negociación → Ganado / Perdido.</li>
+                                <li>Múltiples embudos con etapas personalizadas por ramo.</li>
+                                <li>Arrastrar tarjetas entre columnas con actualización automática.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">2</span> Expediente Omnicanal</h4>
+                            <ul>
+                                <li>Registro de llamadas, reuniones, emails y mensajes de WhatsApp.</li>
+                                <li>Integración con centralita telefónica y WhatsApp Business.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">3</span> Automatización Comercial</h4>
+                            <ul>
+                                <li>Follow-up automático si cotización sin respuesta en 48 horas.</li>
+                                <li>Oportunidad de renovación creada D-60 antes del vencimiento.</li>
+                                <li>Reportes de vencimientos mejorados con métricas de riesgo.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">4</span> Lead Scoring y Análisis</h4>
+                            <ul>
+                                <li>Asignación Round-Robin o por especialidad de los leads digitales.</li>
+                                <li>Semáforo de prioridad por monto de prima y fecha de decisión.</li>
+                                <li>Captura obligatoria de "Motivo de Pérdida" al cerrar como perdido.</li>
+                                <li>Win Rate y ciclo de venta promedio por ramo y ejecutivo.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONSULTAS 360 -->
+        <section id="consultas360">
+            <div class="module-section">
+                <div class="module-header">
+                    <div class="mod-icon blue">🔍</div>
+                    <div>
+                        <div class="mod-title">Consultas 360 y Base de Conocimiento</div>
+                        <div class="mod-subtitle">Expediente unificado · Búsqueda semántica · Asistencia contextual en pantalla</div>
+                    </div>
+                </div>
+                <div class="module-body">
+                    <div class="sub-grid">
+                        <div class="sub-card">
+                            <h4><span class="num">1</span> Base de Conocimiento</h4>
+                            <ul>
+                                <li>Taxonomía: Compañía + Ramo + Tipo de Proceso.</li>
+                                <li>Manuales, flujogramas, comparativos y directorios de contacto.</li>
+                                <li>Control de versiones y alertas de obsolescencia automáticas.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">2</span> Expediente Unificado</h4>
+                            <ul>
+                                <li>Portafolio completo: pólizas vigentes de todas las compañías.</li>
+                                <li>Estado de cuenta, siniestros y renovaciones pendientes en una vista.</li>
+                                <li>Línea de tiempo cronológica de todas las interacciones del cliente.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">3</span> Búsqueda Semántica</h4>
+                            <ul>
+                                <li>Lenguaje natural: "choque" → artículos de siniestro automotor.</li>
+                                <li>Autocompletado y sugerencias de consultas frecuentes.</li>
+                                <li>Reporte de búsquedas sin resultado para crear contenido faltante.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">4</span> Asistencia Contextual</h4>
+                            <ul>
+                                <li>Panel lateral de FAQ disponible sin abandonar la transacción activa.</li>
+                                <li>Tooltips contextuales por módulo y compañía seleccionada.</li>
+                                <li>FAQs proactivas según el ramo y compañía del formulario en pantalla.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════
+             MÓDULOS CORE
+        ═══════════════════════════════════════════ -->
+        <div class="flow-section-header">
+            <div class="fsh-label">Módulos Core</div>
+            <div class="fsh-title">Capacidades Fundamentales del Sistema</div>
+            <div class="fsh-sub">Registro, anulaciones, WhatsApp IA, cotizadores parametrizables, firma digital y gestión de documentos — los módulos que hacen único al core.</div>
+        </div>
+
+        <!-- REGISTRO Y ANULACIONES -->
+        <section id="registro-anulaciones">
+            <div class="module-section">
+                <div class="module-header">
+                    <div class="mod-icon blue">📋</div>
+                    <div>
+                        <div class="mod-title">Registro y Anulación de Pólizas y Certificados</div>
+                        <div class="mod-subtitle">Orden de cobro · Devoluciones · Motivo obligatorio · 30 días de cobertura</div>
+                    </div>
+                </div>
+                <div class="module-body">
+                    <p>El core gestiona el ciclo de vida completo de pólizas y certificados: desde el registro inicial hasta la anulación con trazabilidad total. Al anular una póliza o certificado ya pagado, el sistema genera la devolución correspondiente.</p>
+                    <div class="sub-grid">
+                        <div class="sub-card">
+                            <h4><span class="num">1</span> Registro de Pólizas</h4>
+                            <ul>
+                                <li>Alta de póliza madre con todos los datos parametrizados por compañía y ramo.</li>
+                                <li>Campos obligatorios y opcionales configurables por producto.</li>
+                                <li>Validación de reglas BRE al momento del registro automáticamente.</li>
+                                <li>Sincronización con el sistema de la compañía vía API (si disponible).</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">2</span> Registro de Certificados</h4>
+                            <ul>
+                                <li>Emisión individual o masiva bajo la póliza madre.</li>
+                                <li>Numeración automática desde el talonario asignado por compañía.</li>
+                                <li>Firma electrónica del asegurado integrada al proceso de emisión.</li>
+                                <li>Distribución automática por email, WhatsApp o portal al emitir.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">3</span> Anulación — Motivo Obligatorio</h4>
+                            <ul>
+                                <li>Al anular, el ejecutivo debe ingresar el motivo de anulación (campo obligatorio).</li>
+                                <li>Estados del proceso: Solicitada → En revisión → Aprobada / Rechazada.</li>
+                                <li>Al anularse, el certificado deja de mostrarse en web, portal y WhatsApp del cliente.</li>
+                                <li>Notificación automática al cliente y a la compañía aseguradora.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">4</span> Devolución al Anular ya Pagado</h4>
+                            <ul>
+                                <li>Si la póliza o certificado ya fue pagado, el sistema calcula automáticamente el monto a devolver.</li>
+                                <li>Devolución proporcional por los días de cobertura no consumidos.</li>
+                                <li>Generación de nota de crédito o reversa de cobro según método de pago original.</li>
+                                <li>Registro contable de la devolución enviado automáticamente a Cloud Broker.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">5</span> Orden de Cobro</h4>
+                            <ul>
+                                <li>El core define el orden de aplicación de pagos cuando hay múltiples pólizas activas.</li>
+                                <li>Reglas configurables: por fecha de vencimiento, monto, tipo de riesgo o prioridad manual.</li>
+                                <li>En débito automático: prioriza las pólizas con vencimiento más próximo primero.</li>
+                                <li>Si el saldo no alcanza, documenta qué pólizas quedaron pendientes y continúa el reintento al día siguiente.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">6</span> 30 Días de Cobertura sin Pago</h4>
+                            <ul>
+                                <li>El cliente tiene 30 días desde la emisión para realizar el primer pago con cobertura activa.</li>
+                                <li>El sistema monitorea activamente el estado de pago durante ese período.</li>
+                                <li>Escalamiento automático: D+30 sin pago → proceso de anulación iniciado.</li>
+                                <li>Si pasan 60 días sin cobro en débito automático, el certificado se anula automáticamente.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="integration-compare">
+                        <div class="ic-header">Carga y Descarga Masiva de Certificados</div>
+                        <div class="ic-grid">
+                            <div class="ic-card ic-blue">
+                                <div class="ic-label">📤 Carga Masiva por Excel</div>
+                                <ul>
+                                    <li>Importación de tramas Excel con múltiples asegurados en un solo archivo.</li>
+                                    <li>El sistema verifica los nombres de columnas y reporta campos faltantes antes de procesar.</li>
+                                    <li>Procesamiento asíncrono en segundo plano con notificación al finalizar.</li>
+                                    <li>Reporte de errores fila por fila para corrección eficiente.</li>
+                                </ul>
+                            </div>
+                            <div class="ic-card ic-orange">
+                                <div class="ic-label">📥 Descarga Masiva en Background</div>
+                                <ul>
+                                    <li>Descarga de cientos o miles de certificados en ZIP procesada en segundo plano.</li>
+                                    <li>El usuario continúa trabajando y recibe notificación cuando el ZIP esté listo.</li>
+                                    <li>SLA: 1,000 certificados procesados en menos de 5 minutos.</li>
+                                    <li>Historial de descargas masivas con fecha, usuario y cantidad de registros.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- WHATSAPP IA HUB -->
+        <section id="whatsapp-hub">
+            <div class="module-section">
+                <div class="module-header">
+                    <div class="mod-icon green">📱</div>
+                    <div>
+                        <div class="mod-title">WhatsApp IA Hub — Atención Omnicanal Inteligente</div>
+                        <div class="mod-subtitle">Asistente conectado al core · Cotización · Siniestros · FAQ 360 · OTP · Horarios IA/Humano</div>
+                    </div>
+                </div>
+                <div class="module-body">
+                    <p>La IA de WhatsApp está directamente conectada al core. Conoce los seguros del cliente, ofrece productos relevantes según las compañías disponibles, gestiona siniestros y contesta preguntas frecuentes — todo en tiempo real, 24/7.</p>
+                    <div class="sub-grid">
+                        <div class="sub-card">
+                            <h4><span class="num">1</span> Asistente Comercial IA</h4>
+                            <ul>
+                                <li>Al escribir el cliente, la IA ya sabe qué seguros tiene contratados.</li>
+                                <li>Ofrece los productos que el cliente necesita según su perfil y cartera actual.</li>
+                                <li>Compara las mejores opciones disponibles según las diferentes compañías.</li>
+                                <li>Cotización y compra completa por WhatsApp: la IA emite el certificado y lo envía en el mismo chat.</li>
+                                <li>Selección configurable: el operador decide qué productos ofrece la IA y cuáles no.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">2</span> FAQ 360 y Preguntas Frecuentes</h4>
+                            <ul>
+                                <li>El cliente puede preguntar cualquier cosa: siniestros, pólizas, coberturas, pagos.</li>
+                                <li>La IA responde con datos reales del sistema (vigencia, monto asegurado, estado de cuota).</li>
+                                <li>Preguntas estructuradas por categoría: Pólizas, Siniestros, Pagos, General.</li>
+                                <li>Almacenamiento de búsquedas frecuentes para que gerencia identifique productos no ofrecidos.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">3</span> Siniestros por WhatsApp</h4>
+                            <ul>
+                                <li>El cliente reporta su siniestro por mensaje de texto, foto o audio de voz.</li>
+                                <li>La IA entiende el contexto, registra datos clave (fecha, lugar, tipo de evento).</li>
+                                <li>Evalúa gravedad: casos leves → fast-track; graves → derivación inmediata a asesor humano.</li>
+                                <li>Puede coordinar ambulancia, grúa u otros servicios de asistencia de forma automática.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">4</span> Audio, Llamadas y Reconocimiento IA</h4>
+                            <ul>
+                                <li>El cliente puede enviar notas de voz: la IA transcribe y entiende el contexto completo.</li>
+                                <li>Soporte para llamadas: la IA atiende y registra datos importantes automáticamente.</li>
+                                <li>Evaluación de urgencia por tono, palabras clave y contenido del mensaje.</li>
+                                <li>Si la gravedad es alta, la IA transfiere inmediatamente con contexto completo al asesor humano.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">5</span> Gestión de Anexos y Endosos por Chat</h4>
+                            <ul>
+                                <li>El cliente puede solicitar modificar su valor asegurado directamente por chat con la IA.</li>
+                                <li>Agregar anexos, cambiar beneficiarios o actualizar datos personales vía WhatsApp.</li>
+                                <li>La IA valida los cambios contra las reglas BRE del producto antes de confirmar.</li>
+                                <li>Registro en el sistema y notificación automática a la compañía aseguradora.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">6</span> OTP, Horarios y Control de Acceso</h4>
+                            <ul>
+                                <li>Envío de código OTP para verificar la identidad del cliente en operaciones sensibles.</li>
+                                <li>Confirmación OTP garantiza que sea el cliente original antes de emitir o modificar pólizas.</li>
+                                <li><strong>Horario de oficina:</strong> las solicitudes son atendidas por un asesor humano.</li>
+                                <li><strong>Fuera de horario:</strong> la IA toma el control con capacidades completas de gestión.</li>
+                                <li>Horarios configurables por compañía, sucursal y tipo de atención (comercial vs. siniestros).</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="callout info">
+                        <span class="callout-icon">💡</span>
+                        <div>El cliente siempre sabe si está interactuando con la IA o con un asesor humano. La transferencia al humano siempre incluye el contexto completo de la conversación para evitar que el cliente deba repetir información.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- COTIZADORES PARAMETRIZABLES -->
+        <section id="cotizadores">
+            <div class="module-section">
+                <div class="module-header">
+                    <div class="mod-icon purple">🧮</div>
+                    <div>
+                        <div class="mod-title">Cotizadores Parametrizables y Cuadros Comparativos</div>
+                        <div class="mod-subtitle">Creador sin código · Cuadros comparativos normativa · IA compara slip vs póliza</div>
+                    </div>
+                </div>
+                <div class="module-body">
+                    <p>Cada cotizador es diferente: maneja parámetros propios según el ramo (capital, edad, sexo, maternidad, antecedentes). El creador parametrizable permite configurar cada uno sin tocar código, y la IA genera cuadros comparativos automáticos.</p>
+                    <div class="sub-grid">
+                        <div class="sub-card">
+                            <h4><span class="num">1</span> Creador de Cotizadores Sin Código</h4>
+                            <ul>
+                                <li>Diseñar cotizadores únicos por producto sin necesidad de programación.</li>
+                                <li>Cada cotizador define sus propios campos y parámetros de forma independiente.</li>
+                                <li>Cartillas de cálculo: la tarifa se rige por capital, edad, sexo, maternidad y antecedentes médicos.</li>
+                                <li>Cotizadores para seguros individuales, colectivos y masivos.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">2</span> Cotizador en Línea con IA</h4>
+                            <ul>
+                                <li>El cliente cotiza directamente en la plataforma según valor asegurado y datos requeridos.</li>
+                                <li>La IA asiste al cliente durante todo el proceso de cotización en tiempo real.</li>
+                                <li>Al finalizar la cotización, la IA transfiere automáticamente a un ejecutivo comercial para el cierre.</li>
+                                <li>Historial de cotizaciones guardado en el CRM para seguimiento comercial.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">3</span> Cuadro Comparativo según Normativa</h4>
+                            <ul>
+                                <li>Generación automática de cuadros comparativos según la normativa boliviana de seguros.</li>
+                                <li>Comparación simultánea entre múltiples compañías para el mismo riesgo.</li>
+                                <li>Formatos regulatorios cumpliendo los requisitos de la APS (Autoridad de Fiscalización).</li>
+                                <li>Descarga del comparativo en PDF listo para presentar al cliente o a la compañía.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">4</span> IA Compara Slip de Cotización vs Póliza</h4>
+                            <ul>
+                                <li>Al recibir la póliza de la compañía, la IA la compara con el slip de cotización del broker.</li>
+                                <li>Detecta diferencias en coberturas, primas, condiciones o cláusulas automáticamente.</li>
+                                <li>Genera reporte de discrepancias con semáforo: ✅ OK / ⚠️ Diferencia menor / 🔴 Crítica.</li>
+                                <li>Alerta al ejecutivo y a la compañía si hay diferencias que requieren corrección urgente.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FIRMA DIGITAL -->
+        <section id="firma-digital">
+            <div class="module-section">
+                <div class="module-header">
+                    <div class="mod-icon teal">🔒</div>
+                    <div>
+                        <div class="mod-title">Firma Digital y Legalización de Certificados</div>
+                        <div class="mod-subtitle">Firma con un click · Fecha registrada · QR de validación legal · Talonarios de numeración</div>
+                    </div>
+                </div>
+                <div class="module-body">
+                    <p>Elimina el papel del proceso. El cliente acepta la póliza con un click en un enlace enviado por WhatsApp o email. El sistema registra fecha y hora exacta, y cada certificado puede ser validado legalmente mediante un código QR único.</p>
+                    <div class="sub-grid">
+                        <div class="sub-card">
+                            <h4><span class="num">1</span> Firma Electrónica del Cliente</h4>
+                            <ul>
+                                <li>Se envía un link al cliente por email o WhatsApp para aceptar la póliza.</li>
+                                <li>Con un solo click el cliente acepta, y el sistema registra fecha y hora exacta de la firma.</li>
+                                <li>El certificado queda legalmente firmado y disponible para descarga inmediata.</li>
+                                <li>Cumplimiento con la normativa boliviana de documentos electrónicos.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">2</span> QR de Validación Legal del Certificado</h4>
+                            <ul>
+                                <li>Cada certificado tiene un código QR único e irrepetible encriptado.</li>
+                                <li>El QR redirige a una página web con el certificado original oficial (inmutable).</li>
+                                <li>La página muestra estado actual: Vigente · Vencido · Anulado · Pendiente de pago.</li>
+                                <li>Sirve como validación legal del documento ante terceros (talleres, hospitales, etc.).</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">3</span> IA Detecta Aceptación de la Compañía</h4>
+                            <ul>
+                                <li>La IA monitorea la bandeja de correo y detecta el email de aceptación de la compañía.</li>
+                                <li>Al detectarlo, acepta el certificado automáticamente sin intervención manual.</li>
+                                <li>Alternativa: se incluye un link en el correo para que la compañía acepte con un click.</li>
+                                <li>Registro de fecha y hora de aceptación de la compañía para trazabilidad legal completa.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">4</span> Talonarios de Numeración</h4>
+                            <ul>
+                                <li>Cada compañía gestiona su propio talonario de numeración de certificados.</li>
+                                <li>Solicitud de nuevos talonarios desde la plataforma con flujo de aprobación.</li>
+                                <li>Reporte de uso: números utilizados, disponibles y en reserva.</li>
+                                <li>Alerta automática cuando el talonario esté próximo a agotarse.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="callout success">
+                        <span class="callout-icon">✅</span>
+                        <div>La <strong>impresión del certificado en papel es opcional</strong>. El certificado digital con QR tiene la misma validez legal. Al anularse una póliza, el QR muestra el estado "Anulado" en tiempo real, invalidando el documento automáticamente.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VENCIMIENTOS DE DOCUMENTOS -->
+        <section id="vencimientos-docs">
+            <div class="module-section">
+                <div class="module-header">
+                    <div class="mod-icon orange">📂</div>
+                    <div>
+                        <div class="mod-title">Gestión de Vencimientos de Documentos</div>
+                        <div class="mod-subtitle">Control de vigencia · Nuevas plantillas · Alertas 30/60/90/180 días · UIF clientes</div>
+                    </div>
+                </div>
+                <div class="module-body">
+                    <p>Los documentos del sistema tienen fechas de vencimiento configurables. El core controla activamente su vigencia y facilita la actualización cuando aparecen nuevas versiones de plantillas o requisitos regulatorios.</p>
+                    <div class="sub-grid">
+                        <div class="sub-card">
+                            <h4><span class="num">1</span> Control de Vigencia de Documentos</h4>
+                            <ul>
+                                <li>Cada documento tiene una fecha de vencimiento configurable (anual, bianual, permanente).</li>
+                                <li>Documentos sin vencimiento pueden actualizarse cuando aparece una nueva plantilla de la compañía.</li>
+                                <li>Historial de versiones: qué cambió, cuándo y quién lo actualizó.</li>
+                                <li>Bloqueo de emisión si el documento base está vencido o desactualizado.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">2</span> Alertas de Vencimiento de Pólizas</h4>
+                            <ul>
+                                <li>Reporte de vencimientos a 30, 60, 90 y 180 días para planificación gerencial.</li>
+                                <li>Alertas automáticas al ejecutivo que emitió la póliza para mercadear la renovación.</li>
+                                <li>Campaña automática al cliente con oferta de renovación precargada.</li>
+                                <li>Panel gerencial con segmentación por compañía, ramo y monto en riesgo.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">3</span> Documentos UIF — Conozca a su Cliente</h4>
+                            <ul>
+                                <li>Control de vigencia de los documentos UIF del cliente según normativa boliviana.</li>
+                                <li>Solicitud automática de actualización cuando el documento UIF expira.</li>
+                                <li>Clientes del banco: migración de datos KYC existentes para evitar re-registro.</li>
+                                <li>Clientes externos: formulario UIF completo obligatorio en el proceso de onboarding.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">4</span> Gestión de Plantillas de Certificados</h4>
+                            <ul>
+                                <li>Cuando la compañía emite una nueva plantilla, el sistema la carga y versiona automáticamente.</li>
+                                <li>Control de cambios con comparación visual entre versiones (diff).</li>
+                                <li>Posibilidad de aplicar la nueva plantilla a certificados futuros sin afectar los emitidos.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════
+             OPERACIONES — nuevos módulos
+        ═══════════════════════════════════════════ -->
+
+        <!-- CONCILIACIONES -->
+        <section id="conciliaciones">
+            <div class="module-section">
+                <div class="module-header">
+                    <div class="mod-icon teal">⚖️</div>
+                    <div>
+                        <div class="mod-title">Módulo de Conciliaciones</div>
+                        <div class="mod-subtitle">Semáforo póliza a póliza · Masivos desde banco · No masivos desde compañía · Excel con validación</div>
+                    </div>
+                </div>
+                <div class="module-body">
+                    <p>Machear certificados generados en el sistema versus lo efectivamente cobrado por la compañía o banco. El análisis póliza por póliza permite identificar brechas de ingresos y calcular comisiones reales — no solo devengadas.</p>
+                    <div class="sub-grid">
+                        <div class="sub-card">
+                            <h4><span class="num">1</span> Semáforo de Conciliación</h4>
+                            <ul>
+                                <li>Análisis automático póliza por póliza con resultado en semáforo.</li>
+                            </ul>
+                            <table class="semaphore-table">
+                                <thead><tr><th>Estado</th><th>Descripción</th></tr></thead>
+                                <tbody>
+                                    <tr><td><span class="semaphore-dot dot-green"></span>Verde</td><td>Emitido = Cobrado por compañía/banco. Comisión 100% percibida.</td></tr>
+                                    <tr><td><span class="semaphore-dot dot-yellow"></span>Amarillo</td><td>Pago parcial: solo algunas cuotas cobradas. Comisiona proporcional.</td></tr>
+                                    <tr><td><span class="semaphore-dot dot-red"></span>Rojo</td><td>Póliza emitida pero no cobrada. Sin comisión. Alerta de fuga de ingresos.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">2</span> Masivos: Liquidación desde el Banco</h4>
+                            <ul>
+                                <li>En seguros masivos, el banco cobra y genera la liquidación base del período.</li>
+                                <li>La compañía aseguradora se basa en la información del banco para su reporte.</li>
+                                <li>El core importa el reporte bancario y reconcilia automáticamente certificado por certificado.</li>
+                                <li>Las comisiones solo se devengan sobre los certificados efectivamente cobrados.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">3</span> No Masivos: Reporte desde la Compañía</h4>
+                            <ul>
+                                <li>La compañía envía su reporte de cobros mensual (Excel o API).</li>
+                                <li>El sistema analiza uno a uno, cruzando con los certificados emitidos en el core.</li>
+                                <li>Las cuotas no pagadas en el mes se gestionan como pendientes para meses siguientes.</li>
+                                <li>Reporte de diferencias generado automáticamente para revisión por el broker.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">4</span> Importación Excel con Validación de Campos</h4>
+                            <ul>
+                                <li>Importación de liquidaciones Excel mapeando por nombre de columnas definidas.</li>
+                                <li>El sistema verifica si están todos los campos necesarios o si faltan datos antes de procesar.</li>
+                                <li>Reporte previo a la importación: campos encontrados, faltantes y filas con error.</li>
+                                <li>Pólizas con vigencia anual pero cuotas distribuidas: el motor gestiona la cronología.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="callout info">
+                        <span class="callout-icon">💡</span>
+                        <div>Las pólizas siempre tienen vigencia anual pero se pueden pagar en una o varias cuotas. El motor de conciliación gestiona automáticamente los pagos parciales y las cuotas futuras — si se venden 1,000 pólizas pero solo se cobran 5, el broker solo comisiona de esas 5.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════
+             CONFIG. Y SEGURIDAD
+        ═══════════════════════════════════════════ -->
+        <div class="flow-section-header">
+            <div class="fsh-label">Config. y Seguridad</div>
+            <div class="fsh-title">Parametrización, Integraciones y Control de Acceso</div>
+            <div class="fsh-sub">Configuración profunda por compañía, integraciones regulatorias con Cloud Broker, AXON y SIAT, y seguridad de extremo a extremo.</div>
+        </div>
+
+        <!-- BRANDING Y CONFIG -->
+        <section id="branding-config">
+            <div class="module-section">
+                <div class="module-header">
+                    <div class="mod-icon orange">🎨</div>
+                    <div>
+                        <div class="mod-title">Branding y Parametrización por Compañía y Ramo</div>
+                        <div class="mod-subtitle">White-label completo · Logo y colores · Datos UIF · Parámetros por ramo · POS Virtual</div>
+                    </div>
+                </div>
+                <div class="module-body">
+                    <p>Cada compañía que se registra tiene su propio branding parametrizado. Las compañías que usan el core como sistema propio no perciben que están usando la plataforma Interseguros — ven su propia marca.</p>
+                    <div class="sub-grid">
+                        <div class="sub-card">
+                            <h4><span class="num">1</span> Branding White-Label Total</h4>
+                            <ul>
+                                <li>Configuración de logo, colores primarios y secundarios, tipografía y eslogan por compañía.</li>
+                                <li>Dominio personalizado: la compañía accede desde su propio subdominio o dominio.</li>
+                                <li>Portal del cliente con identidad visual completa de la aseguradora.</li>
+                                <li>Certificados, emails y notificaciones con el branding de la compañía, no de Interseguros.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">2</span> Parametrización de Datos por Ramo</h4>
+                            <ul>
+                                <li>Cada ramo tiene sus propios campos configurables: obligatorios y opcionales.</li>
+                                <li>Al registrar un producto, el formulario se adapta automáticamente al ramo seleccionado.</li>
+                                <li>Ejemplo: Vehículos (placa, chasis, modelo) vs. Vida (edad, beneficiarios, antecedentes médicos).</li>
+                                <li>Una misma compañía puede tener configuraciones diferenciadas por ramo.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">3</span> Datos UIF — Conozca a su Cliente</h4>
+                            <ul>
+                                <li>Formulario UIF parametrizable por compañía según normativa boliviana.</li>
+                                <li>Los clientes del banco ya tienen datos KYC que se migran al sistema para evitar duplicación.</li>
+                                <li>Clientes externos completan el formulario UIF completo al onboarding.</li>
+                                <li>Integración con AXON para reporte automático a la Unidad de Investigaciones Financieras (UIF).</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">4</span> POS Virtual y Monedas</h4>
+                            <ul>
+                                <li>Cada compañía puede tener su POS Virtual configurado en el sistema.</li>
+                                <li>Procesamiento de tarjetas débito, crédito y QR directamente desde el portal.</li>
+                                <li>El dinero va directo a la cuenta de la compañía en el Banco Económico.</li>
+                                <li>Multimoneda: Bolivianos (BOB) y Dólares (USD) según el producto y la compañía.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ROLES Y PERMISOS -->
+        <section id="roles-permisos">
+            <div class="module-section">
+                <div class="module-header">
+                    <div class="mod-icon indigo">👥</div>
+                    <div>
+                        <div class="mod-title">Roles, Permisos y Gestión de Ejecutivos</div>
+                        <div class="mod-subtitle">Broker · Compañías · Clientes · Metas · Comisiones por ejecutivo · Asignación de prospectos</div>
+                    </div>
+                </div>
+                <div class="module-body">
+                    <div class="sub-grid">
+                        <div class="sub-card">
+                            <h4><span class="num">1</span> Roles del Sistema</h4>
+                            <ul>
+                                <li><strong>Broker (Interseguros):</strong> acceso total, configuración, reportes gerenciales.</li>
+                                <li><strong>Compañía Aseguradora:</strong> acceso a sus pólizas, certificados y reportes propios.</li>
+                                <li><strong>Ejecutivo Comercial:</strong> cartera asignada, cotización, emisión y seguimiento.</li>
+                                <li><strong>Cliente/Asegurado:</strong> portal autogestión — consulta y descarga de certificados y siniestros.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">2</span> Ejecutivos del Banco</h4>
+                            <ul>
+                                <li>Cada ejecutivo del banco puede ser registrado en la plataforma.</li>
+                                <li>Visibilidad de comisiones generadas por cada ejecutivo en tiempo real.</li>
+                                <li>Asignación de cartera de clientes y prospectos a ejecutivos específicos.</li>
+                                <li>Alertas de vencimiento enviadas directamente al ejecutivo que emitió la póliza.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">3</span> Metas de Cumplimiento</h4>
+                            <ul>
+                                <li>Definición de metas de producción por ejecutivo, producto y período.</li>
+                                <li>Dashboard de cumplimiento: meta vs. producción real en tiempo real.</li>
+                                <li>Semáforo de cumplimiento: rojo &lt;70%, amarillo 70–90%, verde &gt;90%.</li>
+                                <li>IA con gestión de leads y oportunidades en pipeline Kanban.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">4</span> Asignación de Prospectos</h4>
+                            <ul>
+                                <li>Round-Robin o asignación manual por especialidad del ejecutivo.</li>
+                                <li>Prospectos entrantes por WhatsApp IA o formulario web asignados automáticamente.</li>
+                                <li>Notificación inmediata al ejecutivo al recibir un nuevo prospecto.</li>
+                                <li>Registro de primer contacto para medir tiempos de respuesta y conversión.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- INTEGRACIONES -->
+        <section id="integraciones">
+            <div class="module-section">
+                <div class="module-header">
+                    <div class="mod-icon blue">🔌</div>
+                    <div>
+                        <div class="mod-title">Integraciones del Ecosistema</div>
+                        <div class="mod-subtitle">Cloud Broker · AXON · SIAT · Banco Económico · Middleware · API REST para compañías</div>
+                    </div>
+                </div>
+                <div class="module-body">
+                    <p>El core Interseguros es el hub central de integración. Se conecta con todos los sistemas regulatorios, bancarios y contables del ecosistema boliviano, y ofrece middleware para que compañías externas se integren fácilmente a sus sistemas actuales.</p>
+                    <div class="sub-grid">
+                        <div class="sub-card">
+                            <h4><span class="num">1</span> Cloud Broker — Contabilidad</h4>
+                            <ul>
+                                <li>Integración bidireccional con Cloud Broker, el sistema contable de Interseguros.</li>
+                                <li>Disparos contables automáticos por cada evento: emisión, cobro, anulación y devolución.</li>
+                                <li>Asientos contables generados en tiempo real sin intervención manual.</li>
+                                <li>Reconciliación contable diaria con balance entre el core y el sistema contable.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">2</span> Sistema AXON — Normativa Bolivia</h4>
+                            <ul>
+                                <li>Integración con AXON según normativa de la APS (Autoridad de Fiscalización) de Bolivia.</li>
+                                <li>Reporte automático de operaciones en los plazos regulatorios establecidos.</li>
+                                <li>Envío de datos UIF (Unidad de Investigaciones Financieras) de forma automática.</li>
+                                <li>Alertas de cumplimiento para operaciones que requieren reporte obligatorio.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">3</span> SIAT — Facturación Electrónica</h4>
+                            <ul>
+                                <li>Para compañías sin sistema propio: emisión de facturas electrónicas directamente desde el SIAT.</li>
+                                <li>Facturas generadas en nombre de la aseguradora configurada en el sistema.</li>
+                                <li>Envío automático de la factura al asegurado por email y/o WhatsApp.</li>
+                                <li>Cumplimiento con las regulaciones del SIN (Servicio de Impuestos Nacionales) de Bolivia.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">4</span> Middleware y API REST</h4>
+                            <ul>
+                                <li>API REST documentada (OpenAPI/Swagger) para que compañías integren sus sistemas actuales.</li>
+                                <li>Integración fácil: las compañías pueden conectar sus sistemas existentes al core Interseguros.</li>
+                                <li>Webhooks configurables: notificaciones de eventos en tiempo real hacia sistemas externos.</li>
+                                <li>Sandbox de pruebas para que los equipos técnicos validen su integración antes de producción.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="callout info">
+                        <span class="callout-icon">🔗</span>
+                        <div>Las compañías afiliadas al sistema deberán tener integrada una cuenta en el <strong>Banco Económico</strong>. Al hacer la cobranza, el dinero llega directamente a su cuenta sin pasar por la del broker — Interseguros solo orquesta el proceso.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AUDITORÍA Y LOGS -->
+        <section id="auditoria-logs">
+            <div class="module-section">
+                <div class="module-header">
+                    <div class="mod-icon slate">🗂️</div>
+                    <div>
+                        <div class="mod-title">Auditoría, Logs y Estado de Cuentas</div>
+                        <div class="mod-subtitle">Log por usuario · Historial de certificados · Presupuesto y predicción gerencial · Power BI</div>
+                    </div>
+                </div>
+                <div class="module-body">
+                    <div class="sub-grid">
+                        <div class="sub-card">
+                            <h4><span class="num">1</span> Logs Transaccionales por Usuario</h4>
+                            <ul>
+                                <li>Cada transacción queda registrada: quién la hizo, cuándo y desde qué dispositivo.</li>
+                                <li>Log de cada operación: quién atiende, cotiza, emite, cobra, anula y modifica.</li>
+                                <li>Logs inmutables: ningún usuario puede modificar o eliminar el historial de transacciones.</li>
+                                <li>Exportación de logs para auditorías externas en formato estructurado.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">2</span> Historial de Auditoría de Certificados</h4>
+                            <ul>
+                                <li>Registro de cuántas veces fue consultado un certificado desde web, portal o app.</li>
+                                <li>Historial de impresiones: quién imprimió, cuándo y cuántas veces.</li>
+                                <li>Log de escaneos de QR: IP, fecha, hora y geolocalización aproximada.</li>
+                                <li>Alerta de uso sospechoso: múltiples escaneos desde ubicaciones inusuales.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">3</span> Estado de Cuentas y Comisión Devengada</h4>
+                            <ul>
+                                <li>Estado de cuenta por cliente: todas las pólizas, cuotas pagadas y pendientes en una vista.</li>
+                                <li>Estado de cuenta por compañía: primas recibidas, comisiones devengadas y por cobrar.</li>
+                                <li>Comisión devengada (emitido) vs. comisión percibida (efectivamente cobrado) en un reporte.</li>
+                                <li>Historial de movimientos financieros exportable a Excel en cualquier momento.</li>
+                            </ul>
+                        </div>
+                        <div class="sub-card">
+                            <h4><span class="num">4</span> Presupuesto, Predicción y Power BI</h4>
+                            <ul>
+                                <li>El sistema ayuda a gerencia a armar el presupuesto anual y proyectar ingresos futuros.</li>
+                                <li>Predicción basada en histórico de renovaciones, nuevas emisiones y anulaciones esperadas.</li>
+                                <li>Visor Power BI embebido como iframe: reportes gerenciales directamente en la plataforma.</li>
+                                <li>Disparos contables automáticos hacia Cloud Broker en cada evento del sistema.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div><!-- /.content -->
+</div><!-- /.main -->
+
+<script>
+    // ── Active nav highlight on scroll ──────────────────
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.sidebar nav a');
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(s => {
+            if (window.scrollY >= s.offsetTop - 120) current = s.id;
+        });
+        navLinks.forEach(a => {
+            a.classList.remove('active');
+            if (a.getAttribute('href') === '#' + current) a.classList.add('active');
+        });
+    }, { passive: true });
+
+    // ── Hamburger menu ───────────────────────────────────
+    const hamburgerBtn  = document.getElementById('hamburgerBtn');
+    const sidebar       = document.querySelector('.sidebar');
+    const overlay       = document.getElementById('sidebarOverlay');
+
+    function openSidebar() {
+        sidebar.classList.add('open');
+        overlay.classList.add('open');
+        hamburgerBtn.classList.add('open');
+        hamburgerBtn.setAttribute('aria-expanded', 'true');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeSidebar() {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('open');
+        hamburgerBtn.classList.remove('open');
+        hamburgerBtn.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+    }
+
+    hamburgerBtn.addEventListener('click', () => {
+        sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+    });
+    overlay.addEventListener('click', closeSidebar);
+
+    // Close sidebar when a nav link is tapped on mobile
+    navLinks.forEach(a => {
+        a.addEventListener('click', () => {
+            if (window.innerWidth <= 920) closeSidebar();
+        });
+    });
+
+    // Close on ESC
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') closeSidebar();
+    });
+</script>
+</body>
+</html>
