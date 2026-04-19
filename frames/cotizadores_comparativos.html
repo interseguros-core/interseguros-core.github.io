@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cotizadores & Cuadros Comparativos IA — Interseguros</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+body{background:#f1f5f4;color:#1a2e29;font-size:13px;padding:16px}
+.shell{max-width:1600px;margin:0 auto}
+.topbar{background:linear-gradient(135deg,#0d4f3c,#1a6e54);color:#fff;padding:14px 22px;border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.topbar h1{font-size:17px;font-weight:600}
+.topbar .sub{font-size:11px;opacity:.85;margin-top:2px}
+.topbar .actions{display:flex;gap:10px;align-items:center}
+.icon-btn{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;position:relative}
+.icon-btn .dot{position:absolute;top:6px;right:6px;width:8px;height:8px;background:#ef4444;border-radius:50%}
+
+.statusbar{background:#fff;padding:14px 22px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;border-bottom:1px solid #e5ebe9}
+.crumb{font-weight:700;color:#0d4f3c;font-size:14px;margin-right:auto}
+.pill{padding:7px 14px;border-radius:20px;font-size:12px;display:inline-flex;align-items:center;gap:7px;font-weight:500;border:1px solid transparent}
+.pill .ic{width:9px;height:9px;border-radius:50%;display:inline-block}
+.pill.ok{background:#dcfce7;color:#15803d;border-color:#bbf7d0}.pill.ok .ic{background:#22c55e}
+.pill.warn{background:#fef3c7;color:#a16207;border-color:#fde68a}.pill.warn .ic{background:#f59e0b}
+.pill.live{background:#fee2e2;color:#b91c1c;border-color:#fecaca}.pill.live .ic{background:#ef4444;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+.kpis{background:#fff;padding:16px 22px;display:grid;grid-template-columns:repeat(6,1fr);gap:12px;border-bottom:1px solid #e5ebe9}
+.kpi{padding:12px;border-radius:10px;background:#f8faf9;border-left:3px solid #0d4f3c}
+.kpi .lbl{font-size:10px;color:#64746f;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.kpi .val{font-size:20px;font-weight:700;color:#0d4f3c}
+.kpi .delta{font-size:10px;color:#15803d;margin-top:2px}
+.kpi.alert{border-left-color:#ef4444}.kpi.alert .val{color:#b91c1c}
+.kpi.warn{border-left-color:#f59e0b}
+
+.grid{background:#fff;padding:18px 22px 22px;border-radius:0 0 12px 12px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.card{background:#fff;border:1px solid #e5ebe9;border-radius:10px;padding:14px;display:flex;flex-direction:column;min-height:340px;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.card.wide{grid-column:span 2}
+.card-h{display:flex;align-items:center;gap:9px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #eef2f0}
+.num{width:26px;height:26px;border-radius:50%;background:#0d4f3c;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0}
+.card-h h3{font-size:13px;font-weight:600;flex:1;color:#1a2e29}
+.card-h .menu{color:#94a3a0;cursor:pointer}
+.subtitle{font-size:11px;color:#64746f;margin-bottom:10px}
+
+/* Form fields */
+.field{margin-bottom:8px}
+.field label{display:block;font-size:10px;color:#64746f;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;font-weight:600}
+.field input, .field select, .field textarea{width:100%;padding:7px 10px;border:1px solid #d4dcd9;border-radius:6px;font-size:12px;color:#1a2e29;background:#fff;font-family:inherit}
+.field input:focus, .field select:focus{outline:none;border-color:#0d4f3c;box-shadow:0 0 0 2px rgba(13,79,60,.1)}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+/* Drag & drop builder */
+.builder{display:grid;grid-template-columns:1fr 1fr;gap:8px;flex:1}
+.col-builder{background:#f8faf9;border:1px dashed #cbd5d1;border-radius:8px;padding:8px;min-height:160px}
+.col-builder .h{font-size:10px;color:#64746f;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;font-weight:600}
+.chip-drag{background:#fff;border:1px solid #d4dcd9;border-radius:6px;padding:6px 10px;margin-bottom:5px;font-size:11px;display:flex;align-items:center;gap:6px;cursor:grab}
+.chip-drag::before{content:'⋮⋮';color:#94a3a0;font-size:10px}
+.chip-drag.add{background:#dcfce7;border-color:#86efac;color:#15803d;justify-content:center;cursor:pointer}
+.chip-drag.add::before{content:'+';font-size:14px;font-weight:700}
+
+/* Tables */
+.table-wrap{flex:1;overflow:auto;border:1px solid #e5ebe9;border-radius:6px}
+table{width:100%;border-collapse:collapse;font-size:11px}
+th{background:#f8faf9;color:#64746f;text-transform:uppercase;letter-spacing:.4px;font-size:10px;padding:7px;text-align:left;border-bottom:1px solid #e5ebe9;font-weight:600;position:sticky;top:0;z-index:1}
+td{padding:7px;border-bottom:1px solid #eef2f0;color:#1a2e29}
+tr:hover td{background:#f8faf9}
+td.num-col{text-align:right;font-variant-numeric:tabular-nums;font-weight:500}
+
+.btn{padding:8px 12px;background:#0d4f3c;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:5px;justify-content:center}
+.btn.sec{background:#fff;color:#0d4f3c;border:1px solid #0d4f3c}
+.btn.full{width:100%}
+.btn.amber{background:#f59e0b}
+.btn.red{background:#ef4444}
+.btn-row{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.btn-row .btn{flex:1;min-width:90px}
+
+.badge{padding:2px 7px;border-radius:10px;font-size:10px;font-weight:600;display:inline-flex;align-items:center;gap:3px;white-space:nowrap}
+.badge.green{background:#dcfce7;color:#15803d}
+.badge.amber{background:#fef3c7;color:#a16207}
+.badge.red{background:#fee2e2;color:#b91c1c}
+.badge.blue{background:#dbeafe;color:#1e40af}
+.badge.gray{background:#e5e7eb;color:#4b5563}
+
+/* WhatsApp mini chat */
+.chat{background:#e7e0d4;border-radius:8px;padding:8px;flex:1;display:flex;flex-direction:column;gap:6px;overflow-y:auto;max-height:240px}
+.chat-h{background:#0d4f3c;color:#fff;padding:6px 10px;border-radius:8px 8px 0 0;display:flex;align-items:center;gap:8px;margin:-8px -8px 6px}
+.chat-h .av{width:24px;height:24px;border-radius:50%;background:#fff;color:#0d4f3c;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px}
+.chat-h .name{font-size:11px;font-weight:600;flex:1}
+.msg{max-width:85%;padding:6px 9px;border-radius:8px;font-size:11px;line-height:1.35}
+.msg.in{background:#fff;align-self:flex-start;border-top-left-radius:2px}
+.msg.out{background:#dcf8c6;align-self:flex-end;border-top-right-radius:2px}
+.msg .t{font-size:9px;color:#64746f;text-align:right;margin-top:2px}
+.msg .check{color:#34b7f1}
+.input-bar{background:#fff;border-radius:20px;padding:6px 10px;display:flex;align-items:center;gap:6px;margin-top:6px;font-size:11px;color:#94a3a0}
+.input-bar .mic{width:28px;height:28px;border-radius:50%;background:#0d4f3c;color:#fff;display:flex;align-items:center;justify-content:center;margin-left:auto}
+
+/* Semáforo */
+.light{display:inline-block;width:12px;height:12px;border-radius:50%;vertical-align:middle}
+.light.r{background:#ef4444;box-shadow:0 0 6px rgba(239,68,68,.5)}
+.light.a{background:#f59e0b;box-shadow:0 0 6px rgba(245,158,11,.4)}
+.light.g{background:#22c55e;box-shadow:0 0 6px rgba(34,197,94,.4)}
+
+/* Upload */
+.upload{border:2px dashed #0d4f3c;border-radius:8px;padding:18px;text-align:center;background:#f8faf9;cursor:pointer;transition:.2s}
+.upload:hover{background:#dcfce7}
+.upload .ic{font-size:32px;margin-bottom:6px}
+.upload .lbl{font-size:12px;font-weight:600;color:#0d4f3c}
+.upload .hint{font-size:10px;color:#64746f;margin-top:3px}
+
+/* Documents preview */
+.doc-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.doc-thumb{background:#fff;border:1px solid #e5ebe9;border-radius:6px;padding:8px;text-align:center;font-size:10px;color:#64746f}
+.doc-thumb .ic{font-size:24px;color:#0d4f3c;margin-bottom:4px}
+.doc-thumb .name{font-weight:600;color:#1a2e29;font-size:10px;margin-bottom:2px;word-break:break-word}
+
+/* Lists */
+.list{display:flex;flex-direction:column;gap:6px;flex:1}
+.list-item{padding:8px 10px;background:#f8faf9;border-radius:6px;display:flex;align-items:center;gap:8px;font-size:11px;border-left:3px solid #0d4f3c}
+.list-item.warn{border-left-color:#f59e0b}
+.list-item.alert{border-left-color:#ef4444}
+.list-item .ic{font-size:14px}
+.list-item .body{flex:1;min-width:0}
+.list-item .body .t{font-weight:600;font-size:11px}
+.list-item .body .d{color:#64746f;font-size:10px;margin-top:1px}
+
+/* Switch */
+.switch{position:relative;width:32px;height:18px;background:#cbd5d1;border-radius:9px;cursor:pointer;flex-shrink:0;transition:.2s}
+.switch.on{background:#0d4f3c}
+.switch::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;background:#fff;border-radius:50%;transition:.2s}
+.switch.on::after{left:16px}
+.opt-row{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;background:#f8faf9;border-radius:6px;font-size:11px;margin-bottom:5px;gap:8px}
+
+/* AI Brain */
+.brain{background:linear-gradient(135deg,#0d4f3c,#1a6e54);color:#fff}
+.brain .card-h{border-bottom-color:rgba(255,255,255,.2)}
+.brain .num{background:#fff;color:#0d4f3c}
+.brain h3{color:#fff}
+.brain .stat{display:flex;justify-content:space-between;padding:7px 10px;background:rgba(255,255,255,.1);border-radius:6px;margin-bottom:6px;font-size:11px;gap:8px}
+.brain .stat .v{font-weight:700;text-align:right}
+
+/* Mini metrics */
+.mini-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:11px;border-bottom:1px solid #eef2f0;gap:8px}
+.mini-row:last-child{border-bottom:none}
+.mini-row .l{color:#64746f}
+.mini-row .v{font-weight:600;color:#0d4f3c;text-align:right}
+
+/* Comparator highlight */
+.cmp-best{background:#dcfce7 !important}
+.cmp-best td{color:#15803d;font-weight:600}
+
+/* Score circle */
+.score-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0}
+.score-card{background:#f8faf9;border-radius:8px;padding:10px;text-align:center;border-top:3px solid #0d4f3c}
+.score-card .v{font-size:22px;font-weight:700;color:#0d4f3c}
+.score-card .l{font-size:10px;color:#64746f;text-transform:uppercase;letter-spacing:.3px;margin-top:2px}
+.score-card.r{border-top-color:#ef4444}
+.score-card.r .v{color:#b91c1c}
+.score-card.a{border-top-color:#f59e0b}
+.score-card.a .v{color:#a16207}
+
+/* Progress bar */
+.progress{background:#eef2f0;border-radius:10px;height:8px;overflow:hidden;margin:6px 0}
+.progress > div{height:100%;background:linear-gradient(90deg,#0d4f3c,#1a6e54);border-radius:10px}
+
+/* Footer */
+.footer{background:#0d4f3c;color:#fff;padding:12px 22px;border-radius:12px;margin-top:14px;display:flex;justify-content:space-between;align-items:center;font-size:11px;gap:10px;flex-wrap:wrap}
+.footer .meta{opacity:.85}
+.footer .acts{display:flex;gap:8px;flex-wrap:wrap}
+.footer .btn{background:rgba(255,255,255,.15);color:#fff}
+
+/* Step indicator */
+.steps{display:flex;gap:4px;margin-bottom:10px}
+.step{flex:1;height:4px;background:#eef2f0;border-radius:2px;position:relative}
+.step.active{background:#0d4f3c}
+.step.done{background:#22c55e}
+
+/* Pricing comparison cards */
+.price-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0}
+.price-card{background:#f8faf9;border:1px solid #e5ebe9;border-radius:8px;padding:10px;text-align:center;position:relative}
+.price-card.best{border-color:#22c55e;border-width:2px;background:#dcfce7}
+.price-card.best::before{content:'★ MEJOR';position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:#22c55e;color:#fff;padding:2px 8px;border-radius:10px;font-size:9px;font-weight:700}
+.price-card .ins{font-size:10px;color:#64746f;font-weight:600;text-transform:uppercase;margin-bottom:4px}
+.price-card .price{font-size:18px;font-weight:700;color:#0d4f3c;margin-bottom:4px}
+.price-card .feat{font-size:10px;color:#64746f;line-height:1.4}
+
+/* Ranking */
+.rank-item{display:flex;align-items:center;gap:8px;padding:8px;background:#f8faf9;border-radius:6px;margin-bottom:5px}
+.rank-pos{width:24px;height:24px;border-radius:50%;background:#0d4f3c;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;flex-shrink:0}
+.rank-pos.gold{background:linear-gradient(135deg,#fbbf24,#f59e0b)}
+.rank-pos.silver{background:linear-gradient(135deg,#cbd5d1,#94a3a0)}
+.rank-pos.bronze{background:linear-gradient(135deg,#d97706,#92400e)}
+.rank-info{flex:1;min-width:0}
+.rank-info .n{font-weight:600;font-size:11px}
+.rank-info .d{font-size:10px;color:#64746f}
+.rank-score{font-weight:700;color:#0d4f3c;font-size:13px}
+
+/* ============= RESPONSIVE ============= */
+@media (max-width: 1400px){
+  .grid{grid-template-columns:repeat(3,1fr)}
+  .kpis{grid-template-columns:repeat(3,1fr)}
+  .card.wide{grid-column:span 2}
+}
+@media (max-width: 1024px){
+  .grid{grid-template-columns:repeat(2,1fr)}
+  .kpis{grid-template-columns:repeat(3,1fr)}
+  .card.wide{grid-column:span 2}
+  .topbar h1{font-size:15px}
+}
+@media (max-width: 768px){
+  body{padding:8px}
+  .topbar{padding:12px 14px;flex-wrap:wrap;border-radius:10px 10px 0 0}
+  .topbar h1{font-size:14px;line-height:1.3}
+  .topbar .sub{font-size:10px}
+  .icon-btn{width:30px;height:30px;font-size:12px}
+  
+  .statusbar{padding:10px 12px;gap:6px;overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch}
+  .statusbar::-webkit-scrollbar{height:4px}
+  .crumb{font-size:12px;width:100%;margin-right:0;margin-bottom:4px}
+  .pill{padding:5px 10px;font-size:10px;white-space:nowrap;flex-shrink:0}
+  
+  .kpis{grid-template-columns:repeat(2,1fr);padding:12px;gap:8px}
+  .kpi{padding:10px}
+  .kpi .val{font-size:17px}
+  .kpi .lbl{font-size:9px}
+  .kpi .delta{font-size:9px}
+  
+  .grid{grid-template-columns:1fr;padding:12px;gap:10px;border-radius:0 0 10px 10px}
+  .card, .card.wide{grid-column:span 1;padding:12px;min-height:auto}
+  .card-h{margin-bottom:10px;padding-bottom:8px}
+  .card-h h3{font-size:13px}
+  .num{width:24px;height:24px;font-size:11px}
+  
+  .builder{grid-template-columns:1fr}
+  .doc-grid{grid-template-columns:1fr 1fr}
+  .price-cards{grid-template-columns:1fr}
+  .score-grid{grid-template-columns:repeat(3,1fr)}
+  .field-row{grid-template-columns:1fr}
+  
+  .table-wrap{max-height:300px}
+  table{font-size:10px}
+  th, td{padding:6px 5px}
+  
+  .footer{padding:12px;flex-direction:column;gap:10px;text-align:center;border-radius:10px}
+  .footer .acts{justify-content:center;width:100%}
+  .footer .btn{flex:1;min-width:90px}
+}
+@media (max-width: 420px){
+  .kpis{grid-template-columns:1fr 1fr}
+  .topbar h1{font-size:13px}
+  .topbar .sub{font-size:9px}
+  .crumb{font-size:11px}
+  .doc-grid{grid-template-columns:1fr}
+  .score-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<div class="topbar">
+  <div>
+    <h1>📊 Módulo: Cotizadores Paramétricos & Cuadros Comparativos IA</h1>
+    <div class="sub">Diseño sin código · multi-aseguradora · análisis IA · validación regulatoria APS</div>
+  </div>
+  <div class="actions">
+    <div class="icon-btn">❓</div>
+    <div class="icon-btn">🔔<div class="dot"></div></div>
+    <div class="icon-btn">👤</div>
+  </div>
+</div>
+
+<div class="statusbar">
+  <div class="crumb">← MÓDULO: COTIZADORES PARAMÉTRICOS</div>
+  <div class="pill ok"><span class="ic"></span>BRE Validado</div>
+  <div class="pill ok"><span class="ic"></span>14 Cotizadores Activos</div>
+  <div class="pill warn"><span class="ic"></span>3 Cuadros Pendientes APS</div>
+  <div class="pill live"><span class="ic"></span>87 Cotizaciones Hoy</div>
+</div>
+
+<div class="kpis">
+  <div class="kpi"><div class="lbl">Cotizaciones Hoy</div><div class="val">487</div><div class="delta">▲ 18% vs ayer</div></div>
+  <div class="kpi"><div class="lbl">Tasa Conversión</div><div class="val">34.2%</div><div class="delta">▲ 4.1 pts</div></div>
+  <div class="kpi"><div class="lbl">Cuadros Generados</div><div class="val">142</div><div class="delta">Hoy</div></div>
+  <div class="kpi"><div class="lbl">Aseguradoras</div><div class="val">12</div><div class="delta">Conectadas API</div></div>
+  <div class="kpi warn"><div class="lbl">Discrepancias IA</div><div class="val">23</div><div class="delta">Slip vs Póliza</div></div>
+  <div class="kpi alert"><div class="lbl">Críticas</div><div class="val">5</div><div class="delta">Requieren revisión</div></div>
+</div>
+
+<div class="grid">
+
+<!-- 1. Creador de Cotizadores Sin Código -->
+<div class="card wide">
+  <div class="card-h"><div class="num">1</div><h3>Creador de Cotizadores Sin Código</h3><span class="menu">⋯</span></div>
+  <div class="subtitle">Diseña cotizadores únicos con drag & drop · sin programación</div>
+  <div class="steps">
+    <div class="step done"></div><div class="step done"></div><div class="step active"></div><div class="step"></div>
+  </div>
+  <div class="field-row">
+    <div class="field">
+      <label>Tipo de cotizador</label>
+      <select><option>Seguro Individual</option><option>Colectivo</option><option>Masivo</option></select>
+    </div>
+    <div class="field">
+      <label>Ramo</label>
+      <select><option>Vida</option><option>Auto</option><option>Salud</option><option>Hogar</option></select>
+    </div>
+  </div>
+  <label style="font-size:10px;color:#64746f;text-transform:uppercase;letter-spacing:.4px;margin:4px 0;font-weight:600">Variables del cotizador</label>
+  <div class="builder">
+    <div class="col-builder">
+      <div class="h">Variables disponibles</div>
+      <div class="chip-drag">Capital</div>
+      <div class="chip-drag">Edad</div>
+      <div class="chip-drag">Sexo</div>
+      <div class="chip-drag">Maternidad</div>
+      <div class="chip-drag">Antecedentes</div>
+    </div>
+    <div class="col-builder">
+      <div class="h">Cotizador en construcción</div>
+      <div class="chip-drag">Capital · USD</div>
+      <div class="chip-drag">Edad · 18-75</div>
+      <div class="chip-drag add">Agregar variable</div>
+    </div>
+  </div>
+  <label style="font-size:10px;color:#64746f;text-transform:uppercase;letter-spacing:.4px;margin:8px 0 4px;font-weight:600">Tabla de cálculo</label>
+  <div class="table-wrap" style="max-height:120px">
+    <table>
+      <thead><tr><th>Ítem</th><th>Datos</th><th>Antecedentes</th><th>Prima</th></tr></thead>
+      <tbody>
+        <tr><td>Plan Básico</td><td class="num-col">$100k</td><td>Plazo 1 año</td><td class="num-col">$420</td></tr>
+        <tr><td>Plan Plus</td><td class="num-col">$200k</td><td>Riesgo bajo</td><td class="num-col">$780</td></tr>
+        <tr><td>Plan Premium</td><td class="num-col">$500k</td><td>Riesgo alto</td><td class="num-col">$1,650</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="btn-row">
+    <button class="btn">💾 Guardar cotizador</button>
+    <button class="btn sec">👁️ Vista previa</button>
+    <button class="btn sec">✓ Validar BRE</button>
+  </div>
+</div>
+
+<!-- 2. Cotizador en Línea con IA -->
+<div class="card wide">
+  <div class="card-h"><div class="num">2</div><h3>Cotizador en Línea con IA Asistida</h3><span class="menu">⋯</span></div>
+  <div class="subtitle">Cotización express vía WhatsApp · web · agente · CRM</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:1" class="cot-split">
+    <div>
+      <div class="field"><label>Valor asegurado</label><input value="$100,000"></div>
+      <div class="field"><label>Nombre cliente</label><input value="Marcelo Mendoza"></div>
+      <div class="field-row">
+        <div class="field"><label>Vigencia</label><select><option>1 año</option><option>2 años</option></select></div>
+        <div class="field"><label>Edad</label><input value="34"></div>
+      </div>
+      <div class="field"><label>Antecedentes</label><input placeholder="Sin antecedentes"></div>
+      <button class="btn full" style="margin-top:6px">⚡ Cotizar con IA</button>
+    </div>
+    <div class="chat">
+      <div class="chat-h"><div class="av">IA</div><div class="name">IA Asesor · Cotizador</div></div>
+      <div class="msg in">Hola, ¿cuál es tu edad para cotizar Vida? <div class="t">16:30</div></div>
+      <div class="msg out">34 años, capital 100k <div class="t">16:30 <span class="check">✓✓</span></div></div>
+      <div class="msg in">✅ Cotización lista:<br>• Pacífico: $420/mes<br>• El Sol: $385/mes ⭐<br>• Bolivia: $445/mes <div class="t">16:31</div></div>
+      <div class="msg in">Cotización <b>#1234</b> guardada en CRM. ¿Transferir a ejecutivo? <div class="t">16:31</div></div>
+      <div class="input-bar">😊 Texto y archivo 📎 <div class="mic">🎤</div></div>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn">📋 Ver cotizaciones (87)</button>
+    <button class="btn sec">📧 Enviar al cliente</button>
+  </div>
+</div>
+
+<!-- 3. Cuadro Comparativo según Normativa APS -->
+<div class="card wide">
+  <div class="card-h"><div class="num">3</div><h3>Cuadro Comparativo · Normativa APS</h3><span class="menu">⋯</span></div>
+  <div class="subtitle">Comparación multi-aseguradora con formato regulatorio listo para APS</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Aseguradora</th><th>Cobertura</th><th>Prima Anual</th><th>Comisión</th><th>IA</th></tr></thead>
+      <tbody>
+        <tr class="cmp-best"><td>Aseguradora El Sol ⭐</td><td>Vida $100k</td><td class="num-col">$385</td><td class="num-col">12%</td><td><span class="light g"></span></td></tr>
+        <tr><td>Aseguradora Pacífico</td><td>Vida $100k</td><td class="num-col">$420</td><td class="num-col">15%</td><td><span class="light g"></span></td></tr>
+        <tr><td>Aseguradora Bolivia</td><td>Vida $100k</td><td class="num-col">$445</td><td class="num-col">10%</td><td><span class="light a"></span></td></tr>
+        <tr><td>Aseguradora Nacional</td><td>Vida $100k</td><td class="num-col">$478</td><td class="num-col">14%</td><td><span class="light a"></span></td></tr>
+        <tr><td>Aseguradora La Vitalicia</td><td>Vida $100k</td><td class="num-col">$520</td><td class="num-col">8%</td><td><span class="light r"></span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="font-size:10px;color:#64746f;margin-top:6px">
+    <span class="light g"></span> Cumple normativa &nbsp; <span class="light a"></span> Diferencias menores &nbsp; <span class="light r"></span> Discrepancia crítica
+  </div>
+  <div class="btn-row">
+    <button class="btn">📄 Generar PDF (formato APS)</button>
+    <button class="btn sec">⬇️ Descargar XLSX</button>
+    <button class="btn sec">📧 Enviar a cliente</button>
+  </div>
+</div>
+
+<!-- 4. IA Compara Slip vs Póliza -->
+<div class="card wide">
+  <div class="card-h"><div class="num">4</div><h3>IA · Compara Slip de Cotización vs Póliza Emitida</h3><span class="menu">⋯</span></div>
+  <div class="subtitle">Detección automática de discrepancias · semáforo de validación</div>
+  <div class="upload">
+    <div class="ic">📤</div>
+    <div class="lbl">Subir póliza de compañía</div>
+    <div class="hint">PDF / IMAGE · análisis IA en segundos</div>
+  </div>
+  <div class="doc-grid">
+    <div class="doc-thumb"><div class="ic">📄</div><div class="name">slip-cotizacion.pdf</div>3 páginas</div>
+    <div class="doc-thumb"><div class="ic">📄</div><div class="name">poliza-emitida.pdf</div>5 páginas</div>
+  </div>
+  <label style="font-size:10px;color:#64746f;text-transform:uppercase;letter-spacing:.4px;margin:6px 0;font-weight:600">Reporte de discrepancias</label>
+  <div class="table-wrap" style="max-height:160px">
+    <table>
+      <thead><tr><th>Ítem</th><th>Slip</th><th>Póliza</th><th>Sem.</th></tr></thead>
+      <tbody>
+        <tr><td>Cobertura Vida</td><td class="num-col">$100k</td><td class="num-col">$90k</td><td><span class="badge red">CRÍTICA</span></td></tr>
+        <tr><td>Prima anual</td><td class="num-col">$1,000</td><td class="num-col">$1,010</td><td><span class="badge amber">Menor</span></td></tr>
+        <tr><td>Cláusulas legales</td><td>Estándar</td><td>Estándar</td><td><span class="badge green">OK</span></td></tr>
+        <tr><td>Beneficiarios</td><td>2</td><td>2</td><td><span class="badge green">OK</span></td></tr>
+        <tr><td>Vigencia</td><td>12m</td><td>12m</td><td><span class="badge green">OK</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="score-grid">
+    <div class="score-card"><div class="v">16</div><div class="l">OK</div></div>
+    <div class="score-card a"><div class="v">2</div><div class="l">Menor</div></div>
+    <div class="score-card r"><div class="v">3</div><div class="l">Crítica</div></div>
+  </div>
+  <button class="btn red full">🚨 Alertar ejecutivo y compañía</button>
+</div>
+
+<!-- 5. Mejor Oferta IA -->
+<div class="card">
+  <div class="card-h"><div class="num">5</div><h3>Mejor Oferta · IA Recomendada</h3><span class="menu">⋯</span></div>
+  <div class="subtitle">Análisis multi-criterio: precio · cobertura · servicio · solvencia</div>
+  <div class="price-cards" style="grid-template-columns:1fr">
+    <div class="price-card best">
+      <div class="ins">El Sol Seguros</div>
+      <div class="price">$385/año</div>
+      <div class="feat">Cobertura $100k · Comisión 12% · Tiempo siniestro 5 días</div>
+    </div>
+    <div class="price-card">
+      <div class="ins">Pacífico</div>
+      <div class="price">$420/año</div>
+      <div class="feat">Cobertura $100k · Comisión 15%</div>
+    </div>
+    <div class="price-card">
+      <div class="ins">Bolivia Seguros</div>
+      <div class="price">$445/año</div>
+      <div class="feat">Cobertura $100k · Comisión 10%</div>
+    </div>
+  </div>
+</div>
+
+<!-- 6. Ranking Aseguradoras -->
+<div class="card">
+  <div class="card-h"><div class="num">6</div><h3>Ranking Aseguradoras</h3><span class="menu">⋯</span></div>
+  <div class="subtitle">Score IA: precio + servicio + solvencia + siniestralidad</div>
+  <div class="rank-item"><div class="rank-pos gold">1</div><div class="rank-info"><div class="n">El Sol</div><div class="d">A+ · Pago 5d · 98% CSAT</div></div><div class="rank-score">94</div></div>
+  <div class="rank-item"><div class="rank-pos silver">2</div><div class="rank-info"><div class="n">Pacífico</div><div class="d">A · Pago 8d · 92% CSAT</div></div><div class="rank-score">88</div></div>
+  <div class="rank-item"><div class="rank-pos bronze">3</div><div class="rank-info"><div class="n">Bolivia</div><div class="d">A · Pago 10d · 89% CSAT</div></div><div class="rank-score">82</div></div>
+  <div class="rank-item"><div class="rank-pos">4</div><div class="rank-info"><div class="n">Nacional</div><div class="d">B+ · Pago 14d · 85% CSAT</div></div><div class="rank-score">76</div></div>
+  <div class="rank-item"><div class="rank-pos">5</div><div class="rank-info"><div class="n">La Vitalicia</div><div class="d">B · Pago 18d · 78% CSAT</div></div><div class="rank-score">68</div></div>
+  <button class="btn sec full" style="margin-top:8px">📊 Ver análisis completo</button>
+</div>
+
+<!-- 7. AI Brain -->
+<div class="card brain">
+  <div class="card-h"><div class="num">7</div><h3>🧠 Motor IA Comparador</h3><span class="menu" style="color:#fff">⋯</span></div>
+  <div style="font-size:11px;opacity:.85;margin-bottom:10px">Análisis OCR + NLP + Reasoning</div>
+  <div class="stat"><span>Modelo</span><span class="v">GPT-4o + Vision</span></div>
+  <div class="stat"><span>Docs procesados hoy</span><span class="v">1,247</span></div>
+  <div class="stat"><span>Precisión OCR</span><span class="v">99.4%</span></div>
+  <div class="stat"><span>Tiempo análisis</span><span class="v">3.8s</span></div>
+  <div class="stat"><span>Reglas APS validadas</span><span class="v">187</span></div>
+  <div class="stat"><span>Idiomas</span><span class="v">ES · EN · PT</span></div>
+  <div style="margin-top:auto;padding-top:10px;border-top:1px solid rgba(255,255,255,.2);font-size:10px;opacity:.85">
+    Bases: Productos · Tarifarios · Normativa APS · Históricos
+  </div>
+</div>
+
+<!-- 8. Cotizadores Activos -->
+<div class="card">
+  <div class="card-h"><div class="num">8</div><h3>Cotizadores Activos</h3><span class="menu">⋯</span></div>
+  <div class="subtitle">Catálogo de cotizadores publicados</div>
+  <div class="list">
+    <div class="list-item"><span class="ic">❤️</span><div class="body"><div class="t">Vida Individual v3.2</div><div class="d">87 cotizaciones hoy</div></div><span class="badge green">Live</span></div>
+    <div class="list-item"><span class="ic">🚗</span><div class="body"><div class="t">Auto Particular v2.1</div><div class="d">142 cotizaciones</div></div><span class="badge green">Live</span></div>
+    <div class="list-item"><span class="ic">🏠</span><div class="body"><div class="t">Hogar Premium v1.8</div><div class="d">34 cotizaciones</div></div><span class="badge green">Live</span></div>
+    <div class="list-item warn"><span class="ic">🏥</span><div class="body"><div class="t">Salud Familiar v1.0</div><div class="d">Pendiente BRE</div></div><span class="badge amber">Borrador</span></div>
+    <div class="list-item"><span class="ic">🛡️</span><div class="body"><div class="t">SOAT 2026</div><div class="d">23 cotizaciones</div></div><span class="badge blue">Beta</span></div>
+  </div>
+  <button class="btn full" style="margin-top:8px">+ Nuevo cotizador</button>
+</div>
+
+<!-- 9. Histórico Cotizaciones -->
+<div class="card">
+  <div class="card-h"><div class="num">9</div><h3>Histórico de Cotizaciones</h3><span class="menu">⋯</span></div>
+  <div class="subtitle">Últimas cotizaciones generadas · estado conversión</div>
+  <div class="table-wrap" style="max-height:240px">
+    <table>
+      <thead><tr><th>ID</th><th>Cliente</th><th>Ramo</th><th>Estado</th></tr></thead>
+      <tbody>
+        <tr><td>#1234</td><td>M. Mendoza</td><td>Vida</td><td><span class="badge green">Emitida</span></td></tr>
+        <tr><td>#1233</td><td>J. Pérez</td><td>Auto</td><td><span class="badge amber">Pend.</span></td></tr>
+        <tr><td>#1232</td><td>A. Salinas</td><td>Hogar</td><td><span class="badge green">Emitida</span></td></tr>
+        <tr><td>#1231</td><td>L. Rojas</td><td>Vida</td><td><span class="badge red">Rechaz.</span></td></tr>
+        <tr><td>#1230</td><td>C. Vega</td><td>SOAT</td><td><span class="badge green">Emitida</span></td></tr>
+        <tr><td>#1229</td><td>R. Torres</td><td>Auto</td><td><span class="badge blue">Cotiz.</span></td></tr>
+        <tr><td>#1228</td><td>M. Cruz</td><td>Salud</td><td><span class="badge green">Emitida</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 10. Conexión APIs -->
+<div class="card">
+  <div class="card-h"><div class="num">10</div><h3>APIs · Aseguradoras Conectadas</h3><span class="menu">⋯</span></div>
+  <div class="subtitle">Tarifas en tiempo real · 12 compañías integradas</div>
+  <div class="opt-row"><span>🏢 El Sol Seguros</span><div><span class="badge green">240ms</span></div></div>
+  <div class="opt-row"><span>🏢 Pacífico Seguros</span><div><span class="badge green">180ms</span></div></div>
+  <div class="opt-row"><span>🏢 Bolivia Seguros</span><div><span class="badge green">320ms</span></div></div>
+  <div class="opt-row"><span>🏢 Nacional Seguros</span><div><span class="badge amber">680ms</span></div></div>
+  <div class="opt-row"><span>🏢 La Vitalicia</span><div><span class="badge red">Down</span></div></div>
+  <div class="opt-row"><span>🏢 BISA Seguros</span><div><span class="badge green">280ms</span></div></div>
+  <div class="mini-row"><span class="l">Uptime promedio</span><span class="v">99.2%</span></div>
+  <div class="mini-row"><span class="l">Llamadas hoy</span><span class="v">8,472</span></div>
+</div>
+
+<!-- 11. Validación BRE / Reglas -->
+<div class="card">
+  <div class="card-h"><div class="num">11</div><h3>Validación BRE · Reglas de Negocio</h3><span class="menu">⋯</span></div>
+  <div class="subtitle">Validación automática previa a publicación de cotizadores</div>
+  <div class="opt-row"><span>Edad mín./máx. permitida</span><div class="switch on"></div></div>
+  <div class="opt-row"><span>Capital máximo retención</span><div class="switch on"></div></div>
+  <div class="opt-row"><span>Antecedentes médicos</span><div class="switch on"></div></div>
+  <div class="opt-row"><span>Restricciones geográficas</span><div class="switch on"></div></div>
+  <div class="opt-row"><span>Validación reaseguro</span><div class="switch on"></div></div>
+  <div class="opt-row"><span>Tope de comisión</span><div class="switch on"></div></div>
+  <div class="mini-row"><span class="l">Reglas activas</span><span class="v">187</span></div>
+  <div class="mini-row"><span class="l">Última actualización</span><span class="v">Hoy 14:32</span></div>
+  <button class="btn sec full" style="margin-top:8px">⚖️ Editor de reglas BRE</button>
+</div>
+
+<!-- 12. Plantillas PDF Regulatorias -->
+<div class="card">
+  <div class="card-h"><div class="num">12</div><h3>Plantillas PDF Regulatorias</h3><span class="menu">⋯</span></div>
+  <div class="subtitle">Formatos validados por APS · listos para entrega</div>
+  <div class="doc-grid" style="grid-template-columns:1fr 1fr">
+    <div class="doc-thumb"><div class="ic">📄</div><div class="name">APS-Cuadro Vida</div>v2.4</div>
+    <div class="doc-thumb"><div class="ic">📄</div><div class="name">APS-Cuadro Auto</div>v3.1</div>
+    <div class="doc-thumb"><div class="ic">📄</div><div class="name">APS-Cuadro Hogar</div>v1.8</div>
+    <div class="doc-thumb"><div class="ic">📄</div><div class="name">APS-Cuadro Salud</div>v2.0</div>
+  </div>
+  <div class="mini-row"><span class="l">Plantillas activas</span><span class="v">14</span></div>
+  <div class="mini-row"><span class="l">PDFs generados hoy</span><span class="v">142</span></div>
+  <div class="mini-row"><span class="l">Cumplimiento APS</span><span class="v" style="color:#15803d">100%</span></div>
+  <button class="btn full" style="margin-top:8px">+ Nueva plantilla</button>
+</div>
+
+<!-- 13. Análisis Conversión -->
+<div class="card">
+  <div class="card-h"><div class="num">13</div><h3>Análisis Conversión por Ramo</h3><span class="menu">⋯</span></div>
+  <div class="subtitle">Tasa de conversión cotización → emisión</div>
+  <div style="margin:8px 0">
+    <div class="mini-row"><span class="l">❤️ Vida</span><span class="v">42%</span></div>
+    <div class="progress"><div style="width:42%"></div></div>
+  </div>
+  <div style="margin:8px 0">
+    <div class="mini-row"><span class="l">🚗 Auto</span><span class="v">38%</span></div>
+    <div class="progress"><div style="width:38%"></div></div>
+  </div>
+  <div style="margin:8px 0">
+    <div class="mini-row"><span class="l">🏠 Hogar</span><span class="v">28%</span></div>
+    <div class="progress"><div style="width:28%"></div></div>
+  </div>
+  <div style="margin:8px 0">
+    <div class="mini-row"><span class="l">🏥 Salud</span><span class="v">22%</span></div>
+    <div class="progress"><div style="width:22%"></div></div>
+  </div>
+  <div style="margin:8px 0">
+    <div class="mini-row"><span class="l">🛡️ SOAT</span><span class="v">67%</span></div>
+    <div class="progress"><div style="width:67%"></div></div>
+  </div>
+  <button class="btn sec full" style="margin-top:8px">📊 Ver dashboard completo</button>
+</div>
+
+<!-- 14. Alertas IA -->
+<div class="card">
+  <div class="card-h"><div class="num">14</div><h3>Alertas IA · Acción Requerida</h3><span class="menu">⋯</span></div>
+  <div class="subtitle">Discrepancias críticas detectadas en cuadros y pólizas</div>
+  <div class="list">
+    <div class="list-item alert"><span class="ic">🚨</span><div class="body"><div class="t">Póliza #4432 · Cobertura -10%</div><div class="d">Slip $100k vs Póliza $90k</div></div><span class="badge red">Crítica</span></div>
+    <div class="list-item alert"><span class="ic">🚨</span><div class="body"><div class="t">Póliza #4419 · Beneficiarios</div><div class="d">Falta firma 2/3</div></div><span class="badge red">Crítica</span></div>
+    <div class="list-item warn"><span class="ic">⚠️</span><div class="body"><div class="t">Cuadro #1782 · Comisión</div><div class="d">+2pts sobre tope APS</div></div><span class="badge amber">Menor</span></div>
+    <div class="list-item warn"><span class="ic">⚠️</span><div class="body"><div class="t">Cotizador Salud · BRE</div><div class="d">3 reglas sin validar</div></div><span class="badge amber">Pend.</span></div>
+    <div class="list-item"><span class="ic">ℹ️</span><div class="body"><div class="t">API Nacional · latencia alta</div><div class="d">680ms (umbral 500ms)</div></div><span class="badge blue">Info</span></div>
+  </div>
+  <button class="btn red full" style="margin-top:8px">🚨 Resolver críticas (2)</button>
+</div>
+
+<!-- 15. Configuración -->
+<div class="card">
+  <div class="card-h"><div class="num">15</div><h3>Configuración Global</h3><span class="menu">⋯</span></div>
+  <div class="subtitle">Preferencias del módulo de cotizadores</div>
+  <div class="opt-row"><span>📱 Cotizar por WhatsApp</span><div class="switch on"></div></div>
+  <div class="opt-row"><span>🌐 Cotizador web público</span><div class="switch on"></div></div>
+  <div class="opt-row"><span>🤖 IA recomendar mejor oferta</span><div class="switch on"></div></div>
+  <div class="opt-row"><span>📊 Auto-comparar slip vs póliza</span><div class="switch on"></div></div>
+  <div class="opt-row"><span>📧 Enviar PDF al cliente</span><div class="switch on"></div></div>
+  <div class="opt-row"><span>⚖️ Validación BRE obligatoria</span><div class="switch on"></div></div>
+  <div class="opt-row"><span>🔔 Notificar discrepancias</span><div class="switch on"></div></div>
+  <div class="opt-row"><span>💾 Guardar en CRM auto.</span><div class="switch on"></div></div>
+</div>
+
+<!-- 16. Auditoría -->
+<div class="card">
+  <div class="card-h"><div class="num">16</div><h3>Auditoría · Trazabilidad APS</h3><span class="menu">⋯</span></div>
+  <div class="subtitle">Log completo de cotizaciones y comparativos</div>
+  <div class="mini-row"><span class="l">Cotizaciones archivadas</span><span class="v">147,283</span></div>
+  <div class="mini-row"><span class="l">Cuadros generados (mes)</span><span class="v">3,487</span></div>
+  <div class="mini-row"><span class="l">Validaciones BRE</span><span class="v">12,847</span></div>
+  <div class="mini-row"><span class="l">Discrepancias detectadas</span><span class="v" style="color:#a16207">187</span></div>
+  <div class="mini-row"><span class="l">Resueltas</span><span class="v" style="color:#15803d">164 (88%)</span></div>
+  <div class="mini-row"><span class="l">Retención (años)</span><span class="v">7</span></div>
+  <div class="mini-row"><span class="l">Encriptación</span><span class="v">AES-256</span></div>
+  <div class="mini-row"><span class="l">Reportes APS</span><span class="v">Auto · mensual</span></div>
+  <button class="btn sec full" style="margin-top:8px">📄 Exportar log auditoría</button>
+</div>
+
+</div>
+
+<div class="footer">
+  <div class="meta">🟢 Sistema operativo · 12 APIs conectadas · Última sincronización: hace 6s · v3.4.0</div>
+  <div class="acts">
+    <button class="btn">💾 Guardar</button>
+    <button class="btn">📊 Exportar reporte</button>
+    <button class="btn">⚙️ Configuración</button>
+  </div>
+</div>
+
+</div>
+
+<script>
+document.querySelectorAll('.switch').forEach(s=>s.addEventListener('click',()=>s.classList.toggle('on')));
+// responsive cot-split
+function adjust(){
+  document.querySelectorAll('.cot-split').forEach(el=>{
+    if(window.innerWidth<768) el.style.gridTemplateColumns='1fr';
+    else el.style.gridTemplateColumns='1fr 1fr';
+  });
+}
+adjust();window.addEventListener('resize',adjust);
+</script>
+</body>
+</html>

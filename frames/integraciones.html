@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Hub de Integraciones · Interseguros</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --green-900:#1f3a1f;--green-800:#2d5a2d;--green-700:#3a6b3a;--green-600:#4a8a4a;
+    --green-500:#5fa55f;--green-100:#e8f0e8;--green-50:#f4f8f4;
+    --gold:#c9a227;--amber:#f59e0b;--red:#dc2626;--blue:#2563eb;--purple:#7c3aed;
+    --bg:#f1f5ee;--card:#fff;--ink:#1a2f1a;--muted:#6b7d6b;--border:#dbe5db;
+  }
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    background:var(--bg);color:var(--ink);min-height:100vh;padding:16px}
+  .header{background:var(--green-800);color:#fff;padding:18px 22px;border-radius:12px;
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px}
+  .header h1{font-size:20px;letter-spacing:.5px}
+  .header-actions{display:flex;gap:10px;flex-wrap:wrap}
+  .btn{background:#fff;color:var(--green-800);border:none;padding:9px 14px;border-radius:8px;
+    font-weight:600;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+  .btn-primary{background:var(--gold);color:#fff}
+  .btn-ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4)}
+  .btn-sm{padding:6px 10px;font-size:12px}
+
+  .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px}
+  .kpi{background:var(--card);border-radius:12px;padding:14px;border-left:4px solid var(--green-700);
+    box-shadow:0 1px 3px rgba(0,0,0,.05)}
+  .kpi-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+  .kpi-value{font-size:22px;font-weight:700;color:var(--green-900);margin-top:6px}
+  .kpi-delta{font-size:11px;margin-top:4px;display:inline-block;padding:2px 6px;border-radius:10px;font-weight:600}
+  .delta-up{background:#d1fae5;color:#065f46}
+  .delta-down{background:#fee2e2;color:#991b1b}
+  .kpi.warn{border-left-color:var(--amber)}
+  .kpi.danger{border-left-color:var(--red)}
+  .kpi.gold{border-left-color:var(--gold)}
+  .kpi.purple{border-left-color:var(--purple)}
+
+  .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px;margin-bottom:16px}
+  .card{background:var(--card);border-radius:12px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+  .card h3{font-size:13px;color:var(--green-800);text-transform:uppercase;letter-spacing:.5px;
+    margin-bottom:12px;display:flex;align-items:center;gap:8px;justify-content:space-between}
+  .card h3 .ttl{display:flex;align-items:center;gap:8px}
+  .pill{font-size:10px;padding:3px 8px;border-radius:10px;background:var(--green-100);color:var(--green-800);font-weight:600}
+  .pill.live{background:#d1fae5;color:#065f46}
+  .pill.dev{background:#fef3c7;color:#92400e}
+
+  .col-3{grid-column:span 3}.col-4{grid-column:span 4}.col-6{grid-column:span 6}.col-8{grid-column:span 8}.col-12{grid-column:span 12}
+
+  /* Cloud Broker flow */
+  .flow-cb{background:var(--green-50);border-radius:10px;padding:14px;display:flex;align-items:center;
+    justify-content:space-between;gap:10px;min-height:240px;position:relative}
+  .flow-side{background:var(--green-700);color:#fff;border-radius:10px;padding:14px 10px;text-align:center;
+    width:30%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:200px}
+  .flow-side .ic{font-size:32px}
+  .flow-side .nm{font-size:12px;font-weight:700;line-height:1.2}
+  .flow-mid{flex:1;display:flex;flex-direction:column;gap:8px;align-items:center;font-size:11px;color:var(--green-900);text-align:center}
+  .flow-mid .step{display:flex;align-items:center;gap:6px;background:#fff;padding:6px 10px;border-radius:14px;
+    border:1px solid var(--green-100);font-weight:600;width:100%;justify-content:center}
+  .hash{display:inline-block;background:var(--green-700);color:#fff;font-size:9px;padding:2px 6px;border-radius:8px;font-family:monospace}
+  .flow-bal{position:absolute;bottom:10px;left:14px;right:14px;background:#fff;border-radius:6px;padding:6px 10px;
+    font-size:11px;color:var(--green-800);font-weight:600;display:flex;align-items:center;gap:6px}
+
+  /* SIAT card */
+  .siat-block{background:var(--green-50);border-radius:10px;padding:12px;margin-bottom:10px}
+  .siat-row{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:12px}
+  .siat-row .ic{font-size:14px;color:var(--green-700)}
+  .siat-row .lbl{flex:1;color:var(--ink);font-weight:600}
+  .ok-tick{color:var(--green-light,#22c55e);font-weight:700}
+  .siat-status{background:var(--green-700);color:#fff;padding:6px 10px;border-radius:6px;font-size:11px;font-weight:700;text-align:center}
+  .field-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:11.5px}
+  .field-row .lbl{min-width:55px;font-weight:600;color:var(--green-900)}
+  .field-row select,.field-row input{flex:1;padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:11px;background:#fff}
+
+  /* APS card */
+  .aps-flow{display:flex;flex-direction:column;align-items:center;gap:8px;padding:8px}
+  .aps-step{background:var(--green-50);border:1px solid var(--green-100);padding:8px 12px;border-radius:8px;
+    width:100%;text-align:center;font-size:12px;font-weight:700;color:var(--green-900);display:flex;align-items:center;justify-content:center;gap:6px}
+  .aps-arrow{font-size:14px;color:var(--green-600)}
+  .aps-report{background:#fff;border:1px solid var(--border);border-radius:8px;padding:10px;margin-top:10px;font-size:11.5px}
+  .aps-report-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+  .aps-report-head b{color:var(--green-900)}
+  .badge-sent{background:#d1fae5;color:#065f46;padding:2px 6px;border-radius:8px;font-size:10px;font-weight:700}
+
+  /* Middleware card */
+  .mw-block{background:var(--green-50);border-radius:8px;padding:10px;margin-bottom:10px}
+  .mw-title{font-size:11px;font-weight:700;color:var(--green-800);text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px;justify-content:space-between}
+  .swagger-bar{background:#85ea2d;color:#173647;padding:8px 12px;border-radius:6px;font-weight:700;font-size:12px;display:flex;align-items:center;gap:8px}
+  .wh-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:11.5px}
+  .wh-row .lbl{min-width:78px;font-weight:600;color:var(--green-900)}
+  .wh-row input{flex:1;padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:11px;background:#fff;color:var(--muted)}
+  .toggle-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:11.5px;font-weight:600}
+  .toggle{width:34px;height:18px;background:var(--green-700);border-radius:10px;position:relative;cursor:pointer}
+  .toggle::after{content:"";width:14px;height:14px;background:#fff;border-radius:50%;position:absolute;top:2px;right:2px;transition:.2s}
+  .toggle.off{background:#cbd5e1}
+  .toggle.off::after{right:18px}
+
+  /* Tabla */
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  thead th{background:var(--green-800);color:#fff;padding:10px 8px;text-align:left;font-weight:600;font-size:11px;
+    text-transform:uppercase;letter-spacing:.3px}
+  thead th:first-child{border-radius:6px 0 0 0}
+  thead th:last-child{border-radius:0 6px 0 0}
+  tbody td{padding:10px 8px;border-bottom:1px solid var(--border)}
+  tbody tr:hover{background:var(--green-50)}
+  .td-doc{font-weight:600;color:var(--green-800);display:flex;align-items:center;gap:8px}
+  .logo-dot{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    color:#fff;font-size:12px;font-weight:700}
+  .table-wrap{overflow-x:auto}
+  .badge{display:inline-block;padding:3px 8px;border-radius:10px;font-size:10px;font-weight:700;text-transform:uppercase}
+  .b-ok{background:#d1fae5;color:#065f46}
+  .b-warn{background:#fef3c7;color:#92400e}
+  .b-err{background:#fee2e2;color:#991b1b}
+  .b-curr{background:var(--green-100);color:var(--green-800)}
+  .flow-cell{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--ink);flex-wrap:wrap}
+  .flow-cell .arrow{color:var(--green-600);font-weight:700}
+
+  /* Marketplace de conectores */
+  .mp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+  .mp-card{background:var(--green-50);border:1px solid var(--green-100);border-radius:10px;padding:12px;text-align:center;
+    cursor:pointer;transition:all .15s;position:relative}
+  .mp-card:hover{transform:translateY(-2px);box-shadow:0 4px 10px rgba(0,0,0,.08);border-color:var(--green-600)}
+  .mp-icon{width:40px;height:40px;border-radius:10px;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;
+    color:#fff;font-size:18px;font-weight:700}
+  .mp-name{font-size:11.5px;font-weight:700;color:var(--green-900);margin-bottom:2px;line-height:1.2}
+  .mp-desc{font-size:10px;color:var(--muted);line-height:1.3}
+  .mp-status{position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:50%}
+  .ms-on{background:#22c55e}
+  .ms-off{background:#cbd5e1}
+
+  /* Logs */
+  .log-row{display:flex;gap:10px;padding:8px;background:var(--green-50);border-radius:6px;margin-bottom:6px;
+    font-family:'SF Mono',Monaco,monospace;font-size:11px;border-left:3px solid var(--green-600)}
+  .log-row.err{border-left-color:var(--red);background:#fef2f2}
+  .log-row.warn{border-left-color:var(--amber);background:#fffbeb}
+  .log-time{color:var(--muted);min-width:55px}
+  .log-method{font-weight:700;min-width:45px}
+  .lm-get{color:var(--blue)}.lm-post{color:var(--green-700)}.lm-put{color:var(--gold)}.lm-del{color:var(--red)}
+  .log-path{flex:1;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .log-status{font-weight:700;min-width:35px;text-align:right}
+  .ls-ok{color:var(--green-700)}.ls-err{color:var(--red)}
+
+  /* Alertas + IA */
+  .alert-row{display:flex;gap:10px;align-items:flex-start;padding:10px;border-radius:8px;margin-bottom:8px}
+  .alert-row.warn{background:#fffbeb;border-left:3px solid var(--amber)}
+  .alert-row.danger{background:#fef2f2;border-left:3px solid var(--red)}
+  .alert-row.info{background:#eff6ff;border-left:3px solid var(--blue)}
+  .alert-row.success{background:#ecfdf5;border-left:3px solid #10b981}
+  .alert-icon{font-size:16px}
+  .alert-body{flex:1;font-size:12px}
+  .alert-body strong{display:block;color:var(--green-900);font-size:12.5px;margin-bottom:2px}
+
+  .ia-box{background:linear-gradient(135deg,var(--green-50),#fff);border:1px solid var(--green-100);
+    border-radius:10px;padding:14px}
+  .ia-box textarea{width:100%;border:1px solid var(--border);border-radius:8px;padding:10px;
+    font-family:inherit;font-size:12.5px;resize:vertical;min-height:60px;background:#fff}
+  .ia-suggest{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .ia-chip{font-size:10.5px;padding:5px 10px;border-radius:14px;background:#fff;border:1px solid var(--green-100);
+    color:var(--green-800);cursor:pointer;font-weight:500}
+  .ia-chip:hover{background:var(--green-100)}
+
+  @media (max-width:1200px){
+    .kpis{grid-template-columns:repeat(3,1fr)}
+    .col-3,.col-4,.col-6,.col-8{grid-column:span 12}
+  }
+  @media (max-width:768px){
+    body{padding:10px}
+    .header{padding:14px;flex-direction:column;align-items:stretch}
+    .header h1{font-size:16px;text-align:center}
+    .header-actions{justify-content:center}
+    .kpis{grid-template-columns:repeat(2,1fr)}
+    .flow-cb{flex-direction:column;min-height:auto}
+    .flow-side{width:100%;min-height:auto;padding:10px}
+  }
+  @media (max-width:480px){
+    .kpis{grid-template-columns:1fr}
+    .kpi-value{font-size:18px}
+    thead th,tbody td{padding:8px 6px;font-size:11px}
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🔌 HUB CENTRAL DE INTEGRACIONES · ECOSISTEMA BOLIVIANO</h1>
+  <div class="header-actions">
+    <button class="btn btn-primary">＋ Añadir Nueva Integración (API Key)</button>
+    <button class="btn btn-ghost">⚙️ Configurar Webhooks Globales</button>
+  </div>
+</div>
+
+<!-- KPIs -->
+<div class="kpis">
+  <div class="kpi">
+    <div class="kpi-label">Integraciones Activas</div>
+    <div class="kpi-value">28</div>
+    <span class="kpi-delta delta-up">▲ 4 nuevas este mes</span>
+  </div>
+  <div class="kpi gold">
+    <div class="kpi-label">Llamadas API (24h)</div>
+    <div class="kpi-value">142.8K</div>
+    <span class="kpi-delta delta-up">▲ 12% vs ayer</span>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Uptime Promedio</div>
+    <div class="kpi-value">99.94%</div>
+    <span class="kpi-delta delta-up">SLA cumplido</span>
+  </div>
+  <div class="kpi warn">
+    <div class="kpi-label">Webhooks Pendientes</div>
+    <div class="kpi-value">17</div>
+    <span class="kpi-delta delta-down">Reintento automático</span>
+  </div>
+  <div class="kpi danger">
+    <div class="kpi-label">Errores Críticos (1h)</div>
+    <div class="kpi-value">3</div>
+    <span class="kpi-delta delta-down">Banco Unión timeout</span>
+  </div>
+</div>
+
+<!-- 4 paneles principales -->
+<div class="grid">
+  <!-- Cloud Broker -->
+  <div class="card col-3">
+    <h3><span class="ttl">☁️ CLOUD BROKER · CONTABILIDAD</span><span class="pill live">Editable</span></h3>
+    <div class="flow-cb">
+      <div class="flow-side">
+        <div class="ic">⚙️</div>
+        <div class="nm">MOTOR DE OPERACIONES INTERSEGUROS</div>
+      </div>
+      <div class="flow-mid">
+        <div class="step">⚙ Disparos contables<br>automáticos <span class="hash">3A5A28</span></div>
+        <div class="step">📒 Asientos en<br>tiempo real <span class="hash">3A5A28</span></div>
+        <div class="step">🔄 Reconciliación<br>diaria ✓ <span class="hash">3A5A28</span></div>
+      </div>
+      <div class="flow-side" style="background:var(--green-800)">
+        <div class="ic">🗄️</div>
+        <div class="nm">CLOUD BROKER CONTABLE</div>
+      </div>
+      <div class="flow-bal">💰 Balance Sincronizado: BOB 0.00 ✓</div>
+    </div>
+  </div>
+
+  <!-- SIAT -->
+  <div class="card col-3">
+    <h3><span class="ttl">🧾 SIAT · FACT. ELECTRÓNICA SIN</span><span class="pill live">Online</span></h3>
+    <div class="siat-block">
+      <div class="field-row">
+        <span class="lbl">👤 Emisión:</span>
+        <select><option>Seguros Vida</option><option>Interseguros</option></select>
+      </div>
+    </div>
+    <div class="siat-block">
+      <div style="font-weight:700;color:var(--green-900);font-size:12px;margin-bottom:6px">Seguros Vida</div>
+      <div class="siat-row"><span class="ic">📧</span><span class="lbl">Enviar al Asegurado</span><span class="ok-tick">✓</span></div>
+      <div class="siat-row"><span class="ic">💬</span><span class="lbl">Enviar WhatsApp</span><span class="ok-tick">✓</span></div>
+      <div class="siat-status">✓ SIN Validado: CUFD/CUIS OK</div>
+    </div>
+    <div class="siat-block">
+      <div style="font-weight:700;color:var(--green-900);font-size:12px;margin-bottom:6px">💬 Enviar WhatsApp</div>
+      <div class="field-row"><span class="lbl">Empresa:</span><select><option>Seguros Vida</option></select></div>
+      <div class="field-row"><span class="lbl">Tipo:</span><input value="Editable" /></div>
+      <div class="field-row"><span class="lbl">Validado:</span><input value="Editable" /></div>
+    </div>
+  </div>
+
+  <!-- APS -->
+  <div class="card col-3">
+    <h3><span class="ttl">🏛 AXON &amp; APS · NORMATIVA</span><span class="pill">Bolivia</span></h3>
+    <div class="siat-block">
+      <div class="field-row"><span class="lbl">Norma:</span><select><option>APS Normativa Dropdown</option><option>UIF · PLD/FT</option><option>ASFI Cliente</option></select></div>
+    </div>
+    <div class="aps-flow">
+      <div class="aps-step">✕ AXON Connect</div>
+      <div class="aps-arrow">↓</div>
+      <div class="aps-step">📄 Reporte Automático<br>(APS Plazos)</div>
+      <div class="aps-arrow">↓</div>
+      <div class="aps-step">📤 Envío Datos UIF</div>
+    </div>
+    <div class="aps-report">
+      <div class="aps-report-head"><b>Reporte Tipo Report</b><span class="hash">3A5A38</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:4px">
+        <span>Última emisión</span><b style="color:var(--green-900)">07/06/2021</b>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted)">
+        <span>Estado</span><span class="badge-sent">[Enviado]</span>
+      </div>
+    </div>
+    <div class="aps-report" style="margin-top:8px">
+      <div class="aps-report-head"><b>Reporte Field</b><span class="hash">3A5A28</span></div>
+      <div style="display:flex;gap:6px;margin-top:6px">
+        <input style="flex:1;padding:5px;border:1px solid var(--border);border-radius:4px;font-size:11px" placeholder="Campo 1"/>
+        <input style="flex:1;padding:5px;border:1px solid var(--border);border-radius:4px;font-size:11px" placeholder="Campo 2"/>
+        <input style="flex:1;padding:5px;border:1px solid var(--border);border-radius:4px;font-size:11px" placeholder="Campo 3"/>
+      </div>
+    </div>
+  </div>
+
+  <!-- Middleware -->
+  <div class="card col-3">
+    <h3><span class="ttl">⚡ MIDDLEWARE &amp; API REST</span><span class="pill dev">Developer</span></h3>
+    <div class="mw-block">
+      <select style="width:100%;padding:7px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:#fff;font-weight:600;color:var(--green-800)">
+        <option>API REST Documentada Dropdown</option>
+        <option>v2.4 (estable)</option>
+        <option>v3.0 (beta)</option>
+      </select>
+      <div class="swagger-bar" style="margin-top:8px"><span style="background:#fff;color:#85ea2d;padding:2px 6px;border-radius:4px;font-size:14px">{ }</span> Swagger / OpenAPI ⌄</div>
+    </div>
+    <div class="mw-block">
+      <div class="mw-title">Webhooks <span style="font-weight:400;color:var(--muted)">⋮</span></div>
+      <div class="wh-row"><span class="lbl">Webhook #1:</span><input value="https://erp.cliente.com/wh1" /></div>
+      <div class="wh-row"><span class="lbl">Webhook #2:</span><input placeholder="URL Target" /></div>
+      <div class="wh-row"><span class="lbl">Webhook #3:</span><input value="https://crm.cliente.com/wh3" /></div>
+      <div class="wh-row"><span class="lbl">Webhook #4:</span><input placeholder="URL Target" /></div>
+    </div>
+    <div class="toggle-row"><span>Webhooks Configurables</span><div class="toggle"></div></div>
+    <div class="toggle-row"><span>Sandbox Environment</span><div class="toggle"></div></div>
+    <div style="display:flex;gap:6px;margin-top:8px">
+      <div style="flex:1;height:30px;background:#eaf0ea;border-radius:6px"></div>
+      <div style="flex:1;height:30px;background:#fee2e2;border-radius:6px"></div>
+      <div style="flex:1;height:30px;background:var(--green-100);border-radius:6px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Marketplace de conectores -->
+<div class="grid">
+  <div class="card col-12">
+    <h3><span class="ttl">🛍 MARKETPLACE DE CONECTORES</span>
+      <span style="display:flex;gap:6px;align-items:center">
+        <input placeholder="🔍 Buscar conector..." style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px"/>
+        <button class="btn btn-sm" style="background:var(--green-700);color:#fff">＋ Solicitar</button>
+      </span>
+    </h3>
+    <div class="mp-grid">
+      <div class="mp-card"><span class="mp-status ms-on"></span><div class="mp-icon" style="background:#005baa">BU</div><div class="mp-name">Banco Unión</div><div class="mp-desc">Pasarela · Cobros</div></div>
+      <div class="mp-card"><span class="mp-status ms-on"></span><div class="mp-icon" style="background:#1f7a3a">BE</div><div class="mp-name">Banco Económico</div><div class="mp-desc">Pasarela · Cobros</div></div>
+      <div class="mp-card"><span class="mp-status ms-on"></span><div class="mp-icon" style="background:#c41e3a">BM</div><div class="mp-name">Banco Mercantil</div><div class="mp-desc">SFTP · Liquidación</div></div>
+      <div class="mp-card"><span class="mp-status ms-on"></span><div class="mp-icon" style="background:#0066cc">BG</div><div class="mp-name">Banco Ganadero</div><div class="mp-desc">API · Transferencias</div></div>
+      <div class="mp-card"><span class="mp-status ms-on"></span><div class="mp-icon" style="background:#f59e0b">BCP</div><div class="mp-name">BCP Bolivia</div><div class="mp-desc">QR · Cobranza</div></div>
+      <div class="mp-card"><span class="mp-status ms-on"></span><div class="mp-icon" style="background:#7c3aed">SIN</div><div class="mp-name">SIN / SIAT</div><div class="mp-desc">Fact. electrónica</div></div>
+      <div class="mp-card"><span class="mp-status ms-on"></span><div class="mp-icon" style="background:#dc2626">APS</div><div class="mp-name">APS</div><div class="mp-desc">Reportes regul.</div></div>
+      <div class="mp-card"><span class="mp-status ms-on"></span><div class="mp-icon" style="background:#1f3a1f">UIF</div><div class="mp-name">UIF</div><div class="mp-desc">PLD/FT</div></div>
+      <div class="mp-card"><span class="mp-status ms-on"></span><div class="mp-icon" style="background:#2563eb">ASF</div><div class="mp-name">ASFI</div><div class="mp-desc">Validación cliente</div></div>
+      <div class="mp-card"><span class="mp-status ms-on"></span><div class="mp-icon" style="background:#10b981">SEG</div><div class="mp-name">SEGIP</div><div class="mp-desc">Validación CI</div></div>
+      <div class="mp-card"><span class="mp-status ms-on"></span><div class="mp-icon" style="background:#25d366">WA</div><div class="mp-name">WhatsApp Biz</div><div class="mp-desc">Mensajería</div></div>
+      <div class="mp-card"><span class="mp-status ms-on"></span><div class="mp-icon" style="background:#ea4335">GM</div><div class="mp-name">Gmail / SMTP</div><div class="mp-desc">Correo</div></div>
+      <div class="mp-card"><span class="mp-status ms-on"></span><div class="mp-icon" style="background:#0ea5e9">SMS</div><div class="mp-name">Twilio SMS</div><div class="mp-desc">Mensajería</div></div>
+      <div class="mp-card"><span class="mp-status ms-on"></span><div class="mp-icon" style="background:#f97316">PBX</div><div class="mp-name">PBX / IVR</div><div class="mp-desc">Telefonía IA</div></div>
+      <div class="mp-card"><span class="mp-status ms-on"></span><div class="mp-icon" style="background:#6366f1">PBI</div><div class="mp-name">Power BI</div><div class="mp-desc">Embed analytics</div></div>
+      <div class="mp-card"><span class="mp-status ms-off"></span><div class="mp-icon" style="background:#94a3b8">SAP</div><div class="mp-name">SAP ERP</div><div class="mp-desc">Disponible</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Panel de orquestación -->
+<div class="grid">
+  <div class="card col-12">
+    <h3><span class="ttl">📋 PANEL DE ORQUESTACIÓN DE INTEGRACIONES FINANCIERAS</span>
+      <span style="display:flex;gap:6px">
+        <button class="btn btn-sm" style="background:var(--green-100);color:var(--green-800)">Filtros</button>
+        <button class="btn btn-sm" style="background:var(--green-100);color:var(--green-800)">⬇ Exportar</button>
+      </span>
+    </h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Pasarela / Banco</th><th>Tipo</th><th>Sucursal</th><th>Cuenta Integrada</th>
+            <th>Estado</th><th>Flujo de Fondos</th><th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><div class="td-doc"><div class="logo-dot" style="background:#1f7a3a">BE</div>Banco Económico</div></td>
+            <td><span class="badge b-curr">Banco</span></td>
+            <td>BOB · USD</td>
+            <td>Banco Económico Connect <span class="hash">3A5A28</span></td>
+            <td><span class="badge b-ok">✓ Conectado</span></td>
+            <td><div class="flow-cell">Pasarela de Pago <span class="arrow">→</span> <span class="hash">3A5A28</span> ✓ <span class="arrow">→</span> Cuenta Integrada Cía. Seguros Vida</div></td>
+            <td><button class="btn btn-sm" style="background:var(--green-700);color:#fff">⚙ Configura</button> <button class="btn btn-sm" style="background:var(--green-100);color:var(--green-800)">👁 Logs</button></td>
+          </tr>
+          <tr>
+            <td><div class="td-doc"><div class="logo-dot" style="background:#005baa">BU</div>Banco Unión</div></td>
+            <td><span class="badge b-curr">Banco</span></td>
+            <td>BOB · USD</td>
+            <td>BU Pasarela QR <span class="hash">3A5A29</span></td>
+            <td><span class="badge b-warn">⚠ Latencia</span></td>
+            <td><div class="flow-cell">QR Cobro <span class="arrow">→</span> <span class="hash">3A5A29</span> ⚠ <span class="arrow">→</span> Cuenta Recaudadora Interseguros</div></td>
+            <td><button class="btn btn-sm" style="background:var(--green-700);color:#fff">⚙ Configura</button> <button class="btn btn-sm" style="background:var(--green-100);color:var(--green-800)">👁 Logs</button></td>
+          </tr>
+          <tr>
+            <td><div class="td-doc"><div class="logo-dot" style="background:#c41e3a">BM</div>Banco Mercantil</div></td>
+            <td><span class="badge b-curr">SFTP</span></td>
+            <td>BOB</td>
+            <td>BMSC Liquidaciones <span class="hash">3B0712</span></td>
+            <td><span class="badge b-ok">✓ Conectado</span></td>
+            <td><div class="flow-cell">Archivo plano <span class="arrow">→</span> ETL <span class="arrow">→</span> Cloud Broker <span class="arrow">→</span> Conciliación auto</div></td>
+            <td><button class="btn btn-sm" style="background:var(--green-700);color:#fff">⚙ Configura</button> <button class="btn btn-sm" style="background:var(--green-100);color:var(--green-800)">👁 Logs</button></td>
+          </tr>
+          <tr>
+            <td><div class="td-doc"><div class="logo-dot" style="background:#0066cc">BG</div>Banco Ganadero</div></td>
+            <td><span class="badge b-curr">API</span></td>
+            <td>BOB · USD</td>
+            <td>BG API REST v2 <span class="hash">3B0815</span></td>
+            <td><span class="badge b-ok">✓ Conectado</span></td>
+            <td><div class="flow-cell">Transferencias <span class="arrow">→</span> Webhook <span class="arrow">→</span> Cuenta operativa</div></td>
+            <td><button class="btn btn-sm" style="background:var(--green-700);color:#fff">⚙ Configura</button> <button class="btn btn-sm" style="background:var(--green-100);color:var(--green-800)">👁 Logs</button></td>
+          </tr>
+          <tr>
+            <td><div class="td-doc"><div class="logo-dot" style="background:#f59e0b">BCP</div>BCP Bolivia</div></td>
+            <td><span class="badge b-curr">QR</span></td>
+            <td>BOB</td>
+            <td>BCP QR Simple <span class="hash">3B0901</span></td>
+            <td><span class="badge b-err">✕ Error</span></td>
+            <td><div class="flow-cell">QR <span class="arrow">→</span> ✕ Token expirado <span class="arrow">→</span> Pendiente reconexión</div></td>
+            <td><button class="btn btn-sm" style="background:var(--red);color:#fff">↻ Reconectar</button> <button class="btn btn-sm" style="background:var(--green-100);color:var(--green-800)">👁 Logs</button></td>
+          </tr>
+          <tr>
+            <td><div class="td-doc"><div class="logo-dot" style="background:#7c3aed">SIN</div>SIN / SIAT</div></td>
+            <td><span class="badge b-curr">SOAP</span></td>
+            <td>Nacional</td>
+            <td>SIAT Producción <span class="hash">3B1001</span></td>
+            <td><span class="badge b-ok">✓ Conectado</span></td>
+            <td><div class="flow-cell">Emisión <span class="arrow">→</span> CUFD/CUIS <span class="arrow">→</span> ✓ Validado <span class="arrow">→</span> Cliente</div></td>
+            <td><button class="btn btn-sm" style="background:var(--green-700);color:#fff">⚙ Configura</button> <button class="btn btn-sm" style="background:var(--green-100);color:var(--green-800)">👁 Logs</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Logs en tiempo real + Alertas + IA -->
+<div class="grid">
+  <div class="card col-4">
+    <h3><span class="ttl">📜 LOGS API EN TIEMPO REAL</span><span class="pill live">● Live</span></h3>
+    <div class="log-row"><span class="log-time">14:32:18</span><span class="log-method lm-post">POST</span><span class="log-path">/banco-economico/payments/charge</span><span class="log-status ls-ok">200</span></div>
+    <div class="log-row"><span class="log-time">14:32:15</span><span class="log-method lm-get">GET</span><span class="log-path">/siat/cufd/validate</span><span class="log-status ls-ok">200</span></div>
+    <div class="log-row warn"><span class="log-time">14:32:11</span><span class="log-method lm-post">POST</span><span class="log-path">/banco-union/qr/generate</span><span class="log-status ls-ok">202</span></div>
+    <div class="log-row"><span class="log-time">14:32:08</span><span class="log-method lm-put">PUT</span><span class="log-path">/aps/reporte/upload</span><span class="log-status ls-ok">201</span></div>
+    <div class="log-row err"><span class="log-time">14:32:02</span><span class="log-method lm-post">POST</span><span class="log-path">/bcp/qr/charge</span><span class="log-status ls-err">401</span></div>
+    <div class="log-row"><span class="log-time">14:31:58</span><span class="log-method lm-get">GET</span><span class="log-path">/segip/ci/validate</span><span class="log-status ls-ok">200</span></div>
+    <div class="log-row"><span class="log-time">14:31:54</span><span class="log-method lm-post">POST</span><span class="log-path">/whatsapp/messages/send</span><span class="log-status ls-ok">200</span></div>
+    <div class="log-row"><span class="log-time">14:31:50</span><span class="log-method lm-post">POST</span><span class="log-path">/cloud-broker/journal-entry</span><span class="log-status ls-ok">200</span></div>
+    <div style="margin-top:10px;display:flex;gap:6px">
+      <button class="btn btn-sm" style="background:var(--green-100);color:var(--green-800);flex:1">⏸ Pausar</button>
+      <button class="btn btn-sm" style="background:var(--green-100);color:var(--green-800);flex:1">⬇ Descargar</button>
+    </div>
+  </div>
+
+  <div class="card col-4">
+    <h3><span class="ttl">🔔 ALERTAS DE INTEGRACIONES</span><span class="pill">5 activas</span></h3>
+    <div class="alert-row danger">
+      <span class="alert-icon">🔥</span>
+      <div class="alert-body"><strong>BCP Bolivia · token OAuth expirado</strong>
+        Reconexión necesaria · 23 cobros QR fallidos en última hora</div>
+    </div>
+    <div class="alert-row warn">
+      <span class="alert-icon">⚠</span>
+      <div class="alert-body"><strong>Banco Unión · latencia &gt;3s</strong>
+        Sobrepasa SLA · monitoreando degradación del servicio</div>
+    </div>
+    <div class="alert-row warn">
+      <span class="alert-icon">📤</span>
+      <div class="alert-body"><strong>17 webhooks en cola de reintento</strong>
+        ERP cliente devuelve 503 · próximo intento en 5 min</div>
+    </div>
+    <div class="alert-row info">
+      <span class="alert-icon">🔄</span>
+      <div class="alert-body"><strong>Mantenimiento programado · APS</strong>
+        Sábado 27/Abr 02:00–04:00 · reportes en cola se envían después</div>
+    </div>
+    <div class="alert-row success">
+      <span class="alert-icon">✓</span>
+      <div class="alert-body"><strong>Nueva versión API v3.0 disponible</strong>
+        Sandbox abierto · deprecación de v2.4 en 90 días</div>
+    </div>
+  </div>
+
+  <div class="card col-4">
+    <h3><span class="ttl">🤖 PREGUNTAS SOBRE INTEGRACIONES (IA)</span><span class="pill">GPT</span></h3>
+    <div class="ia-box">
+      <textarea placeholder="¿Por qué está fallando la integración con BCP y cuál es el impacto en cobros del día?"></textarea>
+      <div class="ia-suggest">
+        <span class="ia-chip">Estado de todas las APIs</span>
+        <span class="ia-chip">Top 5 endpoints más usados</span>
+        <span class="ia-chip">Errores recurrentes hoy</span>
+        <span class="ia-chip">¿Cómo conectar SAP?</span>
+        <span class="ia-chip">Ver documentación Swagger</span>
+      </div>
+      <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn btn-sm" style="background:var(--green-100);color:var(--green-800)">🎙 Voz</button>
+        <button class="btn btn-sm" style="background:var(--green-800);color:#fff">📨 Enviar</button>
+      </div>
+      <div style="margin-top:12px;padding:10px;background:#fff;border-radius:8px;border-left:3px solid var(--green-600);font-size:12px;color:var(--ink)">
+        <b style="color:var(--green-800)">💡 Respuesta sugerida:</b><br>
+        BCP falla por <b>token OAuth expirado</b> hace 1h12m. Impacto: <b>23 cobros QR rechazados</b> (~BOB 18.4K).
+        Acción: reconectar desde el panel de orquestación. Mientras tanto, los cobros se redirigen automáticamente a Banco Económico (failover activo).
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

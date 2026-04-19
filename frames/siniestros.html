@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Módulo: Gestión de Siniestros</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+:root{
+  --primary:#1e5f3f; --primary-dark:#164a30; --primary-light:#2d7a52;
+  --bg:#f5f7f6; --surface:#fff; --border:#e1e7e3; --text:#1a2e22; --muted:#6b7d72;
+  --success:#10b981; --warning:#f59e0b; --danger:#ef4444; --info:#3b82f6; --purple:#8b5cf6;
+  --shadow:0 1px 3px rgba(0,0,0,.08); --shadow-md:0 4px 12px rgba(0,0,0,.08);
+  --radius:10px;
+}
+body{background:var(--bg);color:var(--text);font-size:13px;line-height:1.45}
+.topbar{background:linear-gradient(90deg,var(--primary-dark),var(--primary));color:#fff;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow-md)}
+.topbar-left{display:flex;align-items:center;gap:14px}
+.logo{width:34px;height:34px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--primary);font-weight:800;font-size:16px}
+.topbar h1{font-size:15px;font-weight:600}
+.topbar h1 small{display:block;font-size:11px;opacity:.85;font-weight:400;margin-top:2px}
+.topbar-right{display:flex;align-items:center;gap:14px}
+.icon-btn{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;color:#fff;border:0;font-size:14px}
+.icon-btn:hover{background:rgba(255,255,255,.25)}
+.dot{position:absolute;top:6px;right:6px;width:8px;height:8px;background:#ef4444;border-radius:50%;border:2px solid var(--primary)}
+
+.container{padding:18px 24px 32px}
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:16px;flex-wrap:wrap}
+.breadcrumb{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:700;color:var(--primary-dark)}
+.breadcrumb .arrow{cursor:pointer;color:var(--muted);font-weight:400}
+.alert-bar{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--border);border-left:4px solid var(--warning);padding:10px 16px;border-radius:8px;font-size:12px;font-weight:500;color:#92400e}
+.nav-arrows{display:flex;gap:6px}
+.nav-btn{width:34px;height:34px;background:var(--primary);color:#fff;border:0;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600}
+.nav-btn:hover{background:var(--primary-dark)}
+
+/* KPI Strip */
+.kpi-strip{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:18px}
+.kpi{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;position:relative;overflow:hidden}
+.kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--primary)}
+.kpi.warn::before{background:var(--warning)} .kpi.danger::before{background:var(--danger)}
+.kpi.info::before{background:var(--info)} .kpi.purple::before{background:var(--purple)} .kpi.success::before{background:var(--success)}
+.kpi-label{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;font-weight:600}
+.kpi-value{font-size:20px;font-weight:700;color:var(--text);margin-top:3px}
+.kpi-trend{font-size:10.5px;color:var(--success);margin-top:2px;font-weight:600}
+.kpi-trend.down{color:var(--danger)}
+
+/* Grid */
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow)}
+.card-header{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,#fafbfa,#fff)}
+.step-num{width:26px;height:26px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0}
+.card-title{font-size:13px;font-weight:700;color:var(--text);flex:1;line-height:1.25}
+.card-menu{color:var(--muted);cursor:pointer;font-size:16px;padding:0 4px}
+.card-body{padding:12px 14px;flex:1;display:flex;flex-direction:column;gap:10px}
+
+.field-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.3px}
+.field-value{font-size:12.5px;color:var(--text);font-weight:500}
+.row{display:flex;gap:8px;align-items:center;justify-content:space-between}
+.col2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+.input,.select{width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:#fff;color:var(--text)}
+.input:focus,.select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(30,95,63,.1)}
+
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:10px;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.3px}
+.badge-success{background:#d1fae5;color:#065f46}
+.badge-warn{background:#fef3c7;color:#92400e}
+.badge-danger{background:#fee2e2;color:#991b1b}
+.badge-info{background:#dbeafe;color:#1e40af}
+.badge-purple{background:#ede9fe;color:#5b21b6}
+.badge-muted{background:#f1f5f3;color:#4b5d52}
+
+/* Switch */
+.switch{position:relative;display:inline-block;width:38px;height:20px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;cursor:pointer;inset:0;background:#cbd5d0;border-radius:20px;transition:.2s}
+.slider::before{content:"";position:absolute;height:14px;width:14px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.switch input:checked + .slider{background:var(--primary)}
+.switch input:checked + .slider::before{transform:translateX(18px)}
+
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:7px 9px;background:#f8faf9;border-radius:6px;border:1px solid var(--border)}
+.toggle-row .lbl{font-size:11.5px;font-weight:500;color:var(--text);display:flex;align-items:center;gap:6px}
+
+.btn{padding:7px 12px;background:var(--primary);color:#fff;border:0;border-radius:6px;cursor:pointer;font-size:11.5px;font-weight:600;display:inline-flex;align-items:center;gap:5px}
+.btn:hover{background:var(--primary-dark)}
+.btn-outline{background:#fff;color:var(--primary);border:1px solid var(--primary)}
+.btn-sm{padding:4px 8px;font-size:10.5px}
+.btn-danger{background:var(--danger)} .btn-danger:hover{background:#b91c1c}
+
+/* FNOL specific */
+.audio-input{background:#f0f9f4;border:1px dashed var(--primary);border-radius:8px;padding:10px;display:flex;align-items:center;gap:8px;cursor:pointer}
+.audio-icon{width:30px;height:30px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px}
+.audio-text{flex:1;font-size:11.5px;color:var(--text);font-weight:500}
+.audio-text small{display:block;color:var(--muted);font-size:10px;font-weight:400;margin-top:1px}
+.recording{width:8px;height:8px;background:var(--danger);border-radius:50%;animation:pulse 1.4s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+.map-mini{height:80px;background:linear-gradient(135deg,#dbeafe 0%,#a7f3d0 100%);border-radius:6px;position:relative;overflow:hidden;border:1px solid var(--border)}
+.map-mini::after{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.4) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.4) 1px,transparent 1px);background-size:18px 18px}
+.map-pin{position:absolute;top:50%;left:50%;transform:translate(-50%,-100%);font-size:22px;filter:drop-shadow(0 2px 3px rgba(0,0,0,.3));z-index:2}
+
+/* Photo evidence */
+.photo-evidence{position:relative;border-radius:6px;overflow:hidden;background:#1f2937;aspect-ratio:16/10}
+.photo-evidence .label{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.7);color:#fff;font-size:10px;padding:2px 7px;border-radius:4px;font-weight:600}
+.photo-evidence .damage-tag{position:absolute;bottom:6px;left:6px;background:rgba(239,68,68,.95);color:#fff;font-size:10px;padding:2px 7px;border-radius:4px;font-weight:700}
+.photo-evidence::before{content:"🚗";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:38px;opacity:.7}
+.photo-evidence.video::before{content:"▶"}
+.photo-evidence.video{background:#374151}
+
+/* Fraud gauge */
+.gauge{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px;background:#f0fdf4;border-radius:8px;border:1px solid #bbf7d0}
+.gauge-circle{width:62px;height:62px;border-radius:50%;background:conic-gradient(var(--success) 0% 25%,#e5e7eb 25% 100%);display:flex;align-items:center;justify-content:center;position:relative}
+.gauge-circle::before{content:"";position:absolute;inset:6px;background:#fff;border-radius:50%}
+.gauge-num{position:relative;font-size:14px;font-weight:800;color:var(--success);z-index:1}
+.gauge-num small{font-size:9px;color:var(--muted);font-weight:500;display:block;text-align:center}
+.gauge-label{font-size:10px;font-weight:700;color:var(--success);text-transform:uppercase;letter-spacing:.3px}
+
+/* Pipeline */
+.pipeline{display:flex;align-items:center;justify-content:space-between;position:relative;padding:6px 0}
+.pipeline::before{content:"";position:absolute;top:50%;left:8%;right:8%;height:2px;background:var(--border);z-index:0}
+.pipeline-step{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:3px;flex:1}
+.ps-dot{width:18px;height:18px;border-radius:50%;background:#e5e7eb;border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff;font-weight:700}
+.ps-dot.done{background:var(--success)} .ps-dot.active{background:var(--primary);box-shadow:0 0 0 3px rgba(30,95,63,.2)} .ps-dot.pending{background:#cbd5d0}
+.ps-label{font-size:9px;color:var(--muted);text-align:center;font-weight:600;line-height:1.1;max-width:55px}
+.ps-dot.done + .ps-label,.ps-dot.active + .ps-label{color:var(--text)}
+
+/* File list */
+.file-list{display:flex;flex-direction:column;gap:4px}
+.file-item{display:flex;align-items:center;gap:8px;padding:6px 8px;background:#f8faf9;border:1px solid var(--border);border-radius:6px;font-size:11.5px}
+.file-icon{width:22px;height:22px;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:700;flex-shrink:0}
+.fi-img{background:#06b6d4} .fi-pdf{background:#ef4444} .fi-doc{background:#3b82f6}
+.file-name{flex:1;color:var(--text);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.file-size{font-size:10px;color:var(--muted)}
+
+/* Workflow chips */
+.workflow{display:flex;flex-direction:column;gap:6px}
+.wf-row{display:flex;align-items:center;gap:6px;padding:6px 8px;background:#f8faf9;border-radius:6px;border:1px solid var(--border)}
+.wf-row .name{font-size:11px;font-weight:600;color:var(--text);min-width:60px}
+.chip{padding:2px 7px;border-radius:10px;font-size:10px;font-weight:600;background:#f1f5f3;color:var(--muted)}
+.chip.act{background:#d1fae5;color:#065f46}
+.arrow-r{color:var(--muted);font-size:10px}
+
+/* Status table */
+.mini-table{width:100%;border-collapse:collapse;font-size:11px}
+.mini-table th{text-align:left;padding:5px 6px;background:#f8faf9;border-bottom:1px solid var(--border);font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:.3px}
+.mini-table td{padding:5px 6px;border-bottom:1px solid #f1f5f3;color:var(--text)}
+.mini-table tr:last-child td{border-bottom:0}
+.mini-table tr:hover{background:#fafbfa}
+
+/* Map larger */
+.map-big{height:140px;background:linear-gradient(135deg,#dbeafe,#a7f3d0);border-radius:6px;position:relative;overflow:hidden;border:1px solid var(--border)}
+.map-big::after{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.4) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.4) 1px,transparent 1px);background-size:22px 22px}
+.map-asset{position:absolute;background:#fff;border:2px solid var(--primary);border-radius:14px;padding:2px 8px;font-size:10px;font-weight:700;color:var(--primary);display:flex;align-items:center;gap:3px;z-index:2;box-shadow:var(--shadow-md)}
+.map-route{position:absolute;border-top:2.5px dashed var(--primary);opacity:.6;z-index:1}
+
+/* Co-pilot AI */
+.ai-card{background:linear-gradient(135deg,#ede9fe,#ddd6fe);border:1px solid #c4b5fd;border-radius:8px;padding:10px}
+.ai-card .ai-title{font-size:11px;font-weight:700;color:#5b21b6;display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.ai-card .ai-content{font-size:11px;color:#4c1d95;line-height:1.4}
+
+/* Track item */
+.track-row{display:grid;grid-template-columns:60px 1fr 80px;gap:6px;padding:5px 0;border-bottom:1px solid #f1f5f3;font-size:10.5px;align-items:center}
+.track-row:last-child{border-bottom:0}
+.track-time{color:var(--muted);font-family:monospace;font-size:10px}
+.track-action{color:var(--text);font-weight:500}
+.track-id{font-family:monospace;font-size:9.5px;color:var(--muted);text-align:right}
+.track-action .ai-tag{background:var(--purple);color:#fff;font-size:9px;padding:1px 5px;border-radius:8px;margin-right:4px;font-weight:700}
+.track-action .h-tag{background:var(--info);color:#fff;font-size:9px;padding:1px 5px;border-radius:8px;margin-right:4px;font-weight:700}
+
+/* Risk meter */
+.risk-meter{display:flex;align-items:center;gap:8px;background:#f0fdf4;padding:8px 10px;border-radius:6px;border:1px solid #bbf7d0}
+.risk-bar{flex:1;height:6px;background:#e5e7eb;border-radius:3px;overflow:hidden;position:relative}
+.risk-fill{height:100%;width:25%;background:linear-gradient(90deg,var(--success),#84cc16);border-radius:3px}
+.risk-text{font-size:10.5px;font-weight:700;color:var(--success)}
+
+/* Section divider in card */
+.divider-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;padding:4px 0;border-bottom:1px solid var(--border);margin-top:4px}
+
+/* Responsive */
+@media(max-width:1400px){.grid{grid-template-columns:repeat(2,1fr)}.kpi-strip{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:768px){.grid{grid-template-columns:1fr}.kpi-strip{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="logo">IS</div>
+    <h1>INTERSEGUROS — Sistema
+      <small>Módulo: Gestión de Siniestros · Orquestación con IA</small>
+    </h1>
+  </div>
+  <div class="topbar-right">
+    <button class="icon-btn">?</button>
+    <button class="icon-btn">🔔<span class="dot"></span></button>
+    <button class="icon-btn">👤</button>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="page-header">
+    <div class="breadcrumb">
+      <span class="arrow">←</span> MÓDULO: <span style="color:var(--primary)">GESTIÓN DE SINIESTROS</span>
+    </div>
+    <div class="alert-bar">⚠️ Sin configuración completa, no se procesan cobros automatizados</div>
+    <div class="nav-arrows">
+      <button class="nav-btn">‹</button>
+      <button class="nav-btn">›</button>
+    </div>
+  </div>
+
+  <!-- KPI Strip -->
+  <div class="kpi-strip">
+    <div class="kpi"><div class="kpi-label">Siniestros Abiertos</div><div class="kpi-value">1,284</div><div class="kpi-trend">▲ 4.2% vs mes</div></div>
+    <div class="kpi success"><div class="kpi-label">Resueltos Hoy</div><div class="kpi-value">87</div><div class="kpi-trend">▲ 12 fast-track</div></div>
+    <div class="kpi info"><div class="kpi-label">Tiempo Promedio</div><div class="kpi-value">3.2d</div><div class="kpi-trend">▼ 18% vs SLA</div></div>
+    <div class="kpi warn"><div class="kpi-label">Pendiente Doc.</div><div class="kpi-value">142</div><div class="kpi-trend down">▲ 8 hoy</div></div>
+    <div class="kpi danger"><div class="kpi-label">Alertas Fraude</div><div class="kpi-value">23</div><div class="kpi-trend down">Score &gt; 70</div></div>
+    <div class="kpi purple"><div class="kpi-label">IA Asistencia</div><div class="kpi-value">94%</div><div class="kpi-trend">cobertura</div></div>
+  </div>
+
+  <!-- Cards Grid -->
+  <div class="grid">
+
+    <!-- 1. FNOL -->
+    <div class="card">
+      <div class="card-header">
+        <div class="step-num">1</div>
+        <div class="card-title">Recepción y Triaje (FNOL)</div>
+        <span class="card-menu">⋯</span>
+      </div>
+      <div class="card-body">
+        <div class="col2">
+          <div>
+            <div class="field-label">Audio/Text Input</div>
+            <div class="audio-input" style="margin-top:4px">
+              <div class="audio-icon">🎤</div>
+              <div class="audio-text">WhatsApp / Voz<small>Transcripción IA activa</small></div>
+              <div class="recording"></div>
+            </div>
+          </div>
+          <div>
+            <div class="field-label">Extracción Automática</div>
+            <div style="margin-top:4px;background:#f8faf9;border:1px solid var(--border);border-radius:6px;padding:6px 8px">
+              <div style="font-size:10.5px;color:var(--muted)">Fecha</div>
+              <div style="font-size:11.5px;font-weight:600">17/06/2024 · 14:32</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="map-mini"><div class="map-pin">📍</div></div>
+        <div class="col2">
+          <div>
+            <div class="field-label">Ubicación</div>
+            <div class="field-value">Surco, Lima</div>
+          </div>
+          <div>
+            <div class="field-label">Tipo de Evento</div>
+            <select class="select" style="padding:4px 8px;font-size:11px"><option>Colisión vehicular</option><option>Robo</option><option>Daño a terceros</option></select>
+          </div>
+        </div>
+
+        <div class="toggle-row"><span class="lbl">⚡ Fast-Track <span class="badge badge-warn" style="margin-left:4px">PRIORITARIO</span></span><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+        <div class="toggle-row"><span class="lbl">🚨 Alertas Críticas</span><label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
+      </div>
+    </div>
+
+    <!-- 2. Fraude IA -->
+    <div class="card">
+      <div class="card-header">
+        <div class="step-num">2</div>
+        <div class="card-title">Análisis de Fraude con IA</div>
+        <span class="card-menu">⋯</span>
+      </div>
+      <div class="card-body">
+        <div class="col2">
+          <div>
+            <div class="field-label" style="margin-bottom:4px">Visión Computacional</div>
+            <div class="photo-evidence"><span class="label">FOTO</span><span class="damage-tag">Daño detectado</span></div>
+          </div>
+          <div>
+            <div class="field-label" style="margin-bottom:4px">Fraud Scoring</div>
+            <div class="gauge">
+              <div class="gauge-circle"><div class="gauge-num">25<small>/100</small></div></div>
+              <div class="gauge-label">LOW RISK</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="photo-evidence video"><span class="label">VIDEO</span></div>
+
+        <div>
+          <div class="field-label" style="margin-bottom:4px">Validaciones Cruzadas</div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div class="toggle-row" style="padding:5px 8px"><span class="lbl">🌤️ Clima en zona/hora</span><span class="badge badge-success">OK</span></div>
+            <div class="toggle-row" style="padding:5px 8px"><span class="lbl">📜 Historial cliente</span><span class="badge badge-success">OK</span></div>
+            <div class="toggle-row" style="padding:5px 8px"><span class="lbl">🔍 Metadatos imagen</span><span class="badge badge-warn">Revisar</span></div>
+          </div>
+        </div>
+
+        <div class="risk-meter"><span style="font-size:11px;font-weight:600">Nivel Riesgo</span><div class="risk-bar"><div class="risk-fill"></div></div><span class="risk-text">BAJO</span></div>
+      </div>
+    </div>
+
+    <!-- 3. Portal Cliente -->
+    <div class="card">
+      <div class="card-header">
+        <div class="step-num">3</div>
+        <div class="card-title">Portal de Seguimiento Cliente</div>
+        <span class="card-menu">⋯</span>
+      </div>
+      <div class="card-body">
+        <div class="field-label">Portal 24/7</div>
+        <div class="pipeline">
+          <div class="pipeline-step"><div class="ps-dot done">✓</div><div class="ps-label">FNOL Recibido</div></div>
+          <div class="pipeline-step"><div class="ps-dot done">✓</div><div class="ps-label">Documentos Cargados</div></div>
+          <div class="pipeline-step"><div class="ps-dot active">3</div><div class="ps-label">En Proceso</div></div>
+          <div class="pipeline-step"><div class="ps-dot pending">4</div><div class="ps-label">Liquidación</div></div>
+          <div class="pipeline-step"><div class="ps-dot pending">5</div><div class="ps-label">Pago</div></div>
+        </div>
+
+        <div class="divider-label">Auto-carga de documentos</div>
+        <div class="row">
+          <span style="font-size:11.5px">Faltantes:</span>
+          <select class="select" style="width:auto;flex:1;margin-left:8px;padding:4px 8px;font-size:11px"><option>Factura taller — pendiente</option><option>DNI</option></select>
+        </div>
+        <div style="font-size:10.5px;color:var(--muted);font-style:italic">Auto-notificaciones por WhatsApp + Email a cada paso</div>
+
+        <div class="ai-card">
+          <div class="ai-title">🤖 Interacción con IA</div>
+          <div class="ai-content">Borradores y Human-in-the-Loop · Asesor asignado: <strong>Carlos M.</strong></div>
+        </div>
+
+        <div class="toggle-row"><span class="lbl">📱 Notificaciones Push</span><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+      </div>
+    </div>
+
+    <!-- 4. Resolución y Co-piloto IA -->
+    <div class="card">
+      <div class="card-header">
+        <div class="step-num">4</div>
+        <div class="card-title">Resolución y Co-piloto IA</div>
+        <span class="card-menu">⋯</span>
+      </div>
+      <div class="card-body">
+        <div class="toggle-row" style="background:linear-gradient(90deg,#f0fdf4,#fff)"><span class="lbl">⚡ Liquidación Exprés <span class="badge badge-success" style="margin-left:4px">FAST-TRACK</span></span><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+        <div style="font-size:11px;color:var(--muted);margin-top:-4px">Aprobación automática · Límite: <strong>S/ 100,000</strong></div>
+
+        <div class="divider-label">Resumen Ejecutivo</div>
+        <div style="font-size:11.5px;color:var(--text);background:#f8faf9;padding:8px;border-radius:6px;line-height:1.5">
+          Analista humano (revisión final por analista senior). IA generó propuesta de liquidación basada en 124 casos similares.
+        </div>
+
+        <div class="divider-label">Borradores de cartas</div>
+        <div class="col2">
+          <div class="toggle-row" style="padding:6px 8px"><span class="lbl" style="font-size:11px">✅ Aceptación</span><button class="btn btn-sm">Ver</button></div>
+          <div class="toggle-row" style="padding:6px 8px"><span class="lbl" style="font-size:11px">❌ Rechazo</span><button class="btn btn-sm btn-outline">Generar</button></div>
+        </div>
+        <div style="font-size:10.5px;color:var(--muted);font-style:italic">IA pre-genera ambos · revisión humana antes de envío</div>
+
+        <div class="toggle-row" style="background:linear-gradient(90deg,#ede9fe,#fff)"><span class="lbl">🤖 IA Co-pilot Estatus <span class="badge badge-purple" style="margin-left:4px">ACTIVO</span></span><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+      </div>
+    </div>
+
+    <!-- 5. Gestión de Compañías -->
+    <div class="card">
+      <div class="card-header">
+        <div class="step-num">5</div>
+        <div class="card-title">Gestión de Compañías y Proveedores</div>
+        <span class="card-menu">⋯</span>
+      </div>
+      <div class="card-body">
+        <div class="col2">
+          <div>
+            <div class="field-label" style="margin-bottom:4px">Aseguradora Pacífico</div>
+            <div class="workflow">
+              <div class="wf-row"><span class="name">Auto</span><span class="arrow-r">→</span><span class="chip act">Taller A</span></div>
+              <div class="wf-row"><span class="name">Médico</span><span class="arrow-r">→</span><span class="chip act">Clínica X</span></div>
+            </div>
+          </div>
+          <div>
+            <div class="field-label" style="margin-bottom:4px">Aseguradora El Sol</div>
+            <div class="workflow">
+              <div class="wf-row"><span class="name">Auto</span><span class="arrow-r">→</span><span class="chip act">Taller B</span></div>
+              <div class="wf-row"><span class="name">Recup.</span><span class="arrow-r">→</span><span class="chip">Pendiente</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider-label">Estados Workflow</div>
+        <table class="mini-table">
+          <tr><td><span class="badge badge-success">Validado</span></td><td>Pacífico · Auto</td><td style="text-align:right">12 casos</td></tr>
+          <tr><td><span class="badge badge-warn">Pendiente</span></td><td>El Sol · Médico</td><td style="text-align:right">5 casos</td></tr>
+          <tr><td><span class="badge badge-danger">Rechazado</span></td><td>Mapfre · Recup.</td><td style="text-align:right">2 casos</td></tr>
+        </table>
+
+        <button class="btn btn-outline" style="width:100%">+ Configurar nuevo workflow</button>
+      </div>
+    </div>
+
+    <!-- 6. Documentación y Evidencia -->
+    <div class="card">
+      <div class="card-header">
+        <div class="step-num">6</div>
+        <div class="card-title">Documentación y Evidencia</div>
+        <span class="card-menu">⋯</span>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="field-label">Visor Integrado</div>
+          <button class="btn btn-sm">📥 IA Solicitar</button>
+        </div>
+
+        <div class="file-list">
+          <div class="file-item"><div class="file-icon fi-img">IMG</div><div class="file-name">daño_parachoques.jpg</div><span class="file-size">2.4 MB</span></div>
+          <div class="file-item"><div class="file-icon fi-pdf">PDF</div><div class="file-name">informe_medico.pdf</div><span class="file-size">876 KB</span></div>
+          <div class="file-item"><div class="file-icon fi-pdf">PDF</div><div class="file-name">factura_taller.pdf</div><span class="file-size">312 KB</span></div>
+          <div class="file-item"><div class="file-icon fi-doc">DOC</div><div class="file-name">declaración_jurada.docx</div><span class="file-size">89 KB</span></div>
+        </div>
+
+        <div class="divider-label">Estadísticas</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;text-align:center">
+          <div style="background:#f8faf9;padding:8px;border-radius:6px;border:1px solid var(--border)">
+            <div style="font-size:16px;font-weight:700;color:var(--primary)">223</div>
+            <div style="font-size:9.5px;color:var(--muted);text-transform:uppercase">Total Archivos</div>
+          </div>
+          <div style="background:#f8faf9;padding:8px;border-radius:6px;border:1px solid var(--border)">
+            <div style="font-size:16px;font-weight:700;color:var(--success)">8</div>
+            <div style="font-size:9.5px;color:var(--muted);text-transform:uppercase">Tipos</div>
+          </div>
+          <div style="background:#f8faf9;padding:8px;border-radius:6px;border:1px solid var(--border)">
+            <div style="font-size:16px;font-weight:700;color:var(--info)">1.3GB</div>
+            <div style="font-size:9.5px;color:var(--muted);text-transform:uppercase">Almacén</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. Asistencia Geolocalizada -->
+    <div class="card">
+      <div class="card-header">
+        <div class="step-num">7</div>
+        <div class="card-title">Asistencia Geolocalizada</div>
+        <span class="card-menu">⋯</span>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <span style="font-size:11.5px;font-weight:600">Asignar Asistencia</span>
+          <select class="select" style="width:auto;padding:4px 8px;font-size:11px"><option>Auto-despacho IA</option><option>Manual</option></select>
+        </div>
+
+        <div class="map-big">
+          <div class="map-asset" style="top:18%;left:15%">🚑 Ambulancia</div>
+          <div class="map-asset" style="top:25%;right:12%">🚛 Grúa</div>
+          <div class="map-asset" style="bottom:22%;left:42%;background:var(--danger);border-color:var(--danger);color:#fff">📍 Siniestro</div>
+          <div class="map-route" style="top:35%;left:25%;width:30%;transform:rotate(15deg)"></div>
+          <div class="map-route" style="top:42%;right:18%;width:28%;transform:rotate(-25deg)"></div>
+        </div>
+
+        <div class="col2">
+          <div class="toggle-row" style="padding:6px 8px"><span class="lbl">📡 Tracking en Vivo</span><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+          <div class="toggle-row" style="padding:6px 8px"><span class="lbl">⏱️ ETA: 8 min</span><span class="badge badge-success">EN RUTA</span></div>
+        </div>
+
+        <button class="btn" style="width:100%">📍 Despachar asistencia</button>
+      </div>
+    </div>
+
+    <!-- 8. Historial y Auditoría -->
+    <div class="card">
+      <div class="card-header">
+        <div class="step-num">8</div>
+        <div class="card-title">Historial y Auditoría Trail</div>
+        <span class="card-menu">⋯</span>
+      </div>
+      <div class="card-body">
+        <div class="field-label">Log de todas las acciones (incluye IA y humano)</div>
+
+        <div style="border:1px solid var(--border);border-radius:6px;padding:6px 10px;background:#fafbfa;max-height:180px;overflow-y:auto">
+          <div class="track-row"><span class="track-time">13:15:38</span><span class="track-action"><span class="ai-tag">IA</span>Asistió en triaje</span><span class="track-id">USR000129030</span></div>
+          <div class="track-row"><span class="track-time">13:15:37</span><span class="track-action"><span class="h-tag">H</span>Humano validó decisión</span><span class="track-id">USR000120020</span></div>
+          <div class="track-row"><span class="track-time">13:15:35</span><span class="track-action"><span class="ai-tag">IA</span>Generó borrador carta</span><span class="track-id">USR000120030</span></div>
+          <div class="track-row"><span class="track-time">13:15:30</span><span class="track-action"><span class="h-tag">H</span>Humano aprobó pago</span><span class="track-id">USR000120020</span></div>
+          <div class="track-row"><span class="track-time">13:15:32</span><span class="track-action"><span class="ai-tag">IA</span>Análisis de fraude OK</span><span class="track-id">USR000120030</span></div>
+          <div class="track-row"><span class="track-time">13:15:28</span><span class="track-action"><span class="h-tag">H</span>Carga de documentos</span><span class="track-id">USR000120020</span></div>
+          <div class="track-row"><span class="track-time">13:15:25</span><span class="track-action"><span class="ai-tag">IA</span>Asignó asistencia</span><span class="track-id">USR000120030</span></div>
+        </div>
+
+        <div class="divider-label">Transparencia IA vs Asesor</div>
+        <div style="display:flex;gap:6px">
+          <div style="flex:1;background:#ede9fe;padding:8px;border-radius:6px;text-align:center">
+            <div style="font-size:18px;font-weight:700;color:#5b21b6">68%</div>
+            <div style="font-size:9.5px;color:#5b21b6;font-weight:600;text-transform:uppercase">Acciones IA</div>
+          </div>
+          <div style="flex:1;background:#dbeafe;padding:8px;border-radius:6px;text-align:center">
+            <div style="font-size:18px;font-weight:700;color:#1e40af">32%</div>
+            <div style="font-size:9.5px;color:#1e40af;font-weight:600;text-transform:uppercase">Asesor</div>
+          </div>
+        </div>
+
+        <button class="btn btn-outline" style="width:100%">📊 Ver auditoría completa</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// Live clock for tracking log
+function updateClock(){
+  const rows = document.querySelectorAll('.track-time');
+  const now = new Date();
+  let s = now.getSeconds();
+  rows.forEach((r,i)=>{
+    const t = new Date(now.getTime() - i*3000);
+    r.textContent = t.toTimeString().slice(0,8);
+  });
+}
+setInterval(updateClock,1000);
+updateClock();
+
+// Toggle interactivity
+document.querySelectorAll('.switch input').forEach(s=>{
+  s.addEventListener('change',()=>{
+    const row = s.closest('.toggle-row');
+    if(row) row.style.background = s.checked ? 'linear-gradient(90deg,#f0fdf4,#fff)' : '#f8faf9';
+  });
+});
+
+// Card menu
+document.querySelectorAll('.card-menu').forEach(m=>{
+  m.addEventListener('click',()=>alert('Opciones: Editar · Duplicar · Exportar · Eliminar'));
+});
+</script>
+</body>
+</html>

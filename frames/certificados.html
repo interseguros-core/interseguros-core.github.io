@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emisión de Certificados — Seguro de Vida Individual</title>
+<style>
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  --primary:#0F766E; --primary-soft:#E6F4F2; --primary-dark:#0B5752;
+  --bg:#F5F7F6; --card:#FFFFFF; --border:#E2E8E6; --border-strong:#CBD5D1;
+  --text:#0F1F1D; --muted:#64746F; --muted-2:#8A968F;
+  --success:#16A34A; --success-soft:#DCFCE7;
+  --warn:#D97706; --warn-soft:#FEF3C7;
+  --danger:#DC2626; --danger-soft:#FEE2E2;
+  --info:#2563EB; --info-soft:#DBEAFE;
+  --radius:10px; --radius-sm:6px;
+  --shadow:0 1px 2px rgba(15,31,29,.04), 0 1px 3px rgba(15,31,29,.06);
+  --shadow-lg:0 10px 25px -10px rgba(15,31,29,.15);
+}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select,textarea{font-family:inherit;font-size:14px;color:var(--text)}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--primary);outline-offset:-1px}
+
+.header{background:var(--card);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:30}
+.header-left{display:flex;align-items:center;gap:14px;min-width:0}
+.icon-btn{width:34px;height:34px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;color:var(--muted);transition:all .15s}
+.icon-btn:hover{background:var(--bg);color:var(--text)}
+.title-block h1{margin:0;font-size:16px;font-weight:600;letter-spacing:-.01em;display:flex;align-items:center;gap:10px}
+.title-block .crumbs{font-size:12px;color:var(--muted);margin-top:2px}
+.status-pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;background:var(--success-soft);color:var(--success);text-transform:uppercase;letter-spacing:.04em}
+.status-pill::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--success)}
+.header-right{display:flex;gap:8px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:500;transition:all .15s;border:1px solid transparent}
+.btn-ghost{color:var(--muted)}
+.btn-ghost:hover{background:var(--bg);color:var(--text)}
+.btn-outline{border-color:var(--border-strong);color:var(--text);background:var(--card)}
+.btn-outline:hover{border-color:var(--primary);color:var(--primary)}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary-dark)}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-danger:hover{background:#B91C1C}
+.btn-sm{padding:5px 10px;font-size:12px}
+.btn-lg{padding:11px 18px;font-size:14px}
+
+/* KPI strip */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:18px 28px 0}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow)}
+.kpi-icon{width:42px;height:42px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.kpi-icon.green{background:var(--success-soft);color:var(--success)}
+.kpi-icon.red{background:var(--danger-soft);color:var(--danger)}
+.kpi-icon.gray{background:var(--bg);color:var(--muted)}
+.kpi-icon.blue{background:var(--info-soft);color:var(--info)}
+.kpi-label{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:600}
+.kpi-value{font-size:22px;font-weight:700;line-height:1.1}
+.kpi-sub{font-size:11px;color:var(--muted);margin-top:2px}
+
+.layout{display:grid;grid-template-columns:1fr 320px;gap:0;min-height:calc(100vh - 64px)}
+.main{padding:18px 28px 28px;overflow:auto}
+.aside{background:var(--card);border-left:1px solid var(--border);padding:20px 22px;overflow:auto;position:sticky;top:64px;height:calc(100vh - 64px)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
+@media(max-width:1100px){.grid{grid-template-columns:1fr}.layout{grid-template-columns:1fr}.aside{position:static;height:auto;border-left:0;border-top:1px solid var(--border)}.kpis{grid-template-columns:repeat(2,1fr)}}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;transition:border-color .15s}
+.card:hover{border-color:var(--border-strong)}
+.card-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,#FAFBFA 0%,#fff 100%)}
+.card-head-left{display:flex;align-items:center;gap:10px;min-width:0}
+.step-num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--primary);color:#fff;font-size:12px;font-weight:600;flex-shrink:0}
+.card-title{font-size:14px;font-weight:600;margin:0}
+.card-actions{display:flex;gap:2px}
+.card-body{padding:18px}
+.muted{color:var(--muted)}
+.divider{height:1px;background:var(--border);margin:16px 0}
+.lbl{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:8px}
+
+/* Forms */
+.input,.select,.textarea{width:100%;padding:8px 10px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);background:#fff;transition:border-color .15s}
+.input:hover,.select:hover{border-color:var(--muted-2)}
+.select{appearance:none;background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3e%3cpath d='M1 1l4 4 4-4' stroke='%2364746F' stroke-width='1.5' fill='none' stroke-linecap='round'/%3e%3c/svg%3e");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+.field-row{display:grid;gap:12px;margin-bottom:12px}
+.field-row.cols-2{grid-template-columns:1fr 1fr}
+
+/* Template engine: variables list */
+.var-list{border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
+.var-row{display:grid;grid-template-columns:auto 130px 1fr auto;gap:10px;align-items:center;padding:10px 12px;border-bottom:1px solid var(--border);transition:background .15s}
+.var-row:last-child{border-bottom:0}
+.var-row:hover{background:#FAFBFA}
+.var-row.req{background:linear-gradient(90deg,var(--primary-soft) 0,transparent 30%)}
+.check{width:18px;height:18px;border:2px solid var(--border-strong);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;background:#fff;flex-shrink:0;transition:all .15s;color:#fff;font-size:11px;font-weight:700}
+.check.checked{background:var(--primary);border-color:var(--primary)}
+.var-tag{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;color:var(--primary);background:var(--primary-soft);padding:3px 8px;border-radius:4px;font-weight:500}
+.var-row .input{padding:6px 8px;font-size:13px}
+.req-badge{font-size:10px;color:var(--danger);font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+
+/* Certificate preview */
+.cert-preview{position:relative;background:#fff;border:1px solid var(--border);border-radius:var(--radius-sm);padding:18px;font-size:11px;color:var(--text);box-shadow:inset 0 0 0 1px rgba(0,0,0,.02);min-height:230px;overflow:hidden}
+.cert-preview::before{content:"BORRADOR";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-22deg);font-size:54px;font-weight:800;color:rgba(15,118,110,.07);letter-spacing:.1em;pointer-events:none;white-space:nowrap}
+.cert-head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid var(--primary);padding-bottom:8px;margin-bottom:10px}
+.cert-logo{font-weight:800;color:var(--primary);font-size:13px;letter-spacing:-.01em}
+.cert-id{font-family:ui-monospace,monospace;font-size:10px;color:var(--muted)}
+.cert-title{font-size:13px;font-weight:700;text-align:center;margin:8px 0;letter-spacing:.04em}
+.cert-line{height:1px;background:var(--border);margin:6px 0}
+.cert-body p{margin:4px 0;line-height:1.55}
+.cert-body strong{color:var(--primary)}
+.cert-foot{display:flex;justify-content:space-between;align-items:flex-end;margin-top:14px;padding-top:10px;border-top:1px dashed var(--border)}
+.signature{font-family:'Brush Script MT',cursive;font-size:18px;color:#1e3a8a;border-bottom:1px solid var(--text);padding:0 16px 2px;display:inline-block}
+.sig-label{font-size:9px;color:var(--muted);text-align:center;margin-top:3px}
+.cert-qr{width:48px;height:48px;background:repeating-conic-gradient(var(--text) 0 25%,#fff 0 50%) 50%/8px 8px;border-radius:4px;border:1px solid var(--border)}
+
+/* Batch table */
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{text-align:left;font-weight:600;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.04em;padding:9px 10px;border-bottom:1px solid var(--border);background:#FAFBFA}
+.tbl td{padding:10px;border-bottom:1px solid var(--border);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:0}
+.tbl tr:hover td{background:#FAFBFA}
+.batch-id{font-family:ui-monospace,monospace;font-size:12px;color:var(--text);font-weight:600}
+.progress-bar{flex:1;height:8px;background:var(--bg);border-radius:999px;overflow:hidden;min-width:80px}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--primary) 0%,#10b981 100%);border-radius:999px;transition:width .3s}
+.progress-fill.warn{background:var(--warn)}
+.progress-cell{display:flex;align-items:center;gap:8px}
+.progress-pct{font-size:11px;font-weight:600;color:var(--muted);min-width:34px;text-align:right;font-variant-numeric:tabular-nums}
+.tag{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:999px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.03em}
+.tag.success{background:var(--success-soft);color:var(--success)}
+.tag.warn{background:var(--warn-soft);color:var(--warn)}
+.tag.info{background:var(--info-soft);color:var(--info)}
+.tag.danger{background:var(--danger-soft);color:var(--danger)}
+.tag.muted{background:var(--bg);color:var(--muted)}
+.tag::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+
+/* Upload */
+.upload{border:2px dashed var(--border-strong);border-radius:var(--radius-sm);padding:18px;text-align:center;cursor:pointer;transition:all .15s;background:#FAFBFA;display:flex;flex-direction:column;align-items:center;gap:6px}
+.upload:hover{border-color:var(--primary);background:var(--primary-soft);color:var(--primary)}
+.upload .ico{width:36px;height:36px;border-radius:8px;background:var(--primary-soft);color:var(--primary);display:inline-flex;align-items:center;justify-content:center}
+
+/* QR */
+.qr-block{display:flex;gap:14px;align-items:center;padding:12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:#FAFBFA}
+.qr{width:96px;height:96px;background:repeating-conic-gradient(var(--text) 0 25%,#fff 0 50%) 50%/12px 12px;border-radius:8px;border:1px solid var(--border);flex-shrink:0;position:relative;overflow:hidden}
+.qr::after{content:"";position:absolute;inset:38px;background:#fff;border-radius:4px;border:2px solid var(--text)}
+.qr-info{flex:1;min-width:0}
+.qr-info .id{font-family:ui-monospace,monospace;font-size:12px;color:var(--text);font-weight:600;margin-bottom:2px}
+.qr-info .meta{font-size:11px;color:var(--muted);margin-bottom:8px}
+
+/* Switch */
+.switch{position:relative;width:38px;height:22px;background:var(--border-strong);border-radius:999px;cursor:pointer;transition:background .15s;flex-shrink:0}
+.switch::after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;background:#fff;border-radius:50%;transition:left .15s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.switch.on{background:var(--primary)}
+.switch.on::after{left:18px}
+.channel-row{display:flex;align-items:center;justify-content:space-between;padding:12px;border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:8px;transition:border-color .15s}
+.channel-row:hover{border-color:var(--border-strong)}
+.channel-left{display:flex;align-items:center;gap:10px}
+.channel-icon{width:34px;height:34px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.channel-icon.email{background:var(--info-soft);color:var(--info)}
+.channel-icon.wa{background:var(--success-soft);color:var(--success)}
+.channel-icon.sms{background:var(--warn-soft);color:var(--warn)}
+.channel-name{font-size:13px;font-weight:500}
+.channel-meta{font-size:11px;color:var(--muted)}
+
+/* Lifecycle stats */
+.life-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px;background:#FAFBFA;border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:12px}
+.life-stat{text-align:center}
+.life-stat .dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px;vertical-align:middle}
+.life-stat .label{font-size:11px;color:var(--muted);font-weight:600}
+.life-stat .value{font-size:18px;font-weight:700;line-height:1.1;margin-top:2px;font-variant-numeric:tabular-nums}
+
+/* Aside */
+.aside h3{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:0 0 12px}
+.summary-stat{padding:14px 16px;background:linear-gradient(135deg,var(--primary) 0%,var(--primary-dark) 100%);color:#fff;border-radius:var(--radius);margin-bottom:18px}
+.summary-stat .label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;opacity:.8}
+.summary-stat .value{font-size:22px;font-weight:700;margin-top:2px}
+.summary-stat .sub{font-size:12px;opacity:.85;margin-top:4px;display:flex;justify-content:space-between}
+.activity{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:12px}
+.activity:last-child{border-bottom:0}
+.activity-dot{width:8px;height:8px;border-radius:50%;margin-top:6px;flex-shrink:0}
+.activity-dot.green{background:var(--success)}
+.activity-dot.blue{background:var(--info)}
+.activity-dot.warn{background:var(--warn)}
+.activity-text{flex:1;color:var(--text)}
+.activity-time{color:var(--muted);font-size:11px;margin-top:1px}
+
+.toast{position:fixed;bottom:20px;right:20px;background:var(--text);color:#fff;padding:12px 18px;border-radius:8px;font-size:13px;box-shadow:var(--shadow-lg);transform:translateY(20px);opacity:0;transition:all .25s;z-index:100}
+.toast.show{transform:translateY(0);opacity:1}
+svg{display:block}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-left">
+    <button class="icon-btn" title="Volver">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </button>
+    <div class="title-block">
+      <h1>
+        Emisión de Certificados
+        <span class="status-pill">Operando</span>
+      </h1>
+      <div class="crumbs">Productos / Vida / SVI-GLOBAL · Motor de emisión v3.2</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <button class="btn btn-ghost btn-sm">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      Historial
+    </button>
+    <button class="btn btn-outline btn-sm" onclick="toast('Reporte generado')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+      Exportar reporte
+    </button>
+    <button class="btn btn-primary btn-sm" onclick="toast('Nuevo certificado iniciado')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Emitir certificado
+    </button>
+  </div>
+</header>
+
+<div class="kpis">
+  <div class="kpi">
+    <div class="kpi-icon green"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+    <div><div class="kpi-label">Vigentes</div><div class="kpi-value">5,432</div><div class="kpi-sub">+128 esta semana</div></div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-icon red"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></div>
+    <div><div class="kpi-label">Vencidos</div><div class="kpi-value">120</div><div class="kpi-sub">38 vencen en 30 días</div></div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-icon gray"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M4.93 4.93l14.14 14.14"/></svg></div>
+    <div><div class="kpi-label">Anulados</div><div class="kpi-value">55</div><div class="kpi-sub">2 este mes</div></div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-icon blue"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+    <div><div class="kpi-label">SLA Emisión</div><div class="kpi-value">3.4 min</div><div class="kpi-sub">1,000 certificados</div></div>
+  </div>
+</div>
+
+<div class="layout">
+<main class="main">
+  <div class="grid">
+
+    <!-- 1. Motor de Plantillas -->
+    <section class="card">
+      <div class="card-head">
+        <div class="card-head-left">
+          <span class="step-num">1</span>
+          <h2 class="card-title">Motor de Plantillas</h2>
+        </div>
+        <div class="card-actions">
+          <button class="icon-btn" title="Editar plantilla"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          <button class="icon-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="field-row cols-2" style="margin-bottom:14px">
+          <div>
+            <label class="lbl">Producto Activo</label>
+            <select class="select"><option>Seguro de Vida Individual — Global</option><option>Auto Premium</option><option>Hogar Plus</option></select>
+          </div>
+          <div>
+            <label class="lbl">Plantilla</label>
+            <select class="select"><option>plantilla_vida_global_v2.pdf</option><option>plantilla_clasica_v1.pdf</option></select>
+          </div>
+        </div>
+
+        <label class="lbl">Variables Dinámicas</label>
+        <div class="var-list">
+          <div class="var-row req">
+            <div class="check checked" onclick="this.classList.toggle('checked');this.textContent=this.classList.contains('checked')?'✓':''">✓</div>
+            <span class="var-tag">{nombre}</span>
+            <input class="input" value="Juan Pérez Mendoza">
+            <span class="req-badge">Req</span>
+          </div>
+          <div class="var-row req">
+            <div class="check checked" onclick="this.classList.toggle('checked');this.textContent=this.classList.contains('checked')?'✓':''">✓</div>
+            <span class="var-tag">{vigencia}</span>
+            <input class="input" value="01/01/2026 — 31/12/2026">
+            <span class="req-badge">Req</span>
+          </div>
+          <div class="var-row">
+            <div class="check checked" onclick="this.classList.toggle('checked');this.textContent=this.classList.contains('checked')?'✓':''">✓</div>
+            <span class="var-tag">{suma_aseg}</span>
+            <input class="input" value="$100,000 USD">
+            <span></span>
+          </div>
+          <div class="var-row">
+            <div class="check" onclick="this.classList.toggle('checked');this.textContent=this.classList.contains('checked')?'✓':''"></div>
+            <span class="var-tag">{placa}</span>
+            <input class="input" placeholder="N/A para Vida" disabled>
+            <span></span>
+          </div>
+          <div class="var-row">
+            <div class="check checked" onclick="this.classList.toggle('checked');this.textContent=this.classList.contains('checked')?'✓':''">✓</div>
+            <span class="var-tag">{beneficiarios}</span>
+            <input class="input" value="María Pérez (50%), Luis Pérez (50%)">
+            <span></span>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <label class="lbl">Previsualización del Certificado</label>
+        <div class="cert-preview">
+          <div class="cert-head">
+            <div>
+              <div class="cert-logo">★ INTERSEGUROS</div>
+              <div class="cert-id">Cert. N° SVI-2026-001234</div>
+            </div>
+            <div class="cert-qr"></div>
+          </div>
+          <div class="cert-title">CERTIFICADO DE SEGURO DE VIDA INDIVIDUAL</div>
+          <div class="cert-body">
+            <p>Se certifica que <strong>Juan Pérez Mendoza</strong> se encuentra asegurado bajo la póliza <strong>SVI-GLOBAL</strong> con vigencia <strong>01/01/2026 — 31/12/2026</strong>.</p>
+            <p>Suma asegurada: <strong>$100,000 USD</strong>. Beneficiarios designados: María Pérez (50%) y Luis Pérez (50%).</p>
+          </div>
+          <div class="cert-foot">
+            <div style="text-align:center">
+              <div class="signature">Aseguradora</div>
+              <div class="sig-label">Firma Electrónica · 12/04/2026</div>
+            </div>
+            <div style="text-align:right;font-size:9px;color:var(--muted)">
+              <div>★ INTERSEGUROS</div>
+              <div>Hash: a8f3...c721</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:8px;margin-top:14px">
+          <button class="btn btn-outline" style="flex:1;justify-content:center" onclick="toast('Vista previa actualizada')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            Refrescar
+          </button>
+          <button class="btn btn-primary" style="flex:2;justify-content:center" onclick="toast('PDF inalterable generado ✓')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            Generar PDF Inalterable
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Emisión Masiva -->
+    <section class="card">
+      <div class="card-head">
+        <div class="card-head-left">
+          <span class="step-num">2</span>
+          <h2 class="card-title">Emisión Masiva (Batch)</h2>
+        </div>
+        <span class="tag info">Asíncrono</span>
+      </div>
+      <div class="card-body">
+        <div class="field-row cols-2">
+          <div>
+            <label class="lbl">Importar Trama</label>
+            <div class="upload" onclick="toast('Cargando archivo...')">
+              <div class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg></div>
+              <div style="font-size:13px;font-weight:500">Subir Excel / CSV</div>
+              <div style="font-size:11px;color:var(--muted)">Hasta 10,000 filas · .xlsx .csv</div>
+            </div>
+          </div>
+          <div>
+            <label class="lbl">Plantilla aplicada</label>
+            <select class="select"><option>plantilla_vida_global_v2.pdf</option></select>
+            <label class="lbl" style="margin-top:14px">Prioridad de cola</label>
+            <select class="select"><option>Normal</option><option>Alta</option><option>Crítica</option></select>
+          </div>
+        </div>
+
+        <label class="lbl" style="margin-top:8px">Procesamiento en Segundo Plano</label>
+        <div style="border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden">
+          <table class="tbl">
+            <thead><tr><th>Lote</th><th>Archivo</th><th>Asegurados</th><th style="width:40%">Progreso</th><th>Estado</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><span class="batch-id">LOTE-002</span></td>
+                <td>nomina_marzo.xlsx</td>
+                <td>340</td>
+                <td><div class="progress-cell"><div class="progress-bar"><div class="progress-fill" style="width:62%"></div></div><span class="progress-pct">62%</span></div></td>
+                <td><span class="tag info">Procesando</span></td>
+              </tr>
+              <tr>
+                <td><span class="batch-id">LOTE-001</span></td>
+                <td>vida_grupal_q1.csv</td>
+                <td>1,200</td>
+                <td><div class="progress-cell"><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div><span class="progress-pct">100%</span></div></td>
+                <td><span class="tag success">Completo</span></td>
+              </tr>
+              <tr>
+                <td><span class="batch-id">LOTE-000</span></td>
+                <td>auto_diciembre.xlsx</td>
+                <td>485</td>
+                <td><div class="progress-cell"><div class="progress-bar"><div class="progress-fill warn" style="width:78%"></div></div><span class="progress-pct">78%</span></div></td>
+                <td><span class="tag warn">12 errores</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+          <button class="btn btn-primary" style="flex:1;justify-content:center;min-width:200px" onclick="toast('Descargando ZIP...')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+            Descargar ZIP de Certificados
+          </button>
+          <div style="display:flex;align-items:center;gap:6px;padding:8px 14px;background:var(--success-soft);color:var(--success);border-radius:8px;font-size:12px;font-weight:600">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            SLA: 1,000 certificados en &lt; 5 min
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Anti-Fraude y QR -->
+    <section class="card">
+      <div class="card-head">
+        <div class="card-head-left">
+          <span class="step-num">3</span>
+          <h2 class="card-title">Anti-Fraude y QR</h2>
+        </div>
+        <span class="tag success">Verificación pública</span>
+      </div>
+      <div class="card-body">
+        <div class="field-row cols-2">
+          <div>
+            <label class="lbl">QR por Certificado</label>
+            <div class="qr-block">
+              <div class="qr"></div>
+              <div class="qr-info">
+                <div class="id">CERT-001234</div>
+                <div class="meta">Hash SHA-256<br>Firma blockchain</div>
+                <button class="btn btn-outline btn-sm" onclick="toast('QR regenerado')">Regenerar</button>
+              </div>
+            </div>
+          </div>
+          <div>
+            <label class="lbl">QR único de Verificación</label>
+            <div class="qr-block">
+              <div class="qr" style="background:repeating-conic-gradient(var(--primary) 0 25%,#fff 0 50%) 50%/10px 10px"></div>
+              <div class="qr-info">
+                <div class="id">verify.interseguros.bo/<wbr>v/CERT-001234</div>
+                <div class="meta">Landing público<br>Validez en tiempo real</div>
+                <button class="btn btn-outline btn-sm" onclick="toast('Enlace copiado')">Copiar enlace</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <label class="lbl">Bitácora de Verificaciones</label>
+        <div style="border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden">
+          <table class="tbl">
+            <thead><tr><th>Certificado</th><th>Escaneado por</th><th>Fecha y Hora</th><th>Ubicación</th><th>Resultado</th></tr></thead>
+            <tbody>
+              <tr><td><span class="batch-id">CERT-1234</span></td><td>Verificador Público</td><td>12/10/2026 14:35</td><td>Nairobi, KE</td><td><span class="tag success">Vigente</span></td></tr>
+              <tr><td><span class="batch-id">CERT-0987</span></td><td>Banco Económico</td><td>12/10/2026 11:02</td><td>La Paz, BO</td><td><span class="tag success">Vigente</span></td></tr>
+              <tr><td><span class="batch-id">CERT-0421</span></td><td>App Aliado</td><td>11/10/2026 22:18</td><td>Santa Cruz, BO</td><td><span class="tag danger">Vencido</span></td></tr>
+              <tr><td><span class="batch-id">CERT-0155</span></td><td>Verificador Público</td><td>11/10/2026 09:44</td><td>Cochabamba, BO</td><td><span class="tag muted">Anulado</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Distribución y Ciclo de Vida -->
+    <section class="card">
+      <div class="card-head">
+        <div class="card-head-left">
+          <span class="step-num">4</span>
+          <h2 class="card-title">Distribución y Ciclo de Vida</h2>
+        </div>
+        <button class="icon-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>
+      </div>
+      <div class="card-body">
+        <label class="lbl">Distribución Automática</label>
+        <div class="channel-row">
+          <div class="channel-left">
+            <div class="channel-icon email"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+            <div><div class="channel-name">Email</div><div class="channel-meta">PDF adjunto + enlace verificación</div></div>
+          </div>
+          <div class="switch on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="channel-row">
+          <div class="channel-left">
+            <div class="channel-icon wa"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></div>
+            <div><div class="channel-name">WhatsApp</div><div class="channel-meta">Mensaje con enlace seguro</div></div>
+          </div>
+          <div class="switch" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="channel-row">
+          <div class="channel-left">
+            <div class="channel-icon sms"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+            <div><div class="channel-name">SMS</div><div class="channel-meta">Solo enlace de verificación</div></div>
+          </div>
+          <div class="switch" onclick="this.classList.toggle('on')"></div>
+        </div>
+
+        <div class="divider"></div>
+
+        <label class="lbl">Ciclo de Vida (Póliza Madre)</label>
+        <div class="life-stats">
+          <div class="life-stat"><div class="label"><span class="dot" style="background:var(--success)"></span>Vigentes</div><div class="value">5,432</div></div>
+          <div class="life-stat"><div class="label"><span class="dot" style="background:var(--danger)"></span>Vencidos</div><div class="value">120</div></div>
+          <div class="life-stat"><div class="label"><span class="dot" style="background:var(--muted-2)"></span>Anulados</div><div class="value">55</div></div>
+        </div>
+
+        <div style="border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin-bottom:14px">
+          <table class="tbl">
+            <thead><tr><th>Póliza Madre</th><th>Vinculados</th><th>Vencimiento</th><th>Estado</th></tr></thead>
+            <tbody>
+              <tr><td><span class="batch-id">POL-VIDA-2026</span></td><td>3,210</td><td>31/12/2026</td><td><span class="tag success">Vigente</span></td></tr>
+              <tr><td><span class="batch-id">POL-AUTO-2025</span></td><td>1,850</td><td>30/06/2026</td><td><span class="tag warn">Por vencer</span></td></tr>
+              <tr><td><span class="batch-id">POL-HOG-2024</span></td><td>372</td><td>15/03/2026</td><td><span class="tag danger">Vencida</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-outline btn-sm" style="flex:1;min-width:130px;justify-content:center" onclick="confirm('¿Anular el certificado seleccionado?') && toast('Certificado anulado')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+            Anular
+          </button>
+          <button class="btn btn-outline btn-sm" style="flex:1;min-width:130px;justify-content:center" onclick="toast('Vigencia extendida +12 meses')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 11-3.46-7.1L21 8"/><path d="M21 3v5h-5"/></svg>
+            Extender vigencia
+          </button>
+          <button class="btn btn-primary btn-sm" style="flex:1.4;min-width:170px;justify-content:center" onclick="toast('Reporte de ciclo generado')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Reporte de Ciclo
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<aside class="aside">
+  <div class="summary-stat">
+    <div class="label">Emitidos hoy</div>
+    <div class="value">347</div>
+    <div class="sub"><span>↑ 18% vs ayer</span><span>SLA ✓</span></div>
+  </div>
+
+  <h3>Cola de procesamiento</h3>
+  <div style="margin-bottom:18px">
+    <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span class="muted">En cola</span><span style="font-weight:600">340 / 1,540</span></div>
+    <div class="progress-bar" style="height:10px"><div class="progress-fill" style="width:78%"></div></div>
+    <div style="font-size:11px;color:var(--muted);margin-top:6px">ETA: 2 min 14 seg · 2 trabajadores activos</div>
+  </div>
+
+  <h3>Resumen del producto</h3>
+  <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px"><span class="muted">Plantilla</span><span style="font-weight:500">v2.0</span></div>
+  <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px"><span class="muted">Variables activas</span><span style="font-weight:500">4 de 5</span></div>
+  <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px"><span class="muted">QR habilitado</span><span style="font-weight:500;color:var(--success)">Sí</span></div>
+  <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:13px"><span class="muted">Firma digital</span><span style="font-weight:500;color:var(--success)">Activa</span></div>
+
+  <div class="divider"></div>
+
+  <h3>Actividad reciente</h3>
+  <div class="activity"><div class="activity-dot green"></div><div><div class="activity-text">Lote LOTE-001 completado <strong>(1,200 certificados)</strong></div><div class="activity-time">hace 4 min</div></div></div>
+  <div class="activity"><div class="activity-dot blue"></div><div><div class="activity-text">CERT-1234 verificado en Nairobi, KE</div><div class="activity-time">hace 12 min</div></div></div>
+  <div class="activity"><div class="activity-dot warn"></div><div><div class="activity-text">12 errores en LOTE-000 — revisar trama</div><div class="activity-time">hace 38 min</div></div></div>
+  <div class="activity"><div class="activity-dot green"></div><div><div class="activity-text">Plantilla v2.0 publicada por María L.</div><div class="activity-time">hoy 09:14</div></div></div>
+
+  <div class="divider"></div>
+
+  <h3>Acciones rápidas</h3>
+  <button class="btn btn-outline btn-sm" style="width:100%;margin-bottom:8px;justify-content:center" onclick="toast('Buscador abierto')">Buscar certificado</button>
+  <button class="btn btn-outline btn-sm" style="width:100%;margin-bottom:8px;justify-content:center" onclick="toast('Reenvío programado')">Reenviar a clientes</button>
+  <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;color:var(--danger)">Pausar emisiones</button>
+</aside>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._tt);
+  window._tt = setTimeout(()=>t.classList.remove('show'), 2200);
+}
+// Simulate live progress on first batch
+let p = 62;
+setInterval(()=>{
+  const fill = document.querySelector('.tbl .progress-fill');
+  if(!fill) return;
+  p = Math.min(100, p + Math.random()*1.2);
+  fill.style.width = p.toFixed(0)+'%';
+  fill.parentElement.nextElementSibling.textContent = p.toFixed(0)+'%';
+}, 1500);
+</script>
+</body>
+</html>

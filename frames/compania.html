@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Mi Compañía — Configuración</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#f7f8fa;--card:#fff;--border:#e5e7eb;--muted:#6b7280;--fg:#0f172a;
+    --primary:#0F766E;--primary-hover:#0d6660;--primary-soft:#ccfbf1;--destructive:#dc2626;
+    --hover:#f3f4f6;--header:#f9fafb;
+  }
+  html,body{background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  .container{max-width:672px;margin:0 auto;padding:40px 24px}
+  h1{font-size:24px;font-weight:700}
+  h2{font-size:14px;font-weight:600}
+  h3{font-size:18px;font-weight:600}
+  p{margin:0}
+  .subtitle{font-size:14px;color:var(--muted);margin-top:4px;margin-bottom:32px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px}
+  .card + .card{margin-top:24px}
+  .stack > * + *{margin-top:24px}
+  .row{display:flex;align-items:center;gap:16px}
+  .row-between{display:flex;align-items:center;justify-content:space-between;padding-top:16px;border-top:1px solid var(--border)}
+  .flex-1{flex:1}
+  .shrink-0{flex-shrink:0}
+  .min-w-0{min-width:0}
+  .gap-1{gap:4px}.gap-2{gap:8px}.gap-3{gap:12px}
+  .mt-1{margin-top:4px}.mt-4{margin-top:16px}.mt-6{margin-top:24px}
+  .mb-4{margin-bottom:16px}
+  .py-3{padding-top:12px;padding-bottom:12px}
+  .text-center{text-align:center}
+  .text-right{text-align:right}
+  .truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .text-sm{font-size:14px}.text-xs{font-size:12px}
+  .font-medium{font-weight:500}.font-mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase}
+  .text-muted{color:var(--muted)}
+  .label{font-size:12px;color:var(--muted);display:block}
+
+  /* logo box */
+  .logo-box{height:80px;width:80px;border-radius:8px;border:2px dashed var(--border);background:#fafafa;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;transition:border-color .15s}
+  .logo-box:hover{border-color:var(--primary)}
+  .logo-box img{height:100%;width:100%;object-fit:contain;padding:4px}
+  .logo-box svg{height:24px;width:24px;color:#9ca3af}
+
+  /* color picker */
+  .color-row{display:flex;align-items:center;gap:12px;margin-top:4px}
+  .color-wrap{position:relative}
+  .color-swatch{height:40px;width:48px;border-radius:6px;border:1px solid var(--border)}
+  .color-input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;border:0;padding:0}
+
+  /* inputs */
+  .input,.textarea{width:100%;border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:14px;background:#fff;font-family:inherit;color:var(--fg);outline:none;transition:border-color .15s,box-shadow .15s}
+  .input:focus,.textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(15,118,110,.15)}
+  .textarea{resize:vertical;min-height:80px}
+
+  /* buttons */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 16px;border-radius:8px;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;border:1px solid transparent;transition:background .15s,border-color .15s,opacity .15s;line-height:1;white-space:nowrap}
+  .btn-primary{background:var(--primary);color:#fff}
+  .btn-primary:hover{background:var(--primary-hover)}
+  .btn-outline{background:#fff;border-color:var(--border);color:var(--fg)}
+  .btn-outline:hover{background:var(--hover)}
+  .btn-ghost{background:transparent;color:var(--fg)}
+  .btn-ghost:hover{background:var(--hover)}
+  .btn-sm{padding:6px 12px;font-size:13px}
+  .btn-icon{padding:0;width:32px;height:32px}
+  .btn-danger{color:var(--destructive)}
+
+  /* badge */
+  .badge-ok{display:inline-flex;align-items:center;gap:4px;background:var(--primary-soft);color:var(--primary);padding:4px 10px;border-radius:999px;font-size:12px;font-weight:500}
+
+  /* section header */
+  .section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+  .section-title{display:flex;align-items:center;gap:8px}
+  .section-title svg{height:16px;width:16px;color:var(--muted)}
+
+  /* divide */
+  .divide > * + *{border-top:1px solid var(--border)}
+  .item-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0}
+
+  /* tabs */
+  .tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;background:#f3f4f6;padding:4px;border-radius:8px}
+  .tab{padding:8px 12px;font-size:13px;border-radius:6px;cursor:pointer;text-align:center;color:var(--muted);font-weight:500;transition:background .15s,color .15s;border:0;background:transparent;font-family:inherit}
+  .tab.active{background:#fff;color:var(--fg);box-shadow:0 1px 2px rgba(0,0,0,.06)}
+
+  /* table */
+  .table-wrap{margin-top:16px;overflow:hidden;border-radius:8px;border:1px solid var(--border)}
+  table{border-collapse:collapse;width:100%;font-size:14px}
+  thead{background:var(--header)}
+  th{padding:10px 12px;text-align:left;font-weight:500;font-size:12px;color:var(--muted)}
+  th.center{text-align:center;width:80px}
+  td{padding:10px 12px}
+  td.center{text-align:center}
+  tbody tr{border-top:1px solid var(--border)}
+  input[type=checkbox]{width:16px;height:16px;accent-color:var(--primary);cursor:pointer;margin:0}
+
+  /* footer */
+  .footer-actions{display:flex;justify-content:flex-end;margin-top:24px}
+
+  /* modal */
+  .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:50;padding:16px;animation:fade .15s}
+  .modal-bg.open{display:flex}
+  .modal{background:#fff;border-radius:12px;max-width:480px;width:100%;padding:24px;box-shadow:0 20px 50px rgba(0,0,0,.2)}
+  .modal h3{margin-bottom:4px}
+  .modal-desc{font-size:14px;color:var(--muted);margin-bottom:8px}
+  .modal-fields{padding:12px 0}
+  .modal-fields > * + *{margin-top:14px}
+  .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:8px}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+
+  /* toast */
+  .toast{position:fixed;bottom:20px;right:20px;background:#0f172a;color:#fff;padding:12px 20px;border-radius:8px;font-size:14px;opacity:0;transform:translateY(10px);transition:opacity .25s,transform .25s;z-index:100;box-shadow:0 10px 25px rgba(0,0,0,.2);pointer-events:none}
+  .toast.show{opacity:1;transform:translateY(0)}
+  .toast.error{background:var(--destructive)}
+
+  /* empty */
+  .empty{font-size:14px;color:var(--muted);padding:24px 0;text-align:center}
+
+  /* icon helpers */
+  .icn{width:16px;height:16px;display:inline-block;vertical-align:-2px}
+  .icn-lg{width:20px;height:20px}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Mi Compañía</h1>
+  <p class="subtitle">Configura tu marca e integraciones.</p>
+
+  <div class="card stack">
+    <div class="row">
+      <div id="logoBox" class="logo-box">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4-4a3 3 0 014 0l4 4m-2-2l1-1a3 3 0 014 0l3 3M4 8h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+      </div>
+      <input id="logoInput" type="file" accept="image/*" style="display:none"/>
+      <div class="flex-1">
+        <label class="label">Nombre</label>
+        <input class="input mt-1" value="Seguros Alianza S.A."/>
+      </div>
+    </div>
+
+    <div>
+      <label class="label">Color de marca</label>
+      <div class="color-row">
+        <div class="color-wrap">
+          <div id="colorSwatch" class="color-swatch" style="background:#0F766E"></div>
+          <input id="colorPicker" type="color" value="#0F766E" class="color-input"/>
+        </div>
+        <input id="colorText" class="input font-mono" value="#0F766E"/>
+      </div>
+    </div>
+
+    <div class="row-between">
+      <div>
+        <p class="text-sm font-medium">SIAT — Impuestos</p>
+        <p class="text-xs text-muted">Facturación electrónica</p>
+      </div>
+      <div id="siatStatus"><button class="btn btn-primary btn-sm" onclick="openModal('siat')">Conectar</button></div>
+    </div>
+
+    <div class="row-between">
+      <div>
+        <p class="text-sm font-medium">Banco Económico</p>
+        <p class="text-xs text-muted">Cuenta para cobros</p>
+      </div>
+      <div id="bankStatus"><button class="btn btn-primary btn-sm" onclick="openModal('bank')">Vincular</button></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-head">
+      <div class="section-title">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14-4H5m14 8H5m14 4H5"/></svg>
+        <h2>Ramos</h2>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="openBranch()">+ Nuevo</button>
+    </div>
+    <div id="branchList" class="divide"></div>
+  </div>
+
+  <div class="card">
+    <div class="section-title mb-4">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+      <h2>Roles y permisos</h2>
+    </div>
+    <div id="roleTabs" class="tabs"></div>
+    <div id="rolePanel" class="table-wrap"></div>
+  </div>
+
+  <div class="footer-actions">
+    <button class="btn btn-primary" onclick="showToast('Cambios guardados')">
+      <svg class="icn" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+      Guardar
+    </button>
+  </div>
+</div>
+
+<!-- SIAT modal -->
+<div id="siatModal" class="modal-bg">
+  <div class="modal">
+    <h3>Conectar SIAT</h3>
+    <p class="modal-desc">Ingresa las credenciales de facturación electrónica.</p>
+    <div class="modal-fields">
+      <div><label class="label">NIT</label><input id="siat_nit" class="input mt-1" placeholder="1234567890"/></div>
+      <div><label class="label">CUIS</label><input id="siat_cuis" class="input mt-1" placeholder="Código único de inicio"/></div>
+      <div><label class="label">CUFD</label><input id="siat_cufd" class="input mt-1" placeholder="Código único diario"/></div>
+      <div><label class="label">Token</label><input id="siat_token" type="password" class="input mt-1" placeholder="••••••••"/></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('siat')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveSiat()">Conectar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Bank modal -->
+<div id="bankModal" class="modal-bg">
+  <div class="modal">
+    <h3>Vincular Banco Económico</h3>
+    <p class="modal-desc">Conecta tu cuenta para recibir pagos.</p>
+    <div class="modal-fields">
+      <div><label class="label">Número de cuenta</label><input id="bank_acc" class="input mt-1" placeholder="0000-0000-0000-0000"/></div>
+      <div><label class="label">Titular</label><input id="bank_holder" class="input mt-1" placeholder="Seguros Alianza S.A."/></div>
+      <div><label class="label">API Key</label><input id="bank_key" type="password" class="input mt-1" placeholder="••••••••"/></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('bank')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveBank()">Vincular</button>
+    </div>
+  </div>
+</div>
+
+<!-- Branch modal -->
+<div id="branchModal" class="modal-bg">
+  <div class="modal">
+    <h3 id="branchTitle">Nuevo ramo</h3>
+    <div class="modal-fields">
+      <div><label class="label">Nombre</label><input id="br_name" class="input mt-1" placeholder="Ej. Caución"/></div>
+      <div><label class="label">Descripción</label><textarea id="br_desc" class="textarea mt-1" placeholder="Breve descripción"></textarea></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('branch')">Cancelar</button>
+      <button id="branchSave" class="btn btn-primary" onclick="saveBranch()">Crear</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+  function showToast(msg, err){
+    const t=document.getElementById('toast');
+    t.textContent=msg; t.className='toast show'+(err?' error':'');
+    clearTimeout(window._tt); window._tt=setTimeout(()=>t.className='toast',2200);
+  }
+  const logoBox=document.getElementById('logoBox'),logoInput=document.getElementById('logoInput');
+  logoBox.onclick=()=>logoInput.click();
+  logoInput.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{logoBox.innerHTML=`<img src="${r.result}" alt="logo"/>`;};r.readAsDataURL(f);};
+  const cp=document.getElementById('colorPicker'),cs=document.getElementById('colorSwatch'),ct=document.getElementById('colorText');
+  cp.oninput=e=>{cs.style.background=e.target.value;ct.value=e.target.value.toUpperCase();};
+  ct.oninput=e=>{cs.style.background=e.target.value;cp.value=e.target.value;};
+
+  function openModal(k){document.getElementById(k+'Modal').classList.add('open');}
+  function closeModal(k){document.getElementById(k+'Modal').classList.remove('open');}
+  document.querySelectorAll('.modal-bg').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');}));
+
+  function saveSiat(){
+    if(!document.getElementById('siat_nit').value||!document.getElementById('siat_token').value){showToast('Completa NIT y Token',true);return;}
+    document.getElementById('siatStatus').innerHTML='<span class="badge-ok">✓ Conectado</span>';
+    closeModal('siat');showToast('SIAT conectado');
+  }
+  function saveBank(){
+    if(!document.getElementById('bank_acc').value||!document.getElementById('bank_key').value){showToast('Completa cuenta y API Key',true);return;}
+    document.getElementById('bankStatus').innerHTML='<span class="badge-ok">✓ Vinculado</span>';
+    closeModal('bank');showToast('Banco vinculado');
+  }
+
+  let branches=[
+    {id:'1',name:'Automotor',description:'Vehículos livianos y pesados'},
+    {id:'2',name:'Vida',description:'Seguros de vida individual y colectivo'},
+    {id:'3',name:'Salud',description:'Cobertura médica y hospitalaria'},
+    {id:'4',name:'Hogar',description:'Incendio y contenido del hogar'},
+  ];
+  let editingBranch=null;
+  function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+  function renderBranches(){
+    const c=document.getElementById('branchList');
+    if(!branches.length){c.innerHTML='<p class="empty">Sin ramos</p>';return;}
+    c.innerHTML=branches.map(b=>`
+      <div class="item-row">
+        <div class="min-w-0">
+          <p class="text-sm font-medium">${esc(b.name)}</p>
+          <p class="text-xs text-muted truncate">${esc(b.description)}</p>
+        </div>
+        <div class="row gap-1 shrink-0">
+          <button class="btn btn-ghost btn-icon" onclick="openBranch('${b.id}')" title="Editar">✎</button>
+          <button class="btn btn-ghost btn-icon btn-danger" onclick="removeBranch('${b.id}')" title="Eliminar">🗑</button>
+        </div>
+      </div>`).join('');
+  }
+  function openBranch(id){
+    editingBranch=id?branches.find(b=>b.id===id):null;
+    document.getElementById('branchTitle').textContent=editingBranch?'Editar ramo':'Nuevo ramo';
+    document.getElementById('branchSave').textContent=editingBranch?'Guardar':'Crear';
+    document.getElementById('br_name').value=editingBranch?.name||'';
+    document.getElementById('br_desc').value=editingBranch?.description||'';
+    openModal('branch');
+  }
+  function saveBranch(){
+    const n=document.getElementById('br_name').value.trim(),d=document.getElementById('br_desc').value;
+    if(!n){showToast('Nombre requerido',true);return;}
+    if(editingBranch){editingBranch.name=n;editingBranch.description=d;showToast('Ramo actualizado');}
+    else{branches.push({id:Date.now().toString(),name:n,description:d});showToast('Ramo creado');}
+    closeModal('branch');renderBranches();
+  }
+  function removeBranch(id){branches=branches.filter(b=>b.id!==id);renderBranches();showToast('Ramo eliminado');}
+  renderBranches();
+
+  const roles=['Admin','Suscriptor','Agente','Cobranzas'];
+  const modules=[{k:'polizas',l:'Pólizas'},{k:'ramos',l:'Ramos'},{k:'clientes',l:'Clientes'},{k:'cobranzas',l:'Cobranzas'},{k:'reportes',l:'Reportes'},{k:'config',l:'Configuración'}];
+  const actions=['Ver','Crear','Editar','Eliminar'];
+  const perms={};
+  roles.forEach(r=>{perms[r]={};modules.forEach(m=>{perms[r][m.k]={
+    Ver: r==='Admin'||r==='Suscriptor'||(r==='Agente'&&['polizas','clientes','reportes'].includes(m.k))||(r==='Cobranzas'&&['polizas','cobranzas','clientes'].includes(m.k)),
+    Crear: r==='Admin'||(r==='Suscriptor'&&['polizas','clientes'].includes(m.k))||(r==='Agente'&&m.k==='clientes')||(r==='Cobranzas'&&m.k==='cobranzas'),
+    Editar: r==='Admin'||(r==='Suscriptor'&&['polizas','clientes'].includes(m.k))||(r==='Cobranzas'&&m.k==='cobranzas'),
+    Eliminar: r==='Admin'
+  };});});
+  let activeRole='Admin';
+  function renderTabs(){
+    document.getElementById('roleTabs').innerHTML=roles.map(r=>`<button class="tab ${r===activeRole?'active':''}" onclick="setRole('${r}')">${r}</button>`).join('');
+  }
+  function renderPanel(){
+    const r=activeRole;
+    document.getElementById('rolePanel').innerHTML=`
+      <table>
+        <thead><tr><th>Módulo</th>${actions.map(a=>`<th class="center">${a}</th>`).join('')}</tr></thead>
+        <tbody>${modules.map(m=>`<tr><td>${m.l}</td>${actions.map(a=>`<td class="center"><input type="checkbox" ${perms[r][m.k][a]?'checked':''} onchange="perms['${r}']['${m.k}']['${a}']=this.checked"/></td>`).join('')}</tr>`).join('')}</tbody>
+      </table>`;
+  }
+  function setRole(r){activeRole=r;renderTabs();renderPanel();}
+  renderTabs();renderPanel();
+</script>
+</body>
+</html>

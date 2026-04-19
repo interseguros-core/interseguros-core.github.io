@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Plan de Pagos · INTERSEGUROS</title>
+<style>
+  :root{
+    --primary:#0F5132; --primary-2:#14704A; --primary-soft:#E8F1EC;
+    --bg:#F5F7F6; --card:#FFFFFF; --border:#E2E6E3; --muted:#6B7570;
+    --text:#1B2420; --danger:#B42318; --warn:#B54708; --ok:#067647;
+    --chip:#F0F4F1; --shadow:0 1px 2px rgba(16,24,40,.04),0 1px 3px rgba(16,24,40,.06);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;background:var(--bg);color:var(--text);font-size:13px;line-height:1.45}
+  /* Top bar */
+  .topbar{background:var(--primary);color:#fff;padding:10px 22px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20}
+  .topbar h1{font-size:14px;margin:0;font-weight:600}
+  .topbar .sub{font-size:11px;opacity:.85;margin-top:2px}
+  .topbar .actions{display:flex;gap:10px;align-items:center}
+  .icon-btn{background:rgba(255,255,255,.12);border:0;color:#fff;width:32px;height:32px;border-radius:8px;cursor:pointer;display:grid;place-items:center}
+  .icon-btn:hover{background:rgba(255,255,255,.22)}
+
+  /* Page header */
+  .page{padding:18px 22px;max-width:1480px;margin:0 auto}
+  .crumbs{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  .crumbs .back{background:#fff;border:1px solid var(--border);width:30px;height:30px;border-radius:8px;display:grid;place-items:center;cursor:pointer}
+  .crumbs h2{font-size:16px;margin:0;letter-spacing:.4px;color:var(--primary)}
+  .crumbs .pill{margin-left:auto;background:#fff;border:1px solid var(--border);padding:6px 10px;border-radius:999px;font-size:11px;color:var(--muted)}
+
+  /* KPI strip */
+  .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px}
+  .kpi{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;box-shadow:var(--shadow)}
+  .kpi .label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
+  .kpi .val{font-size:20px;font-weight:700;margin-top:4px;color:var(--primary)}
+  .kpi .delta{font-size:11px;margin-top:2px}
+  .kpi .delta.up{color:var(--ok)} .kpi .delta.down{color:var(--danger)}
+
+  /* Grid */
+  .grid{display:grid;grid-template-columns:1.15fr 1fr;gap:14px}
+  @media (max-width:1100px){.grid{grid-template-columns:1fr} .kpis{grid-template-columns:repeat(2,1fr)}}
+
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column}
+  .card-header{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--border);background:linear-gradient(0deg,#fff,#fbfcfb)}
+  .step{width:24px;height:24px;border-radius:50%;background:var(--primary);color:#fff;display:grid;place-items:center;font-size:12px;font-weight:700}
+  .card-header h3{margin:0;font-size:13.5px;font-weight:600}
+  .card-header .right{margin-left:auto;display:flex;gap:6px}
+  .ghost{background:transparent;border:1px solid var(--border);width:28px;height:28px;border-radius:8px;cursor:pointer;color:var(--muted)}
+  .ghost:hover{background:var(--primary-soft);color:var(--primary)}
+  .card-body{padding:14px;display:flex;flex-direction:column;gap:12px}
+
+  label.lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+  .field{display:flex;flex-direction:column;gap:6px}
+  .row{display:grid;gap:10px}
+  .row.c2{grid-template-columns:1fr 1fr}
+  .row.c3{grid-template-columns:repeat(3,1fr)}
+  .row.c4{grid-template-columns:repeat(4,1fr)}
+  input[type=text],input[type=number],input[type=date],select,textarea{
+    width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:#fff;font-family:inherit;color:var(--text)
+  }
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(15,81,50,.12)}
+  textarea{resize:vertical;min-height:54px}
+
+  /* Chips / segmented */
+  .seg{display:inline-flex;background:var(--chip);border-radius:10px;padding:3px;border:1px solid var(--border)}
+  .seg button{background:transparent;border:0;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:12px;color:var(--muted);font-weight:600}
+  .seg button.active{background:#fff;color:var(--primary);box-shadow:var(--shadow)}
+
+  .chips{display:flex;flex-wrap:wrap;gap:6px}
+  .chip{background:var(--chip);border:1px solid var(--border);border-radius:999px;padding:5px 10px;font-size:12px;cursor:pointer;color:var(--muted);font-weight:500}
+  .chip.active{background:var(--primary);border-color:var(--primary);color:#fff}
+  .chip:hover{border-color:var(--primary-2)}
+
+  /* Tables */
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th{font-weight:600;text-align:left;color:var(--muted);text-transform:uppercase;font-size:10.5px;letter-spacing:.5px;padding:8px 10px;background:#fafbfa;border-bottom:1px solid var(--border)}
+  td{padding:9px 10px;border-bottom:1px dashed var(--border)}
+  tr:last-child td{border-bottom:0}
+  tr:hover td{background:#fafdfb}
+  td input{padding:5px 7px;font-size:12.5px}
+
+  .badge{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:999px;font-size:11px;font-weight:600}
+  .b-pend{background:#FEF3F2;color:var(--danger)}
+  .b-paid{background:#ECFDF3;color:var(--ok)}
+  .b-warn{background:#FFFAEB;color:var(--warn)}
+  .b-info{background:#EFF8FF;color:#175CD3}
+  .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+
+  /* Switch */
+  .switch{position:relative;display:inline-block;width:36px;height:20px}
+  .switch input{display:none}
+  .switch span{position:absolute;inset:0;background:#D5DBD7;border-radius:999px;transition:.2s;cursor:pointer}
+  .switch span:before{content:"";position:absolute;width:16px;height:16px;background:#fff;top:2px;left:2px;border-radius:50%;transition:.2s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+  .switch input:checked + span{background:var(--primary)}
+  .switch input:checked + span:before{transform:translateX(16px)}
+
+  /* Summary panel */
+  .summary{background:linear-gradient(180deg,#FFFFFF,#FBFCFB);border:1px solid var(--border);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px;box-shadow:var(--shadow)}
+  .summary h4{margin:0;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+  .summary .total{font-size:24px;font-weight:700;color:var(--primary)}
+  .summary .line{display:flex;justify-content:space-between;font-size:12.5px;padding:5px 0;border-bottom:1px dashed var(--border)}
+  .summary .line:last-of-type{border-bottom:0}
+  .summary .line b{color:var(--text)}
+
+  .btn{padding:9px 14px;border-radius:9px;border:0;cursor:pointer;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:6px;justify-content:center}
+  .btn.primary{background:var(--primary);color:#fff} .btn.primary:hover{background:var(--primary-2)}
+  .btn.outline{background:#fff;border:1px solid var(--border);color:var(--text)} .btn.outline:hover{border-color:var(--primary);color:var(--primary)}
+
+  /* Workflow */
+  .wf{display:flex;flex-direction:column;gap:8px}
+  .wf-step{display:grid;grid-template-columns:54px 1fr auto;gap:10px;align-items:center;padding:10px;border:1px solid var(--border);border-radius:10px;background:#fff}
+  .wf-step.active{border-color:var(--primary);background:#F4FAF6}
+  .wf-day{background:var(--primary);color:#fff;border-radius:8px;text-align:center;padding:6px 4px;font-size:11px;font-weight:600;line-height:1.1}
+  .wf-day .num{font-size:14px;display:block}
+  .wf-step.muted .wf-day{background:#9AA5A0}
+  .wf-step .desc{font-size:12.5px}
+  .wf-step .desc small{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+
+  /* Promise card */
+  .promise{background:var(--primary-soft);border:1px dashed var(--primary-2);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:8px}
+
+  /* Alerts */
+  .alert{display:flex;gap:10px;padding:10px 12px;border-radius:10px;font-size:12.5px;align-items:flex-start}
+  .alert.info{background:#EFF8FF;color:#175CD3;border:1px solid #B2DDFF}
+  .alert.warn{background:#FFFAEB;color:var(--warn);border:1px solid #FEDF89}
+
+  .progress{height:6px;background:#EAEEEC;border-radius:999px;overflow:hidden;flex:1}
+  .progress span{display:block;height:100%;background:var(--primary);border-radius:999px}
+
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px}
+  .legend span{display:inline-flex;align-items:center;gap:6px;color:var(--muted)}
+  .legend .d{width:8px;height:8px;border-radius:50%}
+
+  .footer-bar{position:sticky;bottom:0;background:rgba(255,255,255,.95);backdrop-filter:saturate(140%) blur(8px);border-top:1px solid var(--border);padding:10px 22px;display:flex;align-items:center;gap:10px;justify-content:flex-end;margin-top:14px}
+  .footer-bar .info{margin-right:auto;color:var(--muted);font-size:12px}
+
+  .grip{cursor:grab;color:#9AA5A0;margin-right:6px}
+  .helper{font-size:11px;color:var(--muted)}
+  .divider{height:1px;background:var(--border);margin:4px 0}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div>
+    <h1>Módulo: Creación de Plan de Pagos</h1>
+    <div class="sub">Gestión inteligente de cobros, fraccionamiento y mora</div>
+  </div>
+  <div class="actions">
+    <button class="icon-btn" title="Ayuda">?</button>
+    <button class="icon-btn" title="Notificaciones">🔔</button>
+    <button class="icon-btn" title="Perfil">👤</button>
+  </div>
+</header>
+
+<main class="page">
+
+  <div class="crumbs">
+    <button class="back" title="Volver">←</button>
+    <h2>MÓDULO · PLAN DE PAGOS</h2>
+    <span class="pill">Póliza: <b style="color:var(--text)">CERT-123 · Juan Pérez</b></span>
+    <span class="pill">Producto: <b style="color:var(--text)">Vida Individual</b></span>
+  </div>
+
+  <!-- KPIs -->
+  <section class="kpis">
+    <div class="kpi"><div class="label">Prima Total</div><div class="val">$16,300</div><div class="delta">USD · Anual</div></div>
+    <div class="kpi"><div class="label">Pagado</div><div class="val" style="color:var(--ok)">$12,200</div><div class="delta up">▲ 75% del plan</div></div>
+    <div class="kpi"><div class="label">Pendiente</div><div class="val" style="color:var(--danger)">$3,900</div><div class="delta down">2 cuotas activas</div></div>
+    <div class="kpi"><div class="label">Próximo Vencimiento</div><div class="val" style="font-size:15px">18 / Ene / 2027</div><div class="delta">en 9 días</div></div>
+    <div class="kpi"><div class="label">Tasa de Cobro</div><div class="val" style="color:var(--ok)">94.2%</div><div class="delta up">▲ 1.8% vs mes anterior</div></div>
+  </section>
+
+  <div class="grid">
+
+    <!-- LEFT COLUMN -->
+    <div style="display:flex;flex-direction:column;gap:14px">
+
+      <!-- 1. Motor de Fraccionamiento -->
+      <section class="card">
+        <div class="card-header">
+          <span class="step">1</span><h3>Motor de Fraccionamiento</h3>
+          <div class="right">
+            <button class="ghost" title="Editar">✎</button>
+            <button class="ghost" title="Más">⋯</button>
+          </div>
+        </div>
+        <div class="card-body">
+
+          <div class="row c2">
+            <div class="field">
+              <label class="lbl">Frecuencia de pago</label>
+              <div class="chips" id="freq">
+                <span class="chip" data-n="1">Contado</span>
+                <span class="chip active" data-n="12">Mensual</span>
+                <span class="chip" data-n="4">Trimestral</span>
+                <span class="chip" data-n="2">Semestral</span>
+                <span class="chip" data-n="1">Anual</span>
+              </div>
+            </div>
+            <div class="field">
+              <label class="lbl">Moneda</label>
+              <div style="display:flex;align-items:center;gap:10px">
+                <div class="seg" id="cur">
+                  <button>BOB</button><button class="active">USD</button>
+                </div>
+                <label class="switch" title="Pagos mixtos BOB/USD"><input type="checkbox" id="mix"/><span></span></label>
+                <span class="helper">Pago mixto BOB/USD</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="row c4">
+            <div class="field"><label class="lbl">Recargo financiero %</label><input type="number" value="3.5" step="0.1"/></div>
+            <div class="field"><label class="lbl">Gastos administrativos</label><input type="number" value="25"/></div>
+            <div class="field"><label class="lbl">Día de cobro fijo</label>
+              <select><option>Día 10</option><option>Día 15</option><option selected>Día de emisión</option><option>Último día del mes</option></select>
+            </div>
+            <div class="field"><label class="lbl">Primera cuota</label><input type="date" value="2026-12-10"/></div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div>
+              <label class="lbl">Detalle de Cuotas</label>
+              <div class="helper">Editable inline · arrastra para reordenar</div>
+            </div>
+            <div style="display:flex;gap:6px">
+              <button class="btn outline" id="addRow">+ Cuota</button>
+              <button class="btn outline">⤓ Importar</button>
+            </div>
+          </div>
+
+          <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden">
+            <table id="tbl">
+              <thead><tr>
+                <th></th><th>#</th><th>Monto (USD)</th><th>Vencimiento</th><th>Estado</th><th>Recibo</th><th></th>
+              </tr></thead>
+              <tbody>
+                <tr><td><span class="grip">⋮⋮</span></td><td>1</td><td><input type="number" value="100"/></td><td><input type="date" value="2026-12-10"/></td><td><span class="badge b-pend"><span class="dot"></span>Pendiente</span></td><td>—</td><td><button class="ghost">🗑</button></td></tr>
+                <tr><td><span class="grip">⋮⋮</span></td><td>2</td><td><input type="number" value="50"/></td><td><input type="date" value="2026-12-26"/></td><td><span class="badge b-paid"><span class="dot"></span>Pagado</span></td><td>R-0091</td><td><button class="ghost">🗑</button></td></tr>
+                <tr><td><span class="grip">⋮⋮</span></td><td>3</td><td><input type="number" value="1350"/></td><td><input type="date" value="2027-01-18"/></td><td><span class="badge b-warn"><span class="dot"></span>Por vencer</span></td><td>—</td><td><button class="ghost">🗑</button></td></tr>
+                <tr><td><span class="grip">⋮⋮</span></td><td>4</td><td><input type="number" value="2100"/></td><td><input type="date" value="2027-02-18"/></td><td><span class="badge b-info"><span class="dot"></span>Programada</span></td><td>—</td><td><button class="ghost">🗑</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="alert info">ℹ️ El total a cobrar incluye recargos y gastos administrativos. Se recalcula automáticamente.</div>
+        </div>
+      </section>
+
+      <!-- 3. Workflow de Mora -->
+      <section class="card">
+        <div class="card-header">
+          <span class="step">3</span><h3>Workflow de Mora</h3>
+          <div class="right">
+            <div class="seg"><button class="active">Automático</button><button>Manual</button></div>
+            <button class="ghost">✎</button>
+          </div>
+        </div>
+        <div class="card-body">
+
+          <div class="row c2">
+            <div>
+              <div class="wf">
+                <div class="wf-step active">
+                  <div class="wf-day"><span class="num">1-5</span>días</div>
+                  <div class="desc">Notificación amistosa<small>WhatsApp + Email · plantilla "recordatorio_suave"</small></div>
+                  <label class="switch"><input type="checkbox" checked/><span></span></label>
+                </div>
+                <div class="wf-step">
+                  <div class="wf-day"><span class="num">15</span>día</div>
+                  <div class="desc">Alerta a Ejecutivo Comercial<small>Asignación a [Nombre] · llamada obligatoria</small></div>
+                  <label class="switch"><input type="checkbox" checked/><span></span></label>
+                </div>
+                <div class="wf-step muted">
+                  <div class="wf-day"><span class="num">30</span>día</div>
+                  <div class="desc">Aviso de suspensión de cobertura<small>Carta legal + bloqueo automático de servicios</small></div>
+                  <label class="switch"><input type="checkbox" checked/><span></span></label>
+                </div>
+                <div class="wf-step muted">
+                  <div class="wf-day"><span class="num">60</span>día</div>
+                  <div class="desc">Inicio de proceso de anulación<small>Escalamiento a área legal</small></div>
+                  <label class="switch"><input type="checkbox"/><span></span></label>
+                </div>
+              </div>
+            </div>
+
+            <div class="promise">
+              <label class="lbl">Registro de Promesa de Pago</label>
+              <div class="row c2">
+                <div class="field"><label class="lbl">Asegurado ID</label><input type="text" value="CERT-123"/></div>
+                <div class="field"><label class="lbl">Monto prometido</label><input type="number" placeholder="USD"/></div>
+              </div>
+              <div class="row c2">
+                <div class="field"><label class="lbl">Fecha de pago</label><input type="date"/></div>
+                <div class="field"><label class="lbl">Canal acordado</label>
+                  <select><option>Llamada</option><option>WhatsApp</option><option>Visita</option><option>Email</option></select>
+                </div>
+              </div>
+              <div class="field"><label class="lbl">Notas</label><textarea placeholder="Cliente confirma pago tras cobro de honorarios..."></textarea></div>
+              <div class="alert warn">⚠️ Las alertas se pausan dinámicamente mientras la promesa esté vigente.</div>
+              <button class="btn primary">+ Registrar promesa</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div style="display:flex;flex-direction:column;gap:14px">
+
+      <!-- Resumen -->
+      <section class="summary">
+        <h4>Resumen del Plan</h4>
+        <div class="total" id="sumTotal">$ 3,600 USD</div>
+        <div class="helper" id="sumHelper">Total a cobrar · 12 cuotas mensuales</div>
+        <div class="divider"></div>
+        <div class="line"><span>Subtotal cuotas</span><b>$ 3,420</b></div>
+        <div class="line"><span>Recargo financiero (3.5%)</span><b>$ 119.70</b></div>
+        <div class="line"><span>Gastos administrativos</span><b>$ 25.00</b></div>
+        <div class="line"><span>IVA / Impuestos</span><b>$ 35.30</b></div>
+        <div class="divider"></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn primary" style="flex:1">⚡ Generar Plan de Pagos</button>
+          <button class="btn outline">👁 Vista previa</button>
+        </div>
+      </section>
+
+      <!-- 2. Cuenta Corriente 360 -->
+      <section class="card">
+        <div class="card-header">
+          <span class="step">2</span><h3>Cuenta Corriente 360</h3>
+          <div class="right">
+            <button class="ghost" title="Exportar">⤓</button>
+            <button class="ghost">✎</button>
+          </div>
+        </div>
+        <div class="card-body">
+
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+            <div><div class="lbl">Prima Total</div><div style="font-weight:700">$16,300</div></div>
+            <div><div class="lbl">Pagado</div><div style="font-weight:700;color:var(--ok)">$12,200</div></div>
+            <div><div class="lbl">Pendiente</div><div style="font-weight:700;color:var(--danger)">$3,900</div></div>
+            <div><div class="lbl">Próx. Venc.</div><div style="font-weight:700">18/01/2027</div></div>
+          </div>
+
+          <div class="progress" title="75% pagado"><span style="width:75%"></span></div>
+          <div class="legend">
+            <span><span class="d" style="background:var(--ok)"></span>Pagado 75%</span>
+            <span><span class="d" style="background:var(--warn)"></span>Por vencer 12%</span>
+            <span><span class="d" style="background:var(--danger)"></span>Vencido 13%</span>
+          </div>
+
+          <div>
+            <label class="lbl">Recibos provisionales</label>
+            <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:6px">
+              <table>
+                <thead><tr><th>Recibo ID</th><th>Fecha</th><th>Monto</th><th>Tipo</th><th>Factura</th></tr></thead>
+                <tbody>
+                  <tr><td><b>LOTE-001</b></td><td>12/06/2026</td><td>1,200 USD</td><td><span class="badge b-info"><span class="dot"></span>Prima</span></td><td>—</td></tr>
+                  <tr><td><b>LOTE-002</b></td><td>14/07/2026</td><td>1,200 USD</td><td><span class="badge b-info"><span class="dot"></span>Prima</span></td><td>F-220</td></tr>
+                  <tr><td><b>LOTE-003</b></td><td>10/08/2026</td><td>800 USD</td><td><span class="badge b-warn"><span class="dot"></span>Parcial</span></td><td>F-251</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="row c2">
+            <div class="field">
+              <label class="lbl">Reglas de Pago Parcial</label>
+              <select><option>Aplicar a la cuota más antigua</option><option>Distribuir proporcional</option><option>Solo capital, después recargos</option></select>
+            </div>
+            <div class="field">
+              <label class="lbl">Reglas de pago por compañía</label>
+              <select><option>Por defecto (Furrar Reglas)</option><option>Personalizadas Vida Ind.</option></select>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:8px;justify-content:flex-end">
+            <button class="btn outline">Cancelar</button>
+            <button class="btn primary">💾 Guardar reglas</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Anulación por Falta de Pago -->
+      <section class="card">
+        <div class="card-header">
+          <span class="step">4</span><h3>Anulación por Falta de Pago</h3>
+          <div class="right">
+            <button class="ghost">✎</button>
+            <button class="ghost">⋯</button>
+          </div>
+        </div>
+        <div class="card-body">
+
+          <div class="row c2">
+            <div class="field">
+              <label class="lbl">Regla de suspensión (días)</label>
+              <div style="display:flex;gap:6px;align-items:center">
+                <input type="number" value="30" style="max-width:90px"/>
+                <span class="helper">configurables por compañía</span>
+              </div>
+            </div>
+            <div class="field">
+              <label class="lbl">Regla de anulación (días)</label>
+              <div style="display:flex;gap:6px;align-items:center">
+                <input type="number" value="60" style="max-width:90px"/>
+                <span class="helper">configurables</span>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label class="lbl">Débito Automático · Reintentos</label>
+            <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:6px">
+              <table>
+                <thead><tr><th>Póliza</th><th>Último intento</th><th>Resultado</th><th>Días sin cobro</th><th>Acción</th></tr></thead>
+                <tbody>
+                  <tr><td><b>CERT-123</b></td><td>16/12/2026</td><td><span class="badge b-paid"><span class="dot"></span>Vigente</span></td>
+                    <td><div style="display:flex;align-items:center;gap:8px"><div class="progress" style="max-width:80px"><span style="width:8%;background:var(--ok)"></span></div><span>3</span></div></td>
+                    <td><button class="btn outline" style="padding:5px 10px;font-size:11px">Reintentar</button></td></tr>
+                  <tr><td><b>CERT-451</b></td><td>14/12/2026</td><td><span class="badge b-warn"><span class="dot"></span>Reintento</span></td>
+                    <td><div style="display:flex;align-items:center;gap:8px"><div class="progress" style="max-width:80px"><span style="width:55%;background:var(--warn)"></span></div><span>18</span></div></td>
+                    <td><button class="btn outline" style="padding:5px 10px;font-size:11px">Reintentar</button></td></tr>
+                  <tr><td><b>CERT-902</b></td><td>10/12/2026</td><td><span class="badge b-pend"><span class="dot"></span>Rechazado</span></td>
+                    <td><div style="display:flex;align-items:center;gap:8px"><div class="progress" style="max-width:80px"><span style="width:92%;background:var(--danger)"></span></div><span>42</span></div></td>
+                    <td><button class="btn outline" style="padding:5px 10px;font-size:11px;color:var(--danger);border-color:#fecdca">Anular</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="row c2">
+            <div style="display:flex;align-items:center;gap:10px;padding:10px;border:1px solid var(--border);border-radius:10px">
+              <span style="width:10px;height:10px;border-radius:50%;background:var(--warn)"></span>
+              <div><div class="lbl">Suspendidas</div><div style="font-weight:700;font-size:18px">14</div></div>
+              <div style="margin-left:auto"><button class="btn outline" style="padding:6px 10px;font-size:11px">Ver listado</button></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:10px;border:1px solid var(--border);border-radius:10px">
+              <span style="width:10px;height:10px;border-radius:50%;background:var(--danger)"></span>
+              <div><div class="lbl">En proceso de anulación</div><div style="font-weight:700;font-size:18px">3</div></div>
+              <div style="margin-left:auto"><button class="btn outline" style="padding:6px 10px;font-size:11px">Revisar</button></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <div class="footer-bar">
+    <span class="info">Última edición: hace 2 minutos · Auto-guardado activo</span>
+    <button class="btn outline">Descartar</button>
+    <button class="btn outline">📄 Vista previa PDF</button>
+    <button class="btn primary">✓ Publicar plan</button>
+  </div>
+
+</main>
+
+<script>
+  // Chips frecuencia
+  document.querySelectorAll('#freq .chip').forEach(c=>c.addEventListener('click',()=>{
+    document.querySelectorAll('#freq .chip').forEach(x=>x.classList.remove('active'));
+    c.classList.add('active');
+    const n = +c.dataset.n;
+    document.getElementById('sumHelper').textContent = `Total a cobrar · ${n} cuota${n>1?'s':''} ${c.textContent.toLowerCase()}`;
+  }));
+  // Segmented moneda
+  document.querySelectorAll('#cur button').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#cur button').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+  }));
+  // Add row
+  document.getElementById('addRow').addEventListener('click',()=>{
+    const tb = document.querySelector('#tbl tbody');
+    const i = tb.rows.length+1;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td><span class="grip">⋮⋮</span></td><td>${i}</td><td><input type="number" value="0"/></td><td><input type="date"/></td><td><span class="badge b-info"><span class="dot"></span>Programada</span></td><td>—</td><td><button class="ghost">🗑</button></td>`;
+    tb.appendChild(tr);
+  });
+  // Recalc demo
+  document.querySelector('#tbl').addEventListener('input',()=>{
+    let s=0;document.querySelectorAll('#tbl tbody input[type=number]').forEach(i=>s+=(+i.value||0));
+    document.getElementById('sumTotal').textContent = '$ ' + s.toLocaleString() + ' USD';
+  });
+</script>
+</body>
+</html>

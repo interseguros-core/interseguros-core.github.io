@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Auditoría y Logs · Interseguros</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --green-900:#1f3a1f;--green-800:#2d5a2d;--green-700:#3a6b3a;--green-600:#4a8a4a;
+    --green-500:#5fa55f;--green-100:#e8f0e8;--green-50:#f4f8f4;
+    --gold:#c9a227;--amber:#f59e0b;--red:#dc2626;--blue:#2563eb;--purple:#7c3aed;--cyan:#0891b2;
+    --bg:#f1f5ee;--card:#fff;--ink:#1a2f1a;--muted:#6b7d6b;--border:#dbe5db;
+  }
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    background:var(--bg);color:var(--ink);min-height:100vh;padding:16px}
+  .header{background:var(--green-800);color:#fff;padding:18px 22px;border-radius:12px;
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px}
+  .header h1{font-size:20px;letter-spacing:.5px}
+  .header p{font-size:12px;opacity:.85;margin-top:4px;max-width:680px}
+  .header-actions{display:flex;gap:10px;flex-wrap:wrap}
+  .btn{background:#fff;color:var(--green-800);border:none;padding:9px 14px;border-radius:8px;
+    font-weight:600;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+  .btn-primary{background:var(--gold);color:#fff}
+  .btn-ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4)}
+  .btn-sm{padding:6px 10px;font-size:12px}
+  .crumbs{font-size:11px;opacity:.75;margin-bottom:4px}
+
+  .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px}
+  .kpi{background:var(--card);border-radius:12px;padding:14px;border-left:4px solid var(--green-700);
+    box-shadow:0 1px 3px rgba(0,0,0,.05)}
+  .kpi-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+  .kpi-value{font-size:22px;font-weight:700;color:var(--green-900);margin-top:6px}
+  .kpi-delta{font-size:11px;margin-top:4px;display:inline-block;padding:2px 6px;border-radius:10px;font-weight:600}
+  .delta-up{background:#d1fae5;color:#065f46}
+  .delta-down{background:#fee2e2;color:#991b1b}
+  .kpi.warn{border-left-color:var(--amber)}
+  .kpi.danger{border-left-color:var(--red)}
+  .kpi.gold{border-left-color:var(--gold)}
+  .kpi.purple{border-left-color:var(--purple)}
+
+  .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px;margin-bottom:16px}
+  .card{background:var(--card);border-radius:12px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+  .card h3{font-size:13px;color:var(--green-800);text-transform:uppercase;letter-spacing:.5px;
+    margin-bottom:12px;display:flex;align-items:center;gap:8px;justify-content:space-between}
+  .card h3 .ttl{display:flex;align-items:center;gap:8px}
+  .pill{font-size:10px;padding:3px 8px;border-radius:10px;background:var(--green-100);color:var(--green-800);font-weight:600}
+  .pill.live{background:#d1fae5;color:#065f46}
+  .pill.warn{background:#fef3c7;color:#92400e}
+  .pill.danger{background:#fee2e2;color:#991b1b}
+  .pill.info{background:#dbeafe;color:#1e40af}
+  .pill.purple{background:#ede9fe;color:#6d28d9}
+  .pill.gold{background:#fef3c7;color:#a16207}
+  .col-3{grid-column:span 3}.col-4{grid-column:span 4}.col-5{grid-column:span 5}.col-6{grid-column:span 6}.col-7{grid-column:span 7}.col-8{grid-column:span 8}.col-12{grid-column:span 12}
+
+  /* Filters */
+  .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+  .filters input,.filters select{padding:7px 10px;border:1px solid var(--border);border-radius:6px;
+    font-size:12px;background:#fff;color:var(--ink);font-family:inherit}
+  .filters input{flex:1;min-width:160px}
+
+  /* Table */
+  .tbl{width:100%;border-collapse:collapse;font-size:12px}
+  .tbl th{text-align:left;padding:8px 6px;color:var(--green-800);font-weight:700;font-size:10.5px;
+    text-transform:uppercase;letter-spacing:.4px;border-bottom:2px solid var(--green-100);background:var(--green-50);position:sticky;top:0}
+  .tbl td{padding:9px 6px;border-bottom:1px solid var(--border);vertical-align:middle}
+  .tbl tr:hover td{background:var(--green-50)}
+  .mono{font-family:"SF Mono",Menlo,monospace;font-size:11px;color:var(--muted)}
+  .uchip{display:inline-flex;align-items:center;gap:6px}
+  .av{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:9px;font-weight:700;color:#fff}
+  .scroll{max-height:380px;overflow:auto}
+
+  /* Live stream */
+  .stream{background:var(--green-50);border:1px solid var(--green-100);border-radius:8px;padding:10px;
+    font-family:"SF Mono",Menlo,monospace;font-size:11px;max-height:340px;overflow:auto}
+  .log-line{padding:5px 0;border-bottom:1px dashed var(--border);display:grid;
+    grid-template-columns:75px 60px 1fr;gap:8px;align-items:center}
+  .log-line:last-child{border:none}
+  .log-line .t{color:var(--muted)}
+  .log-line .lv{font-weight:700;font-size:9.5px;text-align:center;padding:2px 0;border-radius:4px}
+  .lv.INFO{background:#dbeafe;color:#1e40af}
+  .lv.WARN{background:#fef3c7;color:#92400e}
+  .lv.ERR{background:#fee2e2;color:#991b1b}
+  .lv.OK{background:#d1fae5;color:#065f46}
+  .lv.AUDIT{background:#ede9fe;color:#6d28d9}
+  .log-line .m{color:var(--ink);font-size:11px}
+  .log-line .m b{color:var(--green-800)}
+  .blink{display:inline-block;width:8px;height:8px;background:#22c55e;border-radius:50%;animation:b 1s infinite;vertical-align:middle;margin-right:4px}
+  @keyframes b{50%{opacity:.2}}
+
+  /* Hash chain */
+  .block{background:var(--green-50);border:1px solid var(--green-100);border-radius:10px;
+    padding:12px;position:relative;margin-bottom:18px}
+  .block:not(:last-child)::after{content:"⬇";position:absolute;left:20px;bottom:-18px;
+    color:var(--green-600);font-size:14px;font-weight:700}
+  .block-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+  .block-h .id{font-weight:700;font-size:12px;color:var(--green-900)}
+  .block-h .lock{color:var(--green-700);font-size:10.5px;font-weight:600}
+  .hash{font-family:"SF Mono",monospace;font-size:10px;color:var(--muted);word-break:break-all;line-height:1.5}
+  .hash b{color:var(--green-800)}
+
+  /* Cert */
+  .cert{background:var(--green-50);border:1px solid var(--green-100);border-radius:10px;padding:12px;margin-bottom:10px}
+  .cert-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+  .cert-h .name{font-weight:700;font-size:12.5px;color:var(--green-900)}
+  .cert-h .num{font-family:"SF Mono",monospace;color:var(--muted);font-size:10.5px;margin-top:2px}
+  .cert-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px}
+  .cs{text-align:center;padding:7px 4px;background:#fff;border-radius:8px;border:1px solid var(--border)}
+  .cs .v{font-weight:700;font-size:16px;color:var(--green-900)}
+  .cs .l{font-size:9.5px;color:var(--muted);margin-top:2px;font-weight:600}
+  .cs.eye .v{color:var(--blue)} .cs.print .v{color:var(--amber)} .cs.qr .v{color:var(--purple)} .cs.dl .v{color:var(--green-700)}
+  .cert-foot{font-size:11px;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px}
+  .cert-foot.warn{color:#92400e;font-weight:600}
+
+  /* Geo */
+  .geo-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px dashed var(--border);font-size:11.5px}
+  .geo-row:last-child{border:none}
+  .flag{width:28px;height:20px;border-radius:4px;display:grid;place-items:center;font-size:9.5px;font-weight:700;color:#fff;background:var(--green-700)}
+  .geo-row .loc{flex:1}
+  .geo-row .loc b{display:block;color:var(--ink)}
+  .geo-row .loc span{color:var(--muted);font-size:10.5px}
+  .bar{height:5px;background:var(--border);border-radius:99px;overflow:hidden;width:80px;margin-top:4px}
+  .bar > i{display:block;height:100%;background:var(--green-600)}
+
+  /* Alerts */
+  .alert{background:#fef2f2;border:1px solid #fecaca;border-left:3px solid var(--red);border-radius:8px;
+    padding:10px;margin-bottom:8px;display:flex;gap:10px}
+  .alert.warn{background:#fffbeb;border-color:#fde68a;border-left-color:var(--amber)}
+  .alert .ai{width:30px;height:30px;border-radius:8px;background:#fee2e2;display:grid;place-items:center;font-size:14px;flex-shrink:0}
+  .alert.warn .ai{background:#fef3c7}
+  .alert .ac{flex:1}
+  .alert .ac .at{font-weight:700;font-size:12px;margin-bottom:2px;color:var(--ink)}
+  .alert .ac .ad{font-size:11px;color:var(--muted);line-height:1.5}
+  .alert .ac .am{font-family:"SF Mono",monospace;font-size:10px;color:var(--muted);margin-top:5px}
+
+  /* Export */
+  .exp-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+  .exp{background:var(--green-50);border:1px solid var(--green-100);border-radius:10px;
+    padding:12px;text-align:center;cursor:pointer;transition:.2s}
+  .exp:hover{border-color:var(--green-600);transform:translateY(-2px)}
+  .exp .ei{font-size:22px;margin-bottom:4px}
+  .exp .en{font-weight:700;font-size:11.5px;color:var(--green-900)}
+  .exp .es{font-size:10px;color:var(--muted);margin-top:2px}
+
+  /* Heatmap */
+  .heatmap,.hm-head{display:grid;grid-template-columns:auto repeat(24,1fr);gap:2px;font-size:9px}
+  .hm-head{color:var(--muted);margin-bottom:4px}
+  .hm-head div{text-align:center}
+  .hm-l{color:var(--muted);padding-right:6px;display:flex;align-items:center;justify-content:flex-end;font-size:10px;font-weight:600}
+  .hm-c{aspect-ratio:1;border-radius:2px;background:#eef3ec}
+  .hm-c.l1{background:#cfe1cb}
+  .hm-c.l2{background:#9bc596}
+  .hm-c.l3{background:#5fa55f}
+  .hm-c.l4{background:var(--green-700)}
+  .hm-c.danger{background:var(--red)}
+
+  /* AI box */
+  .ai-box{background:linear-gradient(135deg,#f4f8f4,#e8f0e8);border:1px solid var(--green-100)}
+  .ai-msg{background:#fff;border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px;font-size:12px;line-height:1.5}
+  .ai-msg.u{background:var(--green-700);color:#fff;text-align:right;border:none}
+  .ai-msg b{color:var(--green-800)}
+  .ai-msg.u b{color:#fff}
+  .ai-input{display:flex;gap:8px;margin-top:8px}
+  .ai-input input{flex:1;background:#fff;border:1px solid var(--border);color:var(--ink);
+    padding:9px 12px;border-radius:8px;font-size:12px;font-family:inherit}
+  .ai-input button{background:var(--gold);color:#fff;border:none;padding:0 16px;border-radius:8px;font-weight:700;cursor:pointer}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+  .chip{background:#fff;border:1px solid var(--green-100);color:var(--green-800);
+    padding:5px 10px;border-radius:99px;font-size:10.5px;cursor:pointer;font-weight:600}
+  .chip:hover{background:var(--green-100)}
+
+  .note{margin-top:10px;padding:9px 12px;background:#fef2f2;border:1px solid #fecaca;
+    border-radius:8px;font-size:11px;color:#991b1b;font-weight:600}
+
+  @media (max-width:1100px){
+    .col-3,.col-4,.col-5,.col-6,.col-7,.col-8{grid-column:span 12}
+    .kpis{grid-template-columns:repeat(2,1fr)}
+    .exp-grid{grid-template-columns:repeat(2,1fr)}
+  }
+  @media (max-width:640px){
+    .kpis{grid-template-columns:1fr}
+    .cert-stats{grid-template-columns:repeat(2,1fr)}
+    .log-line{grid-template-columns:1fr;gap:2px}
+    .heatmap,.hm-head{grid-template-columns:auto repeat(12,1fr);font-size:8px}
+    .heatmap .hm-c:nth-child(13n+14),.heatmap .hm-c:nth-child(13n+15),
+    .heatmap .hm-c:nth-child(13n+16),.heatmap .hm-c:nth-child(13n+17),
+    .heatmap .hm-c:nth-child(13n+18),.heatmap .hm-c:nth-child(13n+19),
+    .heatmap .hm-c:nth-child(13n+20),.heatmap .hm-c:nth-child(13n+21),
+    .heatmap .hm-c:nth-child(13n+22),.heatmap .hm-c:nth-child(13n+23),
+    .heatmap .hm-c:nth-child(13n+24),.heatmap .hm-c:nth-child(13n+25){display:none}
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div>
+    <div class="crumbs">Seguridad / Auditoría y Logs</div>
+    <h1>🔒 Auditoría y Logs Inmutables</h1>
+    <p>Registro forense de cada operación, consulta y evento de seguridad. Logs firmados criptográficamente, exportables para auditorías externas (APS, UIF, ASFI) y monitoreo en tiempo real con detección de anomalías.</p>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-ghost">⚙️ Políticas de retención</button>
+    <button class="btn">📤 Exportar (APS)</button>
+    <button class="btn btn-primary">🔍 Búsqueda forense</button>
+  </div>
+</header>
+
+<!-- KPIs -->
+<section class="kpis">
+  <div class="kpi">
+    <div class="kpi-label">Eventos hoy</div>
+    <div class="kpi-value">847,213</div>
+    <div class="kpi-delta delta-up">▲ 12.4% vs ayer</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Velocidad</div>
+    <div class="kpi-value">9.8 ev/s</div>
+    <div class="kpi-delta delta-up">pico 14.2 ev/s</div>
+  </div>
+  <div class="kpi gold">
+    <div class="kpi-label">Integridad cadena</div>
+    <div class="kpi-value">100%</div>
+    <div class="kpi-delta delta-up">SHA-256 · 0 alterados</div>
+  </div>
+  <div class="kpi warn">
+    <div class="kpi-label">Alertas activas</div>
+    <div class="kpi-value">7</div>
+    <div class="kpi-delta delta-down">3 críticas · 4 medias</div>
+  </div>
+  <div class="kpi danger">
+    <div class="kpi-label">Accesos sospechosos</div>
+    <div class="kpi-value">12</div>
+    <div class="kpi-delta delta-down">▲ 4 últimas 24h</div>
+  </div>
+</section>
+
+<!-- Logs + Stream -->
+<section class="grid">
+  <div class="card col-7">
+    <h3><span class="ttl">📋 Logs Transaccionales Detallados</span><span class="pill gold">Inmutable · WORM</span></h3>
+    <div class="filters">
+      <input placeholder="🔍 Buscar por usuario, póliza, IP, acción…" />
+      <select><option>Todas las acciones</option><option>Cotizar</option><option>Emitir</option><option>Cobrar</option><option>Anular</option><option>Modificar</option></select>
+      <select><option>Últimas 24h</option><option>7 días</option><option>30 días</option></select>
+    </div>
+    <div class="scroll">
+      <table class="tbl">
+        <thead><tr><th>Timestamp</th><th>Usuario</th><th>Acción</th><th>Recurso</th><th>IP / Dispositivo</th><th>Estado</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">14:32:18</td><td><div class="uchip"><div class="av" style="background:var(--green-700)">CR</div>C. Rojas</div></td><td><span class="pill purple">EMITIR</span></td><td>POL-2024-008471</td><td class="mono">181.114.32.18 · 🖥️</td><td><span class="pill live">OK</span></td></tr>
+          <tr><td class="mono">14:31:55</td><td><div class="uchip"><div class="av" style="background:var(--green-600)">JM</div>J. Mamani</div></td><td><span class="pill info">COTIZAR</span></td><td>QT-44219 · Auto</td><td class="mono">190.181.4.92 · 📱</td><td><span class="pill live">OK</span></td></tr>
+          <tr><td class="mono">14:31:02</td><td><div class="uchip"><div class="av" style="background:var(--amber)">LF</div>L. Flores</div></td><td><span class="pill warn">MODIFICAR</span></td><td>POL-2024-008442 · beneficiario</td><td class="mono">181.114.32.18 · 🖥️</td><td><span class="pill live">OK</span></td></tr>
+          <tr><td class="mono">14:30:41</td><td><div class="uchip"><div class="av" style="background:var(--cyan)">AS</div>A. Suárez</div></td><td><span class="pill">COBRAR</span></td><td>RC-99812 · Bs 2,450</td><td class="mono">200.87.119.4 · 🖥️</td><td><span class="pill live">OK</span></td></tr>
+          <tr><td class="mono">14:29:18</td><td><div class="uchip"><div class="av" style="background:var(--red)">RG</div>R. Gutiérrez</div></td><td><span class="pill danger">ANULAR</span></td><td>POL-2024-008301 · rescisión</td><td class="mono">186.27.144.81 · 🖥️</td><td><span class="pill warn">REQ. APROB.</span></td></tr>
+          <tr><td class="mono">14:28:57</td><td><div class="uchip"><div class="av" style="background:var(--purple)">MA</div>M. Auditor</div></td><td><span class="pill purple">CONSULTAR</span></td><td>Logs 30d · export CSV</td><td class="mono">181.114.32.5 · 🖥️</td><td><span class="pill live">OK</span></td></tr>
+          <tr><td class="mono">14:28:11</td><td><div class="uchip"><div class="av" style="background:var(--green-600)">JM</div>J. Mamani</div></td><td><span class="pill info">CONSULTAR</span></td><td>Cert. POL-2024-007215</td><td class="mono">190.181.4.92 · 📱 App</td><td><span class="pill live">OK</span></td></tr>
+          <tr><td class="mono">14:27:44</td><td><div class="uchip"><div class="av" style="background:var(--green-700)">CR</div>C. Rojas</div></td><td><span class="pill purple">EMITIR</span></td><td>POL-2024-008470 · Hogar</td><td class="mono">181.114.32.18 · 🖥️</td><td><span class="pill live">OK</span></td></tr>
+          <tr><td class="mono">14:27:02</td><td><div class="uchip"><div class="av" style="background:var(--red)">??</div>desconocido</div></td><td><span class="pill danger">LOGIN FALL</span></td><td>user: admin (5° intento)</td><td class="mono">45.227.255.190 · 🌐 TOR</td><td><span class="pill danger">BLOCK</span></td></tr>
+          <tr><td class="mono">14:26:33</td><td><div class="uchip"><div class="av" style="background:var(--amber)">LF</div>L. Flores</div></td><td><span class="pill warn">MODIFICAR</span></td><td>Comisión 12% → 14%</td><td class="mono">181.114.32.18 · 🖥️</td><td><span class="pill warn">REQ. APROB.</span></td></tr>
+          <tr><td class="mono">14:25:18</td><td><div class="uchip"><div class="av" style="background:var(--cyan)">AS</div>A. Suárez</div></td><td><span class="pill">COBRAR</span></td><td>QR Banco Unión · Bs 1,200</td><td class="mono">200.87.119.4 · 🖥️</td><td><span class="pill live">OK</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card col-5">
+    <h3><span class="ttl">📡 Stream en Vivo</span><span class="pill live"><span class="blink"></span>9.8 ev/s</span></h3>
+    <div class="stream" id="stream">
+      <div class="log-line"><span class="t">14:32:21</span><span class="lv OK">OK</span><span class="m"><b>C.Rojas</b> emitió POL-2024-008471</span></div>
+      <div class="log-line"><span class="t">14:32:18</span><span class="lv AUDIT">AUDIT</span><span class="m">Bloque #847212 sellado · <b>a3f9…b21c</b></span></div>
+      <div class="log-line"><span class="t">14:32:15</span><span class="lv INFO">INFO</span><span class="m">QR escaneado · POL-007215 · La Paz</span></div>
+      <div class="log-line"><span class="t">14:32:11</span><span class="lv WARN">WARN</span><span class="m">Modif. tarifa <b>L.Flores</b> req. 4-eyes</span></div>
+      <div class="log-line"><span class="t">14:32:08</span><span class="lv OK">OK</span><span class="m">Cobranza Bs 2,450 · QR Banco Unión</span></div>
+      <div class="log-line"><span class="t">14:32:02</span><span class="lv ERR">ERR</span><span class="m">Login fallido · IP <b>45.227.255.190</b> TOR</span></div>
+      <div class="log-line"><span class="t">14:31:58</span><span class="lv AUDIT">AUDIT</span><span class="m">Export CSV · <b>M.Auditor</b> · 30 días</span></div>
+      <div class="log-line"><span class="t">14:31:55</span><span class="lv INFO">INFO</span><span class="m">Cot. QT-44219 · Auto · Bs 4,200/año</span></div>
+      <div class="log-line"><span class="t">14:31:48</span><span class="lv WARN">WARN</span><span class="m">3er escaneo QR · IPs distintas (BO,AR,CL)</span></div>
+      <div class="log-line"><span class="t">14:31:42</span><span class="lv OK">OK</span><span class="m">Firma digital · POL-008470 · USB token</span></div>
+      <div class="log-line"><span class="t">14:31:35</span><span class="lv INFO">INFO</span><span class="m">App móvil · J.Mamani consultó cert.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- Hash chain + Cert tracking -->
+<section class="grid">
+  <div class="card col-6">
+    <h3><span class="ttl">⛓️ Cadena de Bloques de Auditoría</span><span class="pill gold">SHA-256</span></h3>
+    <p style="font-size:11.5px;color:var(--muted);margin:0 0 12px">Cada bloque encadena el hash del anterior. Ningún usuario, ni administrador, puede modificar o eliminar registros sin romper la cadena.</p>
+    <div>
+      <div class="block">
+        <div class="block-h"><span class="id">Block #847,213</span><span class="lock">🔒 Sellado · 14:32:18</span></div>
+        <div class="hash">prev: <b>a3f9c2e1…b21c</b><br>data: 482 eventos (cot, emi, cob, mod)<br>hash: <b>9d4f7a8c0e2b3f1d…7c4e</b></div>
+      </div>
+      <div class="block">
+        <div class="block-h"><span class="id">Block #847,212</span><span class="lock">🔒 Sellado · 14:32:00</span></div>
+        <div class="hash">prev: <b>7e1d4c9a…f02a</b><br>data: 511 eventos<br>hash: <b>a3f9c2e1d4b7…b21c</b></div>
+      </div>
+      <div class="block">
+        <div class="block-h"><span class="id">Block #847,211</span><span class="lock">🔒 Sellado · 14:31:42</span></div>
+        <div class="hash">prev: <b>5c8b3a1e…d99f</b><br>data: 467 eventos<br>hash: <b>7e1d4c9a8b6f…f02a</b></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+      <button class="btn btn-sm" style="background:var(--green-700);color:#fff">🔍 Verificar integridad</button>
+      <button class="btn btn-sm" style="border:1px solid var(--border)">📥 Merkle root</button>
+    </div>
+  </div>
+
+  <div class="card col-6">
+    <h3><span class="ttl">📜 Trazabilidad por Certificado</span><span class="pill info">Tiempo real</span></h3>
+    <div class="cert">
+      <div class="cert-h">
+        <div><div class="name">Juan Mamani Quispe</div><div class="num">POL-2024-007215 · Auto · Toyota Hilux</div></div>
+        <span class="pill live">Activa</span>
+      </div>
+      <div class="cert-stats">
+        <div class="cs eye"><div class="v">47</div><div class="l">👁️ Consultas</div></div>
+        <div class="cs print"><div class="v">3</div><div class="l">🖨️ Impresiones</div></div>
+        <div class="cs qr"><div class="v">12</div><div class="l">📲 Escaneos</div></div>
+        <div class="cs dl"><div class="v">5</div><div class="l">⬇️ Descargas</div></div>
+      </div>
+      <div class="cert-foot"><span>Web: 28 · Portal: 12 · App: 7</span><span>Última: hace 4 min · La Paz</span></div>
+    </div>
+    <div class="cert">
+      <div class="cert-h">
+        <div><div class="name">Lucía Vargas R.</div><div class="num">POL-2024-006892 · Hogar</div></div>
+        <span class="pill warn">Vigilancia</span>
+      </div>
+      <div class="cert-stats">
+        <div class="cs eye"><div class="v">18</div><div class="l">👁️ Consultas</div></div>
+        <div class="cs print"><div class="v">1</div><div class="l">🖨️ Impresiones</div></div>
+        <div class="cs qr"><div class="v">9</div><div class="l">📲 Escaneos</div></div>
+        <div class="cs dl"><div class="v">2</div><div class="l">⬇️ Descargas</div></div>
+      </div>
+      <div class="cert-foot warn"><span>⚠️ 3 escaneos desde IPs distintas en 5 min</span><span>Geo: BO, AR, CL</span></div>
+    </div>
+    <div class="cert">
+      <div class="cert-h">
+        <div><div class="name">Ricardo Peña</div><div class="num">POL-2024-008012 · Salud</div></div>
+        <span class="pill live">Activa</span>
+      </div>
+      <div class="cert-stats">
+        <div class="cs eye"><div class="v">22</div><div class="l">👁️ Consultas</div></div>
+        <div class="cs print"><div class="v">2</div><div class="l">🖨️ Impresiones</div></div>
+        <div class="cs qr"><div class="v">4</div><div class="l">📲 Escaneos</div></div>
+        <div class="cs dl"><div class="v">3</div><div class="l">⬇️ Descargas</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Geo + Alerts + Heatmap -->
+<section class="grid">
+  <div class="card col-4">
+    <h3><span class="ttl">🌍 Geolocalización de Escaneos</span><span class="pill info">24h</span></h3>
+    <div class="geo-row">
+      <div class="flag">BO</div>
+      <div class="loc"><b>La Paz, Bolivia</b><span>847 escaneos · 14:30</span><div class="bar"><i style="width:95%"></i></div></div>
+    </div>
+    <div class="geo-row">
+      <div class="flag" style="background:var(--green-600)">SC</div>
+      <div class="loc"><b>Santa Cruz, Bolivia</b><span>412 escaneos · 14:28</span><div class="bar"><i style="width:48%"></i></div></div>
+    </div>
+    <div class="geo-row">
+      <div class="flag" style="background:var(--green-500)">CB</div>
+      <div class="loc"><b>Cochabamba, Bolivia</b><span>231 escaneos · 14:25</span><div class="bar"><i style="width:28%"></i></div></div>
+    </div>
+    <div class="geo-row">
+      <div class="flag" style="background:var(--amber)">AR</div>
+      <div class="loc" style="color:#92400e"><b>Buenos Aires, AR ⚠️</b><span>34 escaneos · IP rotativa</span><div class="bar"><i style="width:14%;background:var(--amber)"></i></div></div>
+    </div>
+    <div class="geo-row">
+      <div class="flag" style="background:var(--red)">??</div>
+      <div class="loc" style="color:#991b1b"><b>TOR exit nodes</b><span>12 intentos · BLOQUEADO</span><div class="bar"><i style="width:6%;background:var(--red)"></i></div></div>
+    </div>
+  </div>
+
+  <div class="card col-4">
+    <h3><span class="ttl">🚨 Alertas de Uso Sospechoso</span><span class="pill danger">3 críticas</span></h3>
+    <div class="alert">
+      <div class="ai">🌐</div>
+      <div class="ac">
+        <div class="at">Múltiples geo en cert POL-006892</div>
+        <div class="ad">3 escaneos QR desde BO, AR y CL en menos de 5 min. Posible compartición no autorizada.</div>
+        <div class="am">14:31:48 · 190.181.x · 181.30.x · 191.126.x</div>
+      </div>
+    </div>
+    <div class="alert">
+      <div class="ai">🔐</div>
+      <div class="ac">
+        <div class="at">5 logins fallidos · user=admin</div>
+        <div class="ad">Origen: TOR exit 45.227.255.190. Cuenta bloqueada 30 min automáticamente.</div>
+        <div class="am">14:27:02 · Política: BlockOnFail-5</div>
+      </div>
+    </div>
+    <div class="alert warn">
+      <div class="ai">🖨️</div>
+      <div class="ac">
+        <div class="at">Impresión masiva detectada</div>
+        <div class="ad">L. Flores imprimió 47 certificados en 12 min. Promedio diario: 4.</div>
+        <div class="am">14:18:33 · IP 181.114.32.18</div>
+      </div>
+    </div>
+    <div class="alert warn">
+      <div class="ai">⏱️</div>
+      <div class="ac">
+        <div class="at">Acceso fuera de horario laboral</div>
+        <div class="ad">R. Gutiérrez modificó 3 pólizas a las 02:14 AM. Ventana: 07:00-22:00.</div>
+        <div class="am">02:14:08 · IP residencial</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card col-4">
+    <h3><span class="ttl">🔥 Mapa de Calor de Actividad</span><span class="pill">7 días</span></h3>
+    <div class="hm-head"><div></div>
+      <div>0</div><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div><div>10</div><div>11</div><div>12</div><div>13</div><div>14</div><div>15</div><div>16</div><div>17</div><div>18</div><div>19</div><div>20</div><div>21</div><div>22</div><div>23</div>
+    </div>
+    <div class="heatmap" id="hm"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:10.5px;color:var(--muted)">
+      <span>Menos</span>
+      <div style="display:flex;gap:3px">
+        <div style="width:11px;height:11px;background:#eef3ec;border-radius:2px"></div>
+        <div style="width:11px;height:11px;background:#cfe1cb;border-radius:2px"></div>
+        <div style="width:11px;height:11px;background:#9bc596;border-radius:2px"></div>
+        <div style="width:11px;height:11px;background:#5fa55f;border-radius:2px"></div>
+        <div style="width:11px;height:11px;background:var(--green-700);border-radius:2px"></div>
+        <div style="width:11px;height:11px;background:var(--red);border-radius:2px;margin-left:6px"></div>
+      </div>
+      <span>Más / Anomalía</span>
+    </div>
+    <div class="note">🚨 Pico anómalo: <b>Mar 02:00</b> · 4× sobre media histórica</div>
+  </div>
+</section>
+
+<!-- Export + AI -->
+<section class="grid">
+  <div class="card col-6">
+    <h3><span class="ttl">📤 Exportación para Auditorías Externas</span><span class="pill purple">APS · UIF · ASFI</span></h3>
+    <p style="font-size:11.5px;color:var(--muted);margin:0 0 12px">Formatos estructurados, firmados digitalmente y con cadena de custodia. Cada exportación queda registrada en el log inmutable.</p>
+    <div class="exp-grid">
+      <div class="exp"><div class="ei">📄</div><div class="en">CSV / Excel</div><div class="es">UTF-8 · 1M filas</div></div>
+      <div class="exp"><div class="ei">🗂️</div><div class="en">JSON / NDJSON</div><div class="es">streaming · API</div></div>
+      <div class="exp"><div class="ei">📊</div><div class="en">XBRL</div><div class="es">APS regulador</div></div>
+      <div class="exp"><div class="ei">🔏</div><div class="en">PDF firmado</div><div class="es">XAdES · sello T.</div></div>
+    </div>
+    <table class="tbl">
+      <thead><tr><th>Exportación</th><th>Solicitante</th><th>Rango</th><th>Estado</th></tr></thead>
+      <tbody>
+        <tr><td>Logs_Q3_2024.csv</td><td>M. Auditor</td><td>Jul-Sep</td><td><span class="pill live">Listo</span></td></tr>
+        <tr><td>Operaciones_UIF.xbrl</td><td>Compliance</td><td>Sep 2024</td><td><span class="pill live">Listo</span></td></tr>
+        <tr><td>Cert_consultas.json</td><td>APS request</td><td>30d</td><td><span class="pill warn">Procesando</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card ai-box col-6">
+    <h3><span class="ttl">🤖 Co-piloto Forense IA</span><span class="pill purple">NLP · GPT</span></h3>
+    <div class="ai-msg u">¿Quién modificó comisiones del producto Auto la semana pasada?</div>
+    <div class="ai-msg">Se detectaron <b>3 modificaciones</b> en comisiones del producto Auto entre 12-18 oct:<br>• <b>L. Flores</b> · 14 oct 14:26 · 12% → 14% (req. aprob.)<br>• <b>R. Gutiérrez</b> · 16 oct 09:15 · 14% → 13.5%<br>• <b>L. Flores</b> · 18 oct 11:42 · 13.5% → 15% (✅ aprobada)<br><br>¿Quieres ver los logs completos o exportar el reporte?</div>
+    <div class="ai-input">
+      <input placeholder="Pregunta en lenguaje natural sobre los logs…" />
+      <button>▶</button>
+    </div>
+    <div class="chips">
+      <span class="chip">🔍 Accesos a póliza X</span>
+      <span class="chip">📊 Top 10 acciones de hoy</span>
+      <span class="chip">⚠️ Anomalías 24h</span>
+      <span class="chip">👥 Sesiones simultáneas</span>
+      <span class="chip">📤 Exportar trazabilidad</span>
+    </div>
+  </div>
+</section>
+
+<script>
+  const hm = document.getElementById('hm');
+  const days = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+  days.forEach((d, di) => {
+    const lbl = document.createElement('div'); lbl.className='hm-l'; lbl.textContent=d; hm.appendChild(lbl);
+    for (let h=0; h<24; h++){
+      const c = document.createElement('div'); c.className='hm-c';
+      let intensity = 0;
+      if (di < 5){
+        if (h>=10 && h<=16) intensity = 4;
+        else if (h>=8 && h<=18) intensity = 3;
+        else if (h>=7 && h<=20) intensity = 2;
+        else if (h>=6 && h<=22) intensity = 1;
+      } else {
+        if (h>=10 && h<=14) intensity = 2;
+        else if (h>=9 && h<=18) intensity = 1;
+      }
+      if (intensity>0) c.classList.add('l'+intensity);
+      if (di===1 && h===2) { c.className='hm-c danger'; }
+      hm.appendChild(c);
+    }
+  });
+
+  const stream = document.getElementById('stream');
+  const samples = [
+    ['INFO','Cotización <b>QT-44220</b> · Hogar'],
+    ['OK','<b>A.Suárez</b> registró cobro QR · Bs 1,800'],
+    ['AUDIT','Bloque sellado · <b>9d4f…7c4e</b>'],
+    ['INFO','QR escaneado · POL-007891 · Cochabamba'],
+    ['WARN','Intento sin permiso · <b>R.Gutiérrez</b>'],
+    ['OK','Firma digital · POL-2024-008472'],
+    ['ERR','Token expirado · sesión renovada'],
+  ];
+  setInterval(() => {
+    const [lv, msg] = samples[Math.floor(Math.random()*samples.length)];
+    const t = new Date().toTimeString().slice(0,8);
+    const div = document.createElement('div');
+    div.className = 'log-line';
+    div.innerHTML = `<span class="t">${t}</span><span class="lv ${lv}">${lv}</span><span class="m">${msg}</span>`;
+    stream.insertBefore(div, stream.firstChild);
+    if (stream.children.length > 16) stream.removeChild(stream.lastChild);
+  }, 2800);
+</script>
+</body>
+</html>

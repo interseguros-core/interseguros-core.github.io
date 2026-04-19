@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Gestión de Comisiones · Interseguros</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --green-900:#1f3a1f;--green-800:#2d5a2d;--green-700:#3a6b3a;--green-600:#4a8a4a;
+    --green-500:#5fa55f;--green-100:#e8f0e8;--green-50:#f4f8f4;
+    --gold:#c9a227;--amber:#f59e0b;--red:#dc2626;--blue:#2563eb;
+    --bg:#f1f5ee;--card:#fff;--ink:#1a2f1a;--muted:#6b7d6b;--border:#dbe5db;
+  }
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    background:var(--bg);color:var(--ink);min-height:100vh;padding:16px}
+  .header{background:var(--green-800);color:#fff;padding:18px 22px;border-radius:12px;
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px}
+  .header h1{font-size:20px;letter-spacing:.5px}
+  .header-actions{display:flex;gap:10px;flex-wrap:wrap}
+  .btn{background:#fff;color:var(--green-800);border:none;padding:9px 14px;border-radius:8px;
+    font-weight:600;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+  .btn-primary{background:var(--gold);color:#fff}
+  .btn-ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4)}
+  .btn-sm{padding:6px 10px;font-size:12px}
+
+  /* KPIs */
+  .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px}
+  .kpi{background:var(--card);border-radius:12px;padding:14px;border-left:4px solid var(--green-700);
+    box-shadow:0 1px 3px rgba(0,0,0,.05)}
+  .kpi-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+  .kpi-value{font-size:22px;font-weight:700;color:var(--green-900);margin-top:6px}
+  .kpi-delta{font-size:11px;margin-top:4px;display:inline-block;padding:2px 6px;border-radius:10px;font-weight:600}
+  .delta-up{background:#d1fae5;color:#065f46}
+  .delta-down{background:#fee2e2;color:#991b1b}
+  .kpi.warn{border-left-color:var(--amber)}
+  .kpi.danger{border-left-color:var(--red)}
+  .kpi.gold{border-left-color:var(--gold)}
+
+  /* Cards grid */
+  .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px;margin-bottom:16px}
+  .card{background:var(--card);border-radius:12px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+  .card h3{font-size:13px;color:var(--green-800);text-transform:uppercase;letter-spacing:.5px;
+    margin-bottom:12px;display:flex;align-items:center;gap:8px;justify-content:space-between}
+  .card h3 .ttl{display:flex;align-items:center;gap:8px}
+  .pill{font-size:10px;padding:3px 8px;border-radius:10px;background:var(--green-100);color:var(--green-800);font-weight:600}
+
+  .col-8{grid-column:span 8}.col-6{grid-column:span 6}.col-4{grid-column:span 4}.col-12{grid-column:span 12}.col-3{grid-column:span 3}
+
+  /* Chart */
+  .chart-wrap{background:var(--green-50);border-radius:10px;padding:14px}
+  .bars{display:flex;align-items:flex-end;gap:6px;height:180px;padding:0 4px}
+  .bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%}
+  .bar-stack{flex:1;width:100%;display:flex;flex-direction:column;justify-content:flex-end;gap:2px}
+  .bar{width:100%;border-radius:3px 3px 0 0;transition:opacity .2s}
+  .bar:hover{opacity:.8}
+  .bar.devengada{background:var(--green-600)}
+  .bar.cobrada{background:var(--green-800)}
+  .bar.proyectada{background:var(--gold);opacity:.7}
+  .bar-label{font-size:10px;color:var(--muted);font-weight:600}
+  .legend{display:flex;gap:16px;margin-top:12px;flex-wrap:wrap;font-size:11px;color:var(--muted)}
+  .legend-dot{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:middle}
+
+  /* Donut */
+  .donut-wrap{display:flex;align-items:center;gap:18px;flex-wrap:wrap;justify-content:center}
+  .donut{width:140px;height:140px;border-radius:50%;
+    background:conic-gradient(var(--green-700) 0 45%,var(--green-500) 45% 70%,var(--gold) 70% 88%,var(--amber) 88% 100%);
+    display:flex;align-items:center;justify-content:center;position:relative}
+  .donut::after{content:"";width:80px;height:80px;background:#fff;border-radius:50%;position:absolute}
+  .donut-center{position:relative;z-index:1;text-align:center}
+  .donut-center .v{font-size:18px;font-weight:700;color:var(--green-900)}
+  .donut-center .l{font-size:9px;color:var(--muted);text-transform:uppercase}
+  .donut-legend{display:flex;flex-direction:column;gap:8px;font-size:12px;flex:1;min-width:140px}
+  .donut-legend .row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .donut-legend .label{display:flex;align-items:center;gap:6px;color:var(--ink)}
+  .donut-legend .value{font-weight:700;color:var(--green-800)}
+
+  /* Splits */
+  .split-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+  .split-row:last-child{border-bottom:none}
+  .split-name{flex:1;font-size:13px;font-weight:600}
+  .split-name small{display:block;font-weight:400;color:var(--muted);font-size:11px}
+  .split-bar{flex:2;height:18px;background:#eaf0ea;border-radius:4px;overflow:hidden;display:flex}
+  .split-bar span{display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:600}
+  .seg-corredor{background:var(--green-700)}
+  .seg-sponsor{background:var(--green-500)}
+  .seg-vendedor{background:var(--gold)}
+  .seg-banco{background:var(--blue)}
+  .split-total{font-weight:700;color:var(--green-800);font-size:13px;min-width:80px;text-align:right}
+
+  /* Table */
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  thead th{background:var(--green-800);color:#fff;padding:10px 8px;text-align:left;font-weight:600;font-size:11px;
+    text-transform:uppercase;letter-spacing:.3px}
+  thead th:first-child{border-radius:6px 0 0 0}
+  thead th:last-child{border-radius:0 6px 0 0}
+  tbody td{padding:10px 8px;border-bottom:1px solid var(--border)}
+  tbody tr:hover{background:var(--green-50)}
+  .td-doc{font-weight:600;color:var(--green-800)}
+  .badge{display:inline-block;padding:3px 8px;border-radius:10px;font-size:10px;font-weight:600;text-transform:uppercase}
+  .b-ok{background:#d1fae5;color:#065f46}
+  .b-pend{background:#fef3c7;color:#92400e}
+  .b-pago{background:#dbeafe;color:#1e40af}
+  .b-anul{background:#fee2e2;color:#991b1b}
+  .table-wrap{overflow-x:auto}
+
+  /* Reglas / motor */
+  .rule{display:flex;align-items:center;gap:10px;padding:10px;background:var(--green-50);border-radius:8px;margin-bottom:8px;
+    border-left:3px solid var(--green-600)}
+  .rule-icon{width:34px;height:34px;background:var(--green-700);color:#fff;border-radius:8px;
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0}
+  .rule-body{flex:1;min-width:0}
+  .rule-title{font-size:12.5px;font-weight:600;color:var(--green-900)}
+  .rule-desc{font-size:11px;color:var(--muted);margin-top:2px}
+  .rule-status{font-size:10px;font-weight:600;color:var(--green-700);padding:3px 8px;background:#fff;border-radius:10px;border:1px solid var(--green-100)}
+
+  /* Liquidación */
+  .liq-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px dashed var(--border)}
+  .liq-item:last-child{border-bottom:none}
+  .liq-name{font-size:12.5px;font-weight:600}
+  .liq-name small{display:block;color:var(--muted);font-weight:400;font-size:10.5px;margin-top:2px}
+  .liq-amount{text-align:right}
+  .liq-amount .v{font-size:14px;font-weight:700;color:var(--green-800)}
+  .liq-amount .s{font-size:10px;color:var(--muted)}
+
+  /* Alertas + IA preguntas (debajo) */
+  .alert-row{display:flex;gap:10px;align-items:flex-start;padding:10px;border-radius:8px;margin-bottom:8px}
+  .alert-row.warn{background:#fffbeb;border-left:3px solid var(--amber)}
+  .alert-row.danger{background:#fef2f2;border-left:3px solid var(--red)}
+  .alert-row.info{background:#eff6ff;border-left:3px solid var(--blue)}
+  .alert-icon{font-size:16px}
+  .alert-body{flex:1;font-size:12px}
+  .alert-body strong{display:block;color:var(--green-900);font-size:12.5px;margin-bottom:2px}
+
+  .ia-box{background:linear-gradient(135deg,var(--green-50),#fff);border:1px solid var(--green-100);
+    border-radius:10px;padding:14px}
+  .ia-box textarea{width:100%;border:1px solid var(--border);border-radius:8px;padding:10px;
+    font-family:inherit;font-size:12.5px;resize:vertical;min-height:60px;background:#fff}
+  .ia-suggest{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .ia-chip{font-size:10.5px;padding:5px 10px;border-radius:14px;background:#fff;border:1px solid var(--green-100);
+    color:var(--green-800);cursor:pointer;font-weight:500}
+  .ia-chip:hover{background:var(--green-100)}
+
+  /* Responsive */
+  @media (max-width:1200px){
+    .kpis{grid-template-columns:repeat(3,1fr)}
+    .col-8{grid-column:span 12}.col-4{grid-column:span 6}.col-6{grid-column:span 12}.col-3{grid-column:span 6}
+  }
+  @media (max-width:768px){
+    body{padding:10px}
+    .header{padding:14px;flex-direction:column;align-items:stretch}
+    .header h1{font-size:16px;text-align:center}
+    .header-actions{justify-content:center}
+    .kpis{grid-template-columns:repeat(2,1fr)}
+    .col-4,.col-3{grid-column:span 12}
+    .bars{height:140px}
+    .bar-label{font-size:8px}
+    .donut{width:110px;height:110px}
+    .donut::after{width:65px;height:65px}
+    .split-row{flex-wrap:wrap}
+    .split-bar{flex:1 1 100%;order:3}
+    .split-total{order:2}
+  }
+  @media (max-width:480px){
+    .kpis{grid-template-columns:1fr}
+    .kpi-value{font-size:18px}
+    thead th,tbody td{padding:8px 6px;font-size:11px}
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>📊 MÓDULO DE GESTIÓN DE COMISIONES</h1>
+  <div class="header-actions">
+    <button class="btn btn-ghost">⚙️ Configurar Motor de Cálculo</button>
+    <button class="btn btn-primary">＋ Nueva Parametrización</button>
+  </div>
+</div>
+
+<!-- KPIs -->
+<div class="kpis">
+  <div class="kpi">
+    <div class="kpi-label">Comisión Devengada (Mes)</div>
+    <div class="kpi-value">$ 248.530</div>
+    <span class="kpi-delta delta-up">▲ 12.4% vs mes ant.</span>
+  </div>
+  <div class="kpi gold">
+    <div class="kpi-label">Comisión Cobrada</div>
+    <div class="kpi-value">$ 187.220</div>
+    <span class="kpi-delta delta-up">▲ 75.3% efectividad</span>
+  </div>
+  <div class="kpi warn">
+    <div class="kpi-label">Por Liquidar a Vendedores</div>
+    <div class="kpi-value">$ 42.100</div>
+    <span class="kpi-delta delta-down">8 vendedores pendientes</span>
+  </div>
+  <div class="kpi danger">
+    <div class="kpi-label">Cuentas por Cobrar</div>
+    <div class="kpi-value">$ 61.310</div>
+    <span class="kpi-delta delta-down">▼ 14 facturas vencidas</span>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Rentabilidad Promedio</div>
+    <div class="kpi-value">18.6%</div>
+    <span class="kpi-delta delta-up">▲ 2.1 pts</span>
+  </div>
+</div>
+
+<!-- Dashboard gerencial -->
+<div class="grid">
+  <div class="card col-8">
+    <h3><span class="ttl">📈 DASHBOARD GERENCIAL DE RENTABILIDAD</span><span class="pill">Power BI Embed</span></h3>
+    <div class="chart-wrap">
+      <div class="bars" id="bars"></div>
+      <div class="legend">
+        <span><i class="legend-dot" style="background:var(--green-600)"></i>Devengada</span>
+        <span><i class="legend-dot" style="background:var(--green-800)"></i>Cobrada</span>
+        <span><i class="legend-dot" style="background:var(--gold)"></i>Proyectada (12m)</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card col-4">
+    <h3><span class="ttl">🥧 DEVENGADAS vs COBRADAS</span></h3>
+    <div class="donut-wrap">
+      <div class="donut">
+        <div class="donut-center">
+          <div class="v">75.3%</div>
+          <div class="l">Cobrado</div>
+        </div>
+      </div>
+      <div class="donut-legend">
+        <div class="row"><span class="label"><i class="legend-dot" style="background:var(--green-700)"></i>Comisiones</span><span class="value">45%</span></div>
+        <div class="row"><span class="label"><i class="legend-dot" style="background:var(--green-500)"></i>Cobrisiones</span><span class="value">25%</span></div>
+        <div class="row"><span class="label"><i class="legend-dot" style="background:var(--gold)"></i>Sponsor</span><span class="value">18%</span></div>
+        <div class="row"><span class="label"><i class="legend-dot" style="background:var(--amber)"></i>Pendiente</span><span class="value">12%</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Splits + Motor de cálculo -->
+<div class="grid">
+  <div class="card col-6">
+    <h3><span class="ttl">🔀 SPLITS DE COMISIONES POR CONTRATO</span><span class="pill">Multi-actor</span></h3>
+    <div class="split-row">
+      <div class="split-name">Contrato Masivo Banco XYZ<small>Vida grupal · Interseguros</small></div>
+      <div class="split-bar">
+        <span class="seg-corredor" style="width:40%">40%</span>
+        <span class="seg-sponsor" style="width:25%">25%</span>
+        <span class="seg-vendedor" style="width:20%">20%</span>
+        <span class="seg-banco" style="width:15%">15%</span>
+      </div>
+      <div class="split-total">$ 12.400</div>
+    </div>
+    <div class="split-row">
+      <div class="split-name">Póliza Auto Premium<small>Corredor + Vendedor</small></div>
+      <div class="split-bar">
+        <span class="seg-corredor" style="width:60%">60%</span>
+        <span class="seg-vendedor" style="width:40%">40%</span>
+      </div>
+      <div class="split-total">$ 3.850</div>
+    </div>
+    <div class="split-row">
+      <div class="split-name">Contrato Salud Corporativo<small>Sponsor mayorista</small></div>
+      <div class="split-bar">
+        <span class="seg-corredor" style="width:35%">35%</span>
+        <span class="seg-sponsor" style="width:45%">45%</span>
+        <span class="seg-vendedor" style="width:20%">20%</span>
+      </div>
+      <div class="split-total">$ 8.720</div>
+    </div>
+    <div class="split-row">
+      <div class="split-name">Renovación Hogar Multi<small>3 actores</small></div>
+      <div class="split-bar">
+        <span class="seg-corredor" style="width:50%">50%</span>
+        <span class="seg-sponsor" style="width:30%">30%</span>
+        <span class="seg-vendedor" style="width:20%">20%</span>
+      </div>
+      <div class="split-total">$ 1.940</div>
+    </div>
+    <div class="legend">
+      <span><i class="legend-dot" style="background:var(--green-700)"></i>Corredor</span>
+      <span><i class="legend-dot" style="background:var(--green-500)"></i>Sponsor</span>
+      <span><i class="legend-dot" style="background:var(--gold)"></i>Vendedor</span>
+      <span><i class="legend-dot" style="background:var(--blue)"></i>Banco</span>
+    </div>
+  </div>
+
+  <div class="card col-6">
+    <h3><span class="ttl">⚙️ MOTOR DE CÁLCULO · REGLAS ACTIVAS</span><span class="pill">28 reglas</span></h3>
+    <div class="rule">
+      <div class="rule-icon">%</div>
+      <div class="rule-body">
+        <div class="rule-title">Comisión escalonada por volumen</div>
+        <div class="rule-desc">+5% si producción mensual &gt; $100K · auto-aplicada a 12 vendedores</div>
+      </div>
+      <span class="rule-status">ACTIVA</span>
+    </div>
+    <div class="rule">
+      <div class="rule-icon">↻</div>
+      <div class="rule-body">
+        <div class="rule-title">Bono de renovación</div>
+        <div class="rule-desc">2% adicional si la póliza se renueva con &gt;90% de retención</div>
+      </div>
+      <span class="rule-status">ACTIVA</span>
+    </div>
+    <div class="rule">
+      <div class="rule-icon">⚖</div>
+      <div class="rule-body">
+        <div class="rule-title">Clawback por anulación temprana</div>
+        <div class="rule-desc">Reverso 100% si cancela &lt;60 días · 50% si &lt;180 días</div>
+      </div>
+      <span class="rule-status">ACTIVA</span>
+    </div>
+    <div class="rule">
+      <div class="rule-icon">★</div>
+      <div class="rule-body">
+        <div class="rule-title">Override gerencial multi-nivel</div>
+        <div class="rule-desc">Gerente regional recibe 3% sobre producción de su equipo</div>
+      </div>
+      <span class="rule-status">ACTIVA</span>
+    </div>
+    <div class="rule">
+      <div class="rule-icon">$</div>
+      <div class="rule-body">
+        <div class="rule-title">Comisión por cobranza efectiva</div>
+        <div class="rule-desc">Solo se devenga al 100% cuando el cliente paga la prima</div>
+      </div>
+      <span class="rule-status">ACTIVA</span>
+    </div>
+  </div>
+</div>
+
+<!-- Vista detallada -->
+<div class="grid">
+  <div class="card col-8">
+    <h3><span class="ttl">📋 VISTA DETALLADA DE COMISIONES</span>
+      <span><button class="btn btn-sm" style="background:var(--green-100);color:var(--green-800)">⬇ Exportar</button></span>
+    </h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Documento</th><th>Tipo</th><th>Prima Neta</th>
+            <th>Com. Corredor</th><th>Com. Sponsor</th><th>Com. Vendedor</th>
+            <th>Split</th><th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="td-doc">Contrato 01</td><td>Contrato</td><td>$ 34.000</td><td>$ 100</td><td>$ 50</td><td>$ 50</td><td>50/25/25</td><td><span class="badge b-ok">Vigente</span></td></tr>
+          <tr><td class="td-doc">Contrato XYZ</td><td>Interseguros</td><td>$ 17.000</td><td>$ 50</td><td>$ 0</td><td>$ 0</td><td>100/0/0</td><td><span class="badge b-ok">Vigente</span></td></tr>
+          <tr><td class="td-doc">Póliza P-2284</td><td>Auto Premium</td><td>$ 8.500</td><td>$ 425</td><td>—</td><td>$ 170</td><td>71/0/29</td><td><span class="badge b-pago">Pagada</span></td></tr>
+          <tr><td class="td-doc">Póliza P-2301</td><td>Salud Corp.</td><td>$ 22.000</td><td>$ 770</td><td>$ 990</td><td>$ 440</td><td>35/45/20</td><td><span class="badge b-pend">Pendiente</span></td></tr>
+          <tr><td class="td-doc">Renovación R-118</td><td>Hogar</td><td>$ 4.200</td><td>$ 210</td><td>$ 126</td><td>$ 84</td><td>50/30/20</td><td><span class="badge b-ok">Vigente</span></td></tr>
+          <tr><td class="td-doc">Endoso E-445</td><td>Vida Indiv.</td><td>$ 1.200</td><td>$ 60</td><td>—</td><td>$ 30</td><td>67/0/33</td><td><span class="badge b-pago">Pagada</span></td></tr>
+          <tr><td class="td-doc">Póliza P-1998</td><td>Auto</td><td>$ 6.300</td><td>$ 252</td><td>—</td><td>$ 126</td><td>67/0/33</td><td><span class="badge b-anul">Anulada</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card col-4">
+    <h3><span class="ttl">💸 LIQUIDACIÓN PRÓXIMA</span><span class="pill">Cierre 30/Abr</span></h3>
+    <div class="liq-item">
+      <div class="liq-name">Carlos M. Vendedor Top<small>14 pólizas · Auto + Hogar</small></div>
+      <div class="liq-amount"><div class="v">$ 8.420</div><div class="s">Listo para pago</div></div>
+    </div>
+    <div class="liq-item">
+      <div class="liq-name">Sponsor Banco XYZ<small>Contrato masivo · 312 vidas</small></div>
+      <div class="liq-amount"><div class="v">$ 12.150</div><div class="s">Esperando factura</div></div>
+    </div>
+    <div class="liq-item">
+      <div class="liq-name">María L. Corredora<small>22 operaciones</small></div>
+      <div class="liq-amount"><div class="v">$ 6.780</div><div class="s">Listo para pago</div></div>
+    </div>
+    <div class="liq-item">
+      <div class="liq-name">Equipo Regional Sur<small>Override gerencial 3%</small></div>
+      <div class="liq-amount"><div class="v">$ 4.310</div><div class="s">En revisión</div></div>
+    </div>
+    <div class="liq-item">
+      <div class="liq-name">Vendedores varios (5)<small>Bonos de renovación</small></div>
+      <div class="liq-amount"><div class="v">$ 2.940</div><div class="s">Pendiente aprobación</div></div>
+    </div>
+    <div style="margin-top:12px;display:flex;gap:8px">
+      <button class="btn btn-sm" style="background:var(--green-700);color:#fff;flex:1">✓ Aprobar lote</button>
+      <button class="btn btn-sm" style="background:var(--green-100);color:var(--green-800)">⬇ Excel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Alertas + IA preguntas -->
+<div class="grid">
+  <div class="card col-6">
+    <h3><span class="ttl">🔔 ALERTAS DE VENCIMIENTO Y AJUSTES</span><span class="pill">5 activas</span></h3>
+    <div class="alert-row danger">
+      <span class="alert-icon">🔥</span>
+      <div class="alert-body"><strong>Renovaciones: cartera próxima a vencer</strong>
+        Dinero en riesgo: <b>$ 1.2M</b> · 87 pólizas vencen en 30 días</div>
+    </div>
+    <div class="alert-row warn">
+      <span class="alert-icon">🔔</span>
+      <div class="alert-body"><strong>Promo Día del Padre vence en 3 días</strong>
+        Decidir: renovar campaña o retirar incentivo de comisión</div>
+    </div>
+    <div class="alert-row warn">
+      <span class="alert-icon">⚖</span>
+      <div class="alert-body"><strong>Ajuste por clawback pendiente</strong>
+        3 anulaciones tempranas requieren reverso por <b>$ 1.840</b></div>
+    </div>
+    <div class="alert-row info">
+      <span class="alert-icon">📊</span>
+      <div class="alert-body"><strong>Cierre contable mensual en 5 días</strong>
+        Confirma reglas vigentes antes de generar liquidaciones</div>
+    </div>
+    <div class="alert-row info">
+      <span class="alert-icon">💼</span>
+      <div class="alert-body"><strong>Nuevo contrato sponsor sin parametrizar</strong>
+        Banco ABC · 1.240 vidas · falta definir split de comisiones</div>
+    </div>
+  </div>
+
+  <div class="card col-6">
+    <h3><span class="ttl">🤖 PREGUNTAS SOBRE COMISIONES (IA)</span><span class="pill">GPT · datos en vivo</span></h3>
+    <div class="ia-box">
+      <textarea placeholder="¿Cuál es el split de comisiones para el Contrato Masivo Banco XYZ con Interseguros?"></textarea>
+      <div class="ia-suggest">
+        <span class="ia-chip">¿Cuánto le toca a Carlos M. este mes?</span>
+        <span class="ia-chip">Top 5 productos más rentables</span>
+        <span class="ia-chip">Anulaciones que generan clawback</span>
+        <span class="ia-chip">Proyección de comisiones Q2</span>
+        <span class="ia-chip">Reglas que más override generan</span>
+      </div>
+      <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn btn-sm" style="background:var(--green-100);color:var(--green-800)">🎙 Voz</button>
+        <button class="btn btn-sm" style="background:var(--green-800);color:#fff">📨 Enviar pregunta</button>
+      </div>
+      <div style="margin-top:12px;padding:10px;background:#fff;border-radius:8px;border-left:3px solid var(--green-600);font-size:12px;color:var(--ink)">
+        <b style="color:var(--green-800)">💡 Respuesta sugerida:</b><br>
+        El split del Contrato Banco XYZ es 40% Corredor / 25% Sponsor / 20% Vendedor / 15% Banco.
+        Total devengado este mes: <b>$ 12.400</b>. Liquidación prevista al cierre del 30/Abr.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Generar barras del dashboard
+  const months=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const data=[
+    [55,42,0],[62,48,0],[71,55,0],[68,52,0],[78,60,0],[82,65,0],
+    [0,0,72],[0,0,78],[0,0,85],[0,0,90],[0,0,95],[0,0,102]
+  ];
+  const max=110;
+  const html=months.map((m,i)=>{
+    const [d,c,p]=data[i];
+    return `<div class="bar-col">
+      <div class="bar-stack">
+        ${p?`<div class="bar proyectada" style="height:${p/max*100}%" title="Proyectada: $${p}K"></div>`:''}
+        ${d?`<div class="bar devengada" style="height:${d/max*100}%" title="Devengada: $${d}K"></div>`:''}
+        ${c?`<div class="bar cobrada" style="height:${c/max*100}%" title="Cobrada: $${c}K"></div>`:''}
+      </div>
+      <div class="bar-label">${m}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('bars').innerHTML=html;
+</script>
+</body>
+</html>

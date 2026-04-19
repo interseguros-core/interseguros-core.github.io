@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestión Documental & Vencimientos — Interseguros</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+body{background:#f1f5f4;color:#1a2e29;font-size:13px;padding:16px}
+.shell{max-width:1600px;margin:0 auto}
+.topbar{background:linear-gradient(135deg,#0d4f3c,#1a6e54);color:#fff;padding:18px 24px;border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.topbar h1{font-size:20px;font-weight:700;letter-spacing:.5px}
+.topbar .sub{font-size:11px;opacity:.85;margin-top:3px}
+.topbar .actions{display:flex;gap:10px;flex-wrap:wrap}
+.btn-top{background:#fff;color:#0d4f3c;padding:10px 18px;border-radius:8px;font-size:13px;font-weight:600;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:7px;box-shadow:0 2px 6px rgba(0,0,0,.08)}
+.btn-top:hover{background:#f1f5f4}
+
+.body-wrap{background:#fff;padding:20px 24px;border-radius:0 0 12px 12px}
+
+/* CHART SECTION */
+.chart-section{background:linear-gradient(135deg,#f8faf9,#fff);border:1px solid #e5ebe9;border-radius:12px;padding:18px 20px;margin-bottom:20px}
+.chart-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px}
+.chart-head h2{font-size:15px;font-weight:700;color:#0d4f3c;display:flex;align-items:center;gap:8px}
+.chart-tabs{display:flex;gap:4px;background:#eef2f0;padding:3px;border-radius:8px}
+.chart-tab{padding:6px 14px;font-size:11px;font-weight:600;color:#64746f;cursor:pointer;border-radius:6px;transition:.2s}
+.chart-tab.active{background:#0d4f3c;color:#fff}
+
+.chart-grid{display:grid;grid-template-columns:repeat(4,1fr) 2fr;gap:14px;align-items:stretch}
+.stat-tile{background:#fff;border:1px solid #e5ebe9;border-radius:10px;padding:14px;text-align:center;border-top:4px solid #0d4f3c}
+.stat-tile.urgent{border-top-color:#ef4444}
+.stat-tile.warn{border-top-color:#f59e0b}
+.stat-tile.ok{border-top-color:#22c55e}
+.stat-tile .icon{font-size:22px;margin-bottom:4px}
+.stat-tile .num{font-size:26px;font-weight:800;color:#0d4f3c;line-height:1.1}
+.stat-tile.urgent .num{color:#b91c1c}
+.stat-tile.warn .num{color:#a16207}
+.stat-tile.ok .num{color:#15803d}
+.stat-tile .lbl{font-size:10px;color:#64746f;text-transform:uppercase;letter-spacing:.5px;margin-top:4px;font-weight:600}
+.stat-tile .delta{font-size:10px;color:#64746f;margin-top:2px}
+
+.chart-area{background:#fff;border:1px solid #e5ebe9;border-radius:10px;padding:14px;display:flex;flex-direction:column}
+.chart-title-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.chart-title-row .t{font-size:12px;font-weight:700;color:#1a2e29}
+.legend{display:flex;gap:10px;font-size:10px;color:#64746f}
+.legend-item{display:flex;align-items:center;gap:4px}
+.legend-dot{width:10px;height:10px;border-radius:2px}
+
+.bars-chart{flex:1;display:flex;align-items:flex-end;justify-content:space-between;gap:6px;padding:8px 0 0;height:130px;border-bottom:1px solid #e5ebe9;position:relative}
+.bars-chart::before, .bars-chart::after{content:'';position:absolute;left:0;right:0;border-top:1px dashed #eef2f0;z-index:0}
+.bars-chart::before{top:33%}
+.bars-chart::after{top:66%}
+.bar-group{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;position:relative;z-index:1}
+.bar-stack{width:100%;max-width:36px;display:flex;flex-direction:column;justify-content:flex-end;height:110px;gap:2px}
+.bar-seg{width:100%;border-radius:3px 3px 0 0;transition:.3s;cursor:pointer;position:relative}
+.bar-seg:hover{filter:brightness(1.15);transform:scaleY(1.04)}
+.bar-seg.r{background:linear-gradient(180deg,#ef4444,#dc2626)}
+.bar-seg.a{background:linear-gradient(180deg,#fbbf24,#f59e0b)}
+.bar-seg.g{background:linear-gradient(180deg,#22c55e,#15803d)}
+.bar-label{font-size:10px;color:#64746f;font-weight:600;margin-top:4px}
+.bar-total{font-size:10px;color:#0d4f3c;font-weight:700;position:absolute;top:-14px;left:50%;transform:translateX(-50%)}
+
+/* SEARCH BAR */
+.toolbar{display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+.search{flex:1;min-width:220px;position:relative}
+.search input{width:100%;padding:9px 14px 9px 36px;border:1px solid #d4dcd9;border-radius:8px;font-size:13px;background:#f8faf9}
+.search input:focus{outline:none;border-color:#0d4f3c;background:#fff}
+.search::before{content:'🔍';position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:13px}
+.filter-chip{padding:8px 12px;background:#f8faf9;border:1px solid #d4dcd9;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:5px;color:#0d4f3c}
+.filter-chip.active{background:#0d4f3c;color:#fff;border-color:#0d4f3c}
+.filter-chip .badge-mini{background:rgba(255,255,255,.2);padding:1px 6px;border-radius:8px;font-size:10px}
+.filter-chip:not(.active) .badge-mini{background:#0d4f3c;color:#fff}
+
+/* TABLE */
+.table-section h2{font-size:15px;font-weight:700;color:#0d4f3c;margin-bottom:12px}
+.table-wrap{border:1px solid #e5ebe9;border-radius:10px;overflow:hidden}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead{background:linear-gradient(135deg,#0d4f3c,#1a6e54);color:#fff}
+th{padding:12px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+th.center, td.center{text-align:center}
+tbody tr{border-bottom:1px solid #eef2f0;transition:background .15s}
+tbody tr:hover{background:#f8faf9}
+tbody tr:last-child{border-bottom:none}
+td{padding:12px;color:#1a2e29}
+td.name{font-weight:600}
+.doc-icon{display:inline-block;width:28px;height:28px;border-radius:6px;background:#dcfce7;color:#15803d;text-align:center;line-height:28px;font-size:13px;margin-right:8px;vertical-align:middle}
+.doc-icon.contrato{background:#dbeafe;color:#1e40af}
+.doc-icon.factura{background:#fef3c7;color:#a16207}
+.doc-icon.id{background:#ede9fe;color:#7c3aed}
+.doc-icon.guia{background:#cffafe;color:#0891b2}
+
+.date-vence{font-weight:600}
+.date-vence.urgent{color:#b91c1c}
+.date-vence.warn{color:#a16207}
+.date-vence.ok{color:#15803d}
+.date-vence .ext{font-size:10px;margin-left:4px;opacity:.6}
+
+.estado{padding:4px 10px;border-radius:12px;font-size:10px;font-weight:700;display:inline-block}
+.estado.vigente{background:#dcfce7;color:#15803d}
+.estado.pagado{background:#dbeafe;color:#1e40af}
+.estado.actualizado{background:#cffafe;color:#0891b2}
+.estado.por-vencer{background:#fef3c7;color:#a16207}
+.estado.vencido{background:#fee2e2;color:#b91c1c}
+.estado.renovado{background:#ede9fe;color:#7c3aed}
+
+.actions-cell{display:flex;gap:6px;justify-content:center}
+.act-btn{width:28px;height:28px;border-radius:6px;background:#f1f5f4;color:#0d4f3c;border:none;cursor:pointer;font-size:13px;display:inline-flex;align-items:center;justify-content:center;transition:.15s}
+.act-btn:hover{background:#0d4f3c;color:#fff}
+.act-btn.danger:hover{background:#ef4444}
+
+input[type=checkbox]{width:16px;height:16px;accent-color:#0d4f3c;cursor:pointer}
+
+.countdown{display:inline-block;padding:2px 7px;border-radius:10px;font-size:9px;font-weight:700;margin-left:5px;vertical-align:middle}
+.countdown.r{background:#fee2e2;color:#b91c1c}
+.countdown.a{background:#fef3c7;color:#a16207}
+
+/* PAGINATION */
+.pagination{display:flex;justify-content:space-between;align-items:center;padding:14px 4px;font-size:12px;color:#64746f;flex-wrap:wrap;gap:10px}
+.page-btns{display:flex;gap:4px}
+.page-btn{width:32px;height:32px;border-radius:6px;border:1px solid #d4dcd9;background:#fff;color:#0d4f3c;cursor:pointer;font-size:12px;font-weight:600}
+.page-btn.active{background:#0d4f3c;color:#fff;border-color:#0d4f3c}
+
+/* TIMELINE STRIP */
+.timeline-strip{background:#fff;border:1px solid #e5ebe9;border-radius:10px;padding:14px;margin-top:14px}
+.timeline-strip .t{font-size:12px;font-weight:700;color:#0d4f3c;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.tl-track{position:relative;height:40px;background:linear-gradient(90deg,#fee2e2 0%,#fee2e2 12%,#fef3c7 12%,#fef3c7 35%,#dcfce7 35%);border-radius:6px}
+.tl-marks{position:absolute;inset:0;display:flex;justify-content:space-between;padding:0 8px;align-items:center;font-size:9px;color:#64746f;font-weight:600}
+.tl-pin{position:absolute;top:-4px;width:14px;height:14px;border-radius:50%;border:3px solid #fff;cursor:pointer;transform:translateX(-50%)}
+.tl-pin.r{background:#ef4444;box-shadow:0 0 0 1px #ef4444}
+.tl-pin.a{background:#f59e0b;box-shadow:0 0 0 1px #f59e0b}
+.tl-pin.g{background:#22c55e;box-shadow:0 0 0 1px #22c55e}
+.tl-tooltip{position:absolute;top:18px;background:#1a2e29;color:#fff;font-size:9px;padding:3px 6px;border-radius:3px;white-space:nowrap;transform:translateX(-50%);pointer-events:none;display:none}
+.tl-pin:hover .tl-tooltip{display:block}
+
+/* Footer */
+.footer{background:#0d4f3c;color:#fff;padding:14px 24px;border-radius:12px;margin-top:14px;display:flex;justify-content:space-between;align-items:center;font-size:12px;gap:10px;flex-wrap:wrap}
+.footer .acts{display:flex;gap:8px;flex-wrap:wrap}
+.footer .ft-btn{background:rgba(255,255,255,.15);color:#fff;padding:8px 14px;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:5px}
+
+/* RESPONSIVE */
+@media (max-width: 1200px){
+  .chart-grid{grid-template-columns:repeat(4,1fr);grid-template-rows:auto auto}
+  .chart-area{grid-column:span 4}
+}
+@media (max-width: 900px){
+  .chart-grid{grid-template-columns:repeat(2,1fr)}
+  .chart-area{grid-column:span 2}
+}
+@media (max-width: 768px){
+  body{padding:8px}
+  .topbar{padding:14px 16px;border-radius:10px 10px 0 0}
+  .topbar h1{font-size:16px}
+  .topbar .sub{font-size:10px}
+  .btn-top{padding:8px 12px;font-size:11px;flex:1;justify-content:center;min-width:140px}
+  .body-wrap{padding:14px;border-radius:0 0 10px 10px}
+  
+  .chart-section{padding:14px}
+  .chart-head h2{font-size:13px}
+  .chart-tabs{width:100%}
+  .chart-tab{flex:1;text-align:center;padding:5px 8px;font-size:10px}
+  
+  .stat-tile{padding:10px}
+  .stat-tile .num{font-size:20px}
+  .stat-tile .lbl{font-size:9px}
+  .stat-tile .icon{font-size:18px}
+  
+  .bars-chart{height:110px}
+  .bar-stack{height:90px;max-width:24px}
+  .bar-label{font-size:9px}
+  
+  .toolbar{flex-direction:column;align-items:stretch}
+  .search{min-width:0}
+  .filter-chip{font-size:10px;padding:6px 10px;flex:1;justify-content:center}
+  
+  .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table{font-size:11px;min-width:720px}
+  th, td{padding:9px 8px}
+  
+  .footer{padding:12px;flex-direction:column;text-align:center;border-radius:10px}
+  .footer .acts{justify-content:center;width:100%}
+  .footer .ft-btn{flex:1;justify-content:center;min-width:100px}
+  
+  .tl-marks{font-size:8px}
+}
+@media (max-width: 480px){
+  .topbar h1{font-size:14px}
+  .chart-grid{grid-template-columns:1fr 1fr}
+  .stat-tile .num{font-size:18px}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<div class="topbar">
+  <div>
+    <h1>📋 GESTIÓN DOCUMENTAL & VENCIMIENTOS</h1>
+    <div class="sub">Control inteligente de contratos · pólizas · facturas · documentos legales</div>
+  </div>
+</div>
+
+<div class="body-wrap">
+
+  <!-- CHART SECTION (reemplaza alerta lateral) -->
+  <div class="chart-section">
+    <div class="chart-head">
+      <h2>📊 Vencimientos Próximos · Vista Anual</h2>
+      <div class="chart-tabs">
+        <div class="chart-tab">Semana</div>
+        <div class="chart-tab">Mes</div>
+        <div class="chart-tab active">12 meses</div>
+        <div class="chart-tab">Año</div>
+      </div>
+    </div>
+    
+    <div class="chart-grid">
+      <div class="stat-tile urgent">
+        <div class="icon">🚨</div>
+        <div class="num">7</div>
+        <div class="lbl">Vencidos</div>
+        <div class="delta">Acción inmediata</div>
+      </div>
+      <div class="stat-tile warn">
+        <div class="icon">⏰</div>
+        <div class="num">23</div>
+        <div class="lbl">Próx. 30 días</div>
+        <div class="delta">Renovar/Actualizar</div>
+      </div>
+      <div class="stat-tile ok">
+        <div class="icon">✅</div>
+        <div class="num">187</div>
+        <div class="lbl">Vigentes</div>
+        <div class="delta">Sin acción</div>
+      </div>
+      <div class="stat-tile">
+        <div class="icon">📁</div>
+        <div class="num">487</div>
+        <div class="lbl">Total docs.</div>
+        <div class="delta">▲ 12 este mes</div>
+      </div>
+      
+      <div class="chart-area">
+        <div class="chart-title-row">
+          <div class="t">Distribución mensual de vencimientos</div>
+          <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#ef4444"></div>Vencidos</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div>Por vencer</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#22c55e"></div>Vigentes</div>
+          </div>
+        </div>
+        <div class="bars-chart">
+          <div class="bar-group"><span class="bar-total">12</span><div class="bar-stack"><div class="bar-seg r" style="height:25%"></div><div class="bar-seg a" style="height:30%"></div><div class="bar-seg g" style="height:30%"></div></div><div class="bar-label">ENE</div></div>
+          <div class="bar-group"><span class="bar-total">8</span><div class="bar-stack"><div class="bar-seg r" style="height:15%"></div><div class="bar-seg a" style="height:20%"></div><div class="bar-seg g" style="height:25%"></div></div><div class="bar-label">FEB</div></div>
+          <div class="bar-group"><span class="bar-total">15</span><div class="bar-stack"><div class="bar-seg r" style="height:10%"></div><div class="bar-seg a" style="height:35%"></div><div class="bar-seg g" style="height:35%"></div></div><div class="bar-label">MAR</div></div>
+          <div class="bar-group"><span class="bar-total">22</span><div class="bar-stack"><div class="bar-seg a" style="height:50%"></div><div class="bar-seg g" style="height:35%"></div></div><div class="bar-label">ABR</div></div>
+          <div class="bar-group"><span class="bar-total">18</span><div class="bar-stack"><div class="bar-seg a" style="height:40%"></div><div class="bar-seg g" style="height:35%"></div></div><div class="bar-label">MAY</div></div>
+          <div class="bar-group"><span class="bar-total">26</span><div class="bar-stack"><div class="bar-seg a" style="height:55%"></div><div class="bar-seg g" style="height:40%"></div></div><div class="bar-label">JUN</div></div>
+          <div class="bar-group"><span class="bar-total">14</span><div class="bar-stack"><div class="bar-seg a" style="height:30%"></div><div class="bar-seg g" style="height:35%"></div></div><div class="bar-label">JUL</div></div>
+          <div class="bar-group"><span class="bar-total">19</span><div class="bar-stack"><div class="bar-seg a" style="height:40%"></div><div class="bar-seg g" style="height:40%"></div></div><div class="bar-label">AGO</div></div>
+          <div class="bar-group"><span class="bar-total">31</span><div class="bar-stack"><div class="bar-seg r" style="height:10%"></div><div class="bar-seg a" style="height:55%"></div><div class="bar-seg g" style="height:30%"></div></div><div class="bar-label">SEP</div></div>
+          <div class="bar-group"><span class="bar-total">28</span><div class="bar-stack"><div class="bar-seg r" style="height:15%"></div><div class="bar-seg a" style="height:50%"></div><div class="bar-seg g" style="height:30%"></div></div><div class="bar-label">OCT</div></div>
+          <div class="bar-group"><span class="bar-total">11</span><div class="bar-stack"><div class="bar-seg a" style="height:25%"></div><div class="bar-seg g" style="height:25%"></div></div><div class="bar-label">NOV</div></div>
+          <div class="bar-group"><span class="bar-total">35</span><div class="bar-stack"><div class="bar-seg r" style="height:18%"></div><div class="bar-seg a" style="height:60%"></div><div class="bar-seg g" style="height:20%"></div></div><div class="bar-label">DIC</div></div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Timeline próximos 90 días -->
+    <div class="timeline-strip">
+      <div class="t">
+        <span>📅 Línea de Tiempo · Próximos 90 días</span>
+        <span style="font-size:10px;color:#64746f;font-weight:500">Hoy → +90 días</span>
+      </div>
+      <div class="tl-track">
+        <div class="tl-marks"><span>Hoy</span><span>+15d</span><span>+30d</span><span>+45d</span><span>+60d</span><span>+75d</span><span>+90d</span></div>
+        <div class="tl-pin r" style="left:5%"><div class="tl-tooltip">Contrato 3A · Hoy+5d</div></div>
+        <div class="tl-pin r" style="left:8%"><div class="tl-tooltip">Póliza Auto · +7d</div></div>
+        <div class="tl-pin a" style="left:18%"><div class="tl-tooltip">Factura Telcel · +15d</div></div>
+        <div class="tl-pin a" style="left:25%"><div class="tl-tooltip">Contrato Oficina · +22d</div></div>
+        <div class="tl-pin a" style="left:35%"><div class="tl-tooltip">Renovación SOAT · +32d</div></div>
+        <div class="tl-pin g" style="left:48%"><div class="tl-tooltip">Garantía equipos · +43d</div></div>
+        <div class="tl-pin g" style="left:62%"><div class="tl-tooltip">Convenio +56d</div></div>
+        <div class="tl-pin g" style="left:75%"><div class="tl-tooltip">Auditoría +68d</div></div>
+        <div class="tl-pin g" style="left:88%"><div class="tl-tooltip">Cert. ISO +80d</div></div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- LISTADO -->
+  <div class="table-section">
+    <h2>📂 LISTADO DE DOCUMENTOS</h2>
+    
+    <div class="toolbar">
+      <div class="search"><input placeholder="Buscar por nombre, tipo, responsable o fecha…"></div>
+      <div class="filter-chip active">Todos <span class="badge-mini">487</span></div>
+      <div class="filter-chip">🚨 Vencidos <span class="badge-mini">7</span></div>
+      <div class="filter-chip">⏰ Por vencer <span class="badge-mini">23</span></div>
+      <div class="filter-chip">✅ Vigentes <span class="badge-mini">187</span></div>
+      <div class="filter-chip">📁 Tipo</div>
+    </div>
+    
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th class="center" style="width:50px"><input type="checkbox"></th>
+            <th>Nombre</th>
+            <th style="width:130px">Tipo</th>
+            <th style="width:120px">Fecha Carga</th>
+            <th style="width:160px">Vencimiento ⓘ</th>
+            <th style="width:130px">Estado</th>
+            <th style="width:60px">Días</th>
+            <th class="center" style="width:140px">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="center"><input type="checkbox" checked></td>
+            <td class="name"><span class="doc-icon contrato">📄</span>Contrato Arrendamiento — Oficina Central (PDF)</td>
+            <td>Contrato</td>
+            <td>10/01/2023</td>
+            <td><span class="date-vence warn">31/12/2025 <span class="ext">↗</span></span></td>
+            <td><span class="estado vigente">Vigente</span></td>
+            <td class="center"><span class="countdown a">42d</span></td>
+            <td><div class="actions-cell"><button class="act-btn" title="Ver">👁</button><button class="act-btn" title="Editar">✏️</button><button class="act-btn" title="Renovar">🔄</button><button class="act-btn" title="Info">ℹ️</button></div></td>
+          </tr>
+          <tr>
+            <td class="center"><input type="checkbox"></td>
+            <td class="name"><span class="doc-icon factura">🧾</span>Factura Compra — Equipos TI 001</td>
+            <td>Factura</td>
+            <td>05/02/2023</td>
+            <td>N/A</td>
+            <td><span class="estado pagado">Pagado</span></td>
+            <td class="center">—</td>
+            <td><div class="actions-cell"><button class="act-btn">👁</button><button class="act-btn">✏️</button><button class="act-btn">🔄</button><button class="act-btn">ℹ️</button></div></td>
+          </tr>
+          <tr>
+            <td class="center"><input type="checkbox"></td>
+            <td class="name"><span class="doc-icon id">🆔</span>DNI — Manuel Gómez López</td>
+            <td>Identificación</td>
+            <td>01/03/2023</td>
+            <td><span class="date-vence ok">10/05/2030</span></td>
+            <td><span class="estado vigente">Vigente</span></td>
+            <td class="center">5+años</td>
+            <td><div class="actions-cell"><button class="act-btn">👁</button><button class="act-btn">✏️</button><button class="act-btn">🔄</button><button class="act-btn">ℹ️</button></div></td>
+          </tr>
+          <tr>
+            <td class="center"><input type="checkbox"></td>
+            <td class="name"><span class="doc-icon guia">📘</span>Manual de Usuario — ERP v4.2</td>
+            <td>Guía</td>
+            <td>22/03/2023</td>
+            <td>N/A</td>
+            <td><span class="estado actualizado">Actualizado</span></td>
+            <td class="center">—</td>
+            <td><div class="actions-cell"><button class="act-btn">👁</button><button class="act-btn">✏️</button><button class="act-btn">🔄</button><button class="act-btn">ℹ️</button></div></td>
+          </tr>
+          <tr style="background:#fff8f8">
+            <td class="center"><input type="checkbox"></td>
+            <td class="name"><span class="doc-icon contrato">📄</span>Contrato Proveedores — 3A Services</td>
+            <td>Contrato</td>
+            <td>01/10/2023</td>
+            <td><span class="date-vence urgent">15/12/2025 <span class="ext">↗</span></span></td>
+            <td><span class="estado por-vencer">Por Vencer</span></td>
+            <td class="center"><span class="countdown r">5d</span></td>
+            <td><div class="actions-cell"><button class="act-btn">👁</button><button class="act-btn">✏️</button><button class="act-btn">🔄</button><button class="act-btn">ℹ️</button></div></td>
+          </tr>
+          <tr style="background:#fff8f8">
+            <td class="center"><input type="checkbox"></td>
+            <td class="name"><span class="doc-icon contrato">📄</span>Póliza Auto — Pacífico Seguros</td>
+            <td>Póliza</td>
+            <td>14/12/2024</td>
+            <td><span class="date-vence urgent">17/12/2025 <span class="ext">↗</span></span></td>
+            <td><span class="estado por-vencer">Por Vencer</span></td>
+            <td class="center"><span class="countdown r">7d</span></td>
+            <td><div class="actions-cell"><button class="act-btn">👁</button><button class="act-btn">✏️</button><button class="act-btn">🔄</button><button class="act-btn">ℹ️</button></div></td>
+          </tr>
+          <tr>
+            <td class="center"><input type="checkbox"></td>
+            <td class="name"><span class="doc-icon factura">🧾</span>Factura Servicios — Telcel Empresarial</td>
+            <td>Factura</td>
+            <td>01/11/2025</td>
+            <td><span class="date-vence warn">25/12/2025 <span class="ext">↗</span></span></td>
+            <td><span class="estado por-vencer">Por Vencer</span></td>
+            <td class="center"><span class="countdown a">15d</span></td>
+            <td><div class="actions-cell"><button class="act-btn">👁</button><button class="act-btn">✏️</button><button class="act-btn">🔄</button><button class="act-btn">ℹ️</button></div></td>
+          </tr>
+          <tr style="opacity:.7">
+            <td class="center"><input type="checkbox"></td>
+            <td class="name"><span class="doc-icon contrato">📄</span>Convenio Marco — Banco Nacional</td>
+            <td>Convenio</td>
+            <td>15/06/2022</td>
+            <td><span class="date-vence urgent">15/06/2025</span></td>
+            <td><span class="estado vencido">Vencido</span></td>
+            <td class="center"><span class="countdown r">-176d</span></td>
+            <td><div class="actions-cell"><button class="act-btn danger">👁</button><button class="act-btn">✏️</button><button class="act-btn">🔄</button><button class="act-btn">ℹ️</button></div></td>
+          </tr>
+          <tr>
+            <td class="center"><input type="checkbox"></td>
+            <td class="name"><span class="doc-icon id">🆔</span>Certificado ISO 9001 — Sucursal La Paz</td>
+            <td>Certificado</td>
+            <td>10/05/2024</td>
+            <td><span class="date-vence ok">10/05/2027</span></td>
+            <td><span class="estado renovado">Renovado</span></td>
+            <td class="center">+2años</td>
+            <td><div class="actions-cell"><button class="act-btn">👁</button><button class="act-btn">✏️</button><button class="act-btn">🔄</button><button class="act-btn">ℹ️</button></div></td>
+          </tr>
+          <tr>
+            <td class="center"><input type="checkbox"></td>
+            <td class="name"><span class="doc-icon guia">📘</span>Procedimiento BRE — Suscripción 2026</td>
+            <td>Guía</td>
+            <td>05/11/2025</td>
+            <td>N/A</td>
+            <td><span class="estado actualizado">Actualizado</span></td>
+            <td class="center">—</td>
+            <td><div class="actions-cell"><button class="act-btn">👁</button><button class="act-btn">✏️</button><button class="act-btn">🔄</button><button class="act-btn">ℹ️</button></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="pagination">
+      <div>Mostrando <b>1-10</b> de <b>487</b> documentos</div>
+      <div class="page-btns">
+        <button class="page-btn">‹</button>
+        <button class="page-btn active">1</button>
+        <button class="page-btn">2</button>
+        <button class="page-btn">3</button>
+        <button class="page-btn">…</button>
+        <button class="page-btn">49</button>
+        <button class="page-btn">›</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <div>🟢 Sistema operativo · IA monitoreando vencimientos · Última sincronización: hace 8s · v3.6.0</div>
+  <div class="acts">
+    <button class="ft-btn">🔔 Configurar alertas</button>
+    <button class="ft-btn">📊 Exportar Excel</button>
+    <button class="ft-btn">⚙️ Configuración</button>
+  </div>
+</div>
+
+</div>
+
+<script>
+document.querySelectorAll('.chart-tab').forEach(t=>t.addEventListener('click',()=>{
+  document.querySelectorAll('.chart-tab').forEach(x=>x.classList.remove('active'));t.classList.add('active');
+}));
+document.querySelectorAll('.filter-chip').forEach(t=>t.addEventListener('click',()=>{
+  document.querySelectorAll('.filter-chip').forEach(x=>x.classList.remove('active'));t.classList.add('active');
+}));
+</script>
+</body>
+</html>

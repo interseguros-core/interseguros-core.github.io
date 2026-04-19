@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Perfil de Cliente 360</title>
+<style>
+  :root{
+    --primary:#0F766E;
+    --primary-dark:#0B5C55;
+    --primary-light:#D1FAE5;
+    --bg:#F1F5F1;
+    --card:#FFFFFF;
+    --border:#E5E7EB;
+    --text:#1F2937;
+    --muted:#6B7280;
+    --success:#10B981;
+    --danger:#EF4444;
+    --warning:#F59E0B;
+    --chart:#6B8E5A;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);font-size:13px;padding:16px;}
+  .page-title{font-size:22px;font-weight:800;color:var(--text);margin-bottom:14px;letter-spacing:.5px;}
+  .layout{display:grid;grid-template-columns:1fr 380px;gap:14px;}
+  @media(max-width:1100px){.layout{grid-template-columns:1fr;}}
+
+  /* Main app card */
+  .app{background:var(--card);border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.05);display:grid;min-height:760px;}
+  .sidebar{background:var(--card);border-right:1px solid var(--border);padding:16px 8px;display:flex;flex-direction:column;align-items:center;gap:6px;}
+  .logo{width:64px;height:48px;border-radius:8px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--primary);font-size:11px;text-align:center;line-height:1.1;margin-bottom:14px;}
+  .nav-item{width:100%;padding:10px 6px;border-radius:8px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;color:var(--muted);font-size:11px;transition:.15s;}
+  .nav-item:hover{background:#F3F4F6;}
+  .nav-item.active{background:var(--primary);color:#fff;}
+  .nav-item svg{width:20px;height:20px;}
+
+  .main{display:flex;flex-direction:column;}
+  .topbar{display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid var(--border);}
+  .search{flex:1;max-width:340px;margin-left:auto;position:relative;}
+  .search input{width:100%;padding:8px 12px 8px 32px;border:1px solid var(--border);border-radius:8px;background:#F9FAFB;font-size:12px;}
+  .search svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:var(--muted);}
+  .top-icons{display:flex;align-items:center;gap:14px;color:var(--muted);}
+  .top-icons .bell{position:relative;}
+  .top-icons .bell::after{content:"";position:absolute;top:-2px;right:-2px;width:8px;height:8px;border-radius:50%;background:var(--danger);}
+  .user-pill{display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:8px;cursor:pointer;}
+
+  .content{padding:18px;display:flex;flex-direction:column;gap:14px;}
+  .client-header{display:flex;align-items:center;gap:16px;padding:8px 4px;}
+  .avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#FCD9B6,#F4A261);display:flex;align-items:center;justify-content:center;font-size:28px;}
+  .client-name{font-size:20px;font-weight:800;letter-spacing:.5px;}
+  .client-id{font-size:12px;color:var(--muted);margin-top:2px;}
+  .client-contact{margin-left:auto;text-align:right;font-size:12px;color:var(--muted);line-height:1.7;}
+  .client-contact div{display:flex;align-items:center;gap:6px;justify-content:flex-end;}
+
+  .section-title{font-size:14px;font-weight:700;margin-bottom:8px;}
+  .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;}
+  .card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+  .card-title{font-size:13px;font-weight:700;}
+  .card-sub{font-size:11px;color:var(--muted);}
+  .icon-btns{display:flex;gap:4px;}
+  .icon-btn{width:24px;height:24px;border-radius:6px;border:1px solid var(--border);background:#fff;display:inline-flex;align-items:center;justify-content:center;color:var(--muted);cursor:pointer;}
+  .icon-btn:hover{background:#F3F4F6;}
+  .icon-btn svg{width:12px;height:12px;}
+
+  .info-row{display:flex;align-items:center;gap:8px;font-size:12px;padding:3px 0;color:var(--text);}
+  .info-row svg{width:13px;height:13px;color:var(--muted);}
+
+  .badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;}
+  .badge-success{background:var(--primary-light);color:var(--primary-dark);}
+  .badge-warn{background:#FEF3C7;color:#92400E;}
+
+  table{width:100%;border-collapse:collapse;font-size:12px;}
+  th{text-align:left;font-weight:600;color:var(--muted);padding:6px 8px;border-bottom:1px solid var(--border);font-size:11px;}
+  td{padding:8px;border-bottom:1px solid #F3F4F6;}
+  tr.expired{background:#FEE2E2;}
+  tr.expired td:first-child{font-weight:600;}
+
+  .ramo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;}
+  .ramo-col-title{text-align:center;font-size:12px;font-weight:700;margin-bottom:10px;color:var(--text);}
+  .ramo-items{display:flex;justify-content:space-around;flex-wrap:wrap;gap:14px;}
+  .ramo-item{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;color:var(--muted);position:relative;}
+  .ramo-icon{width:42px;height:42px;border-radius:50%;background:#F3F4F6;display:flex;align-items:center;justify-content:center;font-size:18px;position:relative;}
+  .ramo-item.contracted .ramo-icon{background:var(--primary-light);}
+  .ramo-item.contracted .ramo-icon::after{content:"✓";position:absolute;bottom:-2px;right:-2px;width:16px;height:16px;border-radius:50%;background:var(--success);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;font-weight:700;border:2px solid #fff;}
+
+  /* right column */
+  .right{display:flex;flex-direction:column;gap:14px;}
+  .right .card{padding:14px;}
+  .right-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+  .right-search{flex:1;max-width:180px;position:relative;margin-left:8px;}
+  .right-search input{width:100%;padding:6px 10px 6px 28px;border:1px solid var(--border);border-radius:7px;background:#F9FAFB;font-size:11px;}
+  .right-search svg{position:absolute;left:8px;top:50%;transform:translateY(-50%);width:12px;height:12px;color:var(--muted);}
+
+  /* charts */
+  .bar-chart{display:flex;align-items:flex-end;gap:14px;height:140px;padding:8px 0 0;border-left:1px solid var(--border);border-bottom:1px solid var(--border);position:relative;padding-left:20px;}
+  .bar{flex:1;background:var(--chart);border-radius:3px 3px 0 0;position:relative;min-width:18px;}
+  .bar-label{position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--muted);white-space:nowrap;}
+  .y-axis{position:absolute;left:0;top:0;bottom:0;width:18px;display:flex;flex-direction:column;justify-content:space-between;font-size:9px;color:var(--muted);text-align:right;padding-right:2px;}
+  .chart-wrap{padding-bottom:24px;}
+
+  .donut{width:140px;height:140px;margin:8px auto;border-radius:50%;background:conic-gradient(var(--chart) 0 45%, #9DB88E 45% 70%, #C8D5BB 70% 88%, #E5EBDC 88% 100%);position:relative;}
+  .donut::after{content:"";position:absolute;inset:30px;background:#fff;border-radius:50%;}
+
+  .line-chart{height:140px;position:relative;padding:8px 0 24px 20px;border-left:1px solid var(--border);border-bottom:1px solid var(--border);}
+  .line-chart svg{width:100%;height:100%;}
+  .line-labels{display:flex;justify-content:space-between;font-size:9px;color:var(--muted);padding:4px 0 0 20px;}
+
+  .stat{padding:8px 0;}
+  .stat-label{font-size:11px;color:var(--muted);}
+  .stat-value{font-size:22px;font-weight:800;color:var(--text);}
+  .stat-value.green{color:var(--primary);}
+  .divider{height:1px;background:var(--border);margin:4px 0;}
+
+  .contact-row{display:grid;grid-template-columns:60px 1fr 60px 1fr;gap:8px;font-size:11px;padding:8px 0;border-bottom:1px solid #F3F4F6;align-items:start;}
+  .contact-row:last-child{border-bottom:none;}
+  .contact-date{color:var(--muted);font-weight:600;}
+  .contact-agent{font-weight:600;}
+  .contact-agent span{display:block;font-weight:400;color:var(--muted);font-size:10px;}
+  .contact-type{color:var(--text);font-weight:600;}
+  .contact-note{color:var(--muted);line-height:1.4;}
+
+  .recent-search{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #F3F4F6;font-size:12px;color:var(--muted);}
+  .recent-search:last-child{border-bottom:none;}
+  .recent-search svg{width:13px;height:13px;color:var(--muted);}
+
+  .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle;}
+  .dot-open{background:var(--warning);}
+  .dot-closed{background:var(--success);}
+</style>
+</head>
+<body>
+
+<h1 class="page-title">MÓDULO DE PERFIL DE CLIENTE 360</h1>
+
+<div class="layout">
+
+  <!-- ============ MAIN APP ============ -->
+  <div class="app">
+
+    <div class="main">
+      <div class="topbar">
+        <div class="search">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" d="M21 21l-4.35-4.35"/></svg>
+          <input placeholder="Buscar clientes" />
+        </div>
+        <div class="top-icons">
+          <span class="bell">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2a2 2 0 01-.6 1.4L4 17h5m6 0a3 3 0 11-6 0"/></svg>
+          </span>
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" d="M9.1 9a3 3 0 015.8 1c0 2-3 3-3 3M12 17h.01"/></svg>
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+          <div class="user-pill">User settings ▾</div>
+        </div>
+      </div>
+
+      <div class="content">
+
+        <!-- Client header -->
+        <div class="client-header">
+          <div class="avatar">👤</div>
+          <div>
+            <div class="client-name">JUAN PÉREZ GARCÍA</div>
+            <div class="client-id">Cliente ID: 6005000</div>
+          </div>
+          <div class="client-contact">
+            <div>📞 (22) 325-2770</div>
+            <div>✉️ juancoxserez@gmail.com</div>
+          </div>
+        </div>
+
+        <!-- Perfil General -->
+        <div>
+          <div class="card-head" style="margin-bottom:8px;">
+            <div class="card-title">Perfil General</div>
+            <div class="icon-btns">
+              <button class="icon-btn" title="Filtrar"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 4h18M6 12h12M10 20h4"/></svg></button>
+              <button class="icon-btn" title="Eliminar"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m-3 5v6m-4-6v6M5 6l1 14a2 2 0 002 2h8a2 2 0 002-2l1-14"/></svg></button>
+            </div>
+          </div>
+          <div class="grid-3">
+            <div class="card">
+              <div class="card-title">Información del Cliente</div>
+              <div class="card-sub" style="margin-bottom:8px;">Datos personales, contacto</div>
+              <div class="info-row">👤 Juan Pérez García</div>
+              <div class="info-row">📞 (22) 522-2770</div>
+              <div class="info-row">✉️ juancorserez@gmail.com</div>
+            </div>
+            <div class="card">
+              <div class="card-head" style="margin-bottom:6px;">
+                <div class="card-title">Pólizas Activas</div>
+                <div class="icon-btns">
+                  <button class="icon-btn"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5h6m-6 7h6m-6 7h6M5 5h.01M5 12h.01M5 19h.01"/></svg></button>
+                  <button class="icon-btn"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg></button>
+                </div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px;">
+                <div><strong>Key Personales</strong></div><div></div>
+                <div>Cobertura 30130825</div><div>Póliza5 3</div>
+                <div><strong>Estadus</strong> 27/378</div><div>09-23-202</div>
+              </div>
+              <div style="margin-top:8px;display:flex;gap:6px;">
+                <span class="badge badge-success">Estado</span>
+                <span class="badge badge-warn">Resuno mesido</span>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title" style="margin-bottom:6px;">Resumen de Seguros</div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;padding:4px 0;"><span>Resumen Seguros</span><strong>26</strong></div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;padding:4px 0;"><span>Seguro Activas</span><strong>135</strong></div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-top:1px solid var(--border);margin-top:4px;"><span><strong>Total Estatos</strong></span><strong style="color:var(--primary)">$550%</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Información Detallada -->
+        <div>
+          <div class="section-title">Información Detallada</div>
+          <div class="grid-2">
+            <div class="card">
+              <div class="card-head">
+                <div class="card-title">Pólizas y Certificados</div>
+                <div class="icon-btns">
+                  <button class="icon-btn"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5h2v14h-2zM5 11h14v2H5z"/></svg></button>
+                  <button class="icon-btn"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg></button>
+                </div>
+              </div>
+              <table>
+                <thead><tr><th>Activo</th><th>Número</th><th>Cobertura</th><th>Descarga</th></tr></thead>
+                <tbody>
+                  <tr><td>🚗 Automóvil</td><td>101500401</td><td>11/06/2023</td><td>⬇️</td></tr>
+                  <tr><td>🏠 Hogar</td><td>103400123</td><td>27/06/2023</td><td>⬇️</td></tr>
+                  <tr class="expired"><td colspan="4" style="font-weight:700;">Expiretos</td></tr>
+                  <tr class="expired"><td>❤️ Vida</td><td>104800401</td><td>29/08/2023</td><td>⬇️</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <div class="card-title">Ramos Contratados y Sin Contratar</div>
+                <div class="icon-btns">
+                  <button class="icon-btn"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 4h18M6 12h12M10 20h4"/></svg></button>
+                  <button class="icon-btn"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 4h18M6 12h12M10 20h4"/></svg></button>
+                </div>
+              </div>
+              <div class="ramo-grid">
+                <div>
+                  <div class="ramo-col-title">Contratados</div>
+                  <div class="ramo-items">
+                    <div class="ramo-item contracted"><div class="ramo-icon">🚗</div>Automóvil</div>
+                    <div class="ramo-item contracted"><div class="ramo-icon">➕</div>Salud</div>
+                    <div class="ramo-item contracted"><div class="ramo-icon">➕</div>Salud</div>
+                    <div class="ramo-item contracted"><div class="ramo-icon">❤️</div>Vida</div>
+                    <div class="ramo-item contracted"><div class="ramo-icon">🚗</div>Automóvil</div>
+                    <div class="ramo-item contracted"><div class="ramo-icon">🏠</div>Corries</div>
+                  </div>
+                </div>
+                <div>
+                  <div class="ramo-col-title">Sin Contratar</div>
+                  <div class="ramo-items">
+                    <div class="ramo-item"><div class="ramo-icon">🚗</div>Automóvil</div>
+                    <div class="ramo-item"><div class="ramo-icon">❤️</div>Vida</div>
+                    <div class="ramo-item"><div class="ramo-icon">❤️</div>Vida</div>
+                    <div class="ramo-item"><div class="ramo-icon">🏠</div>Hogar</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Siniestros + Búsquedas -->
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-head">
+              <div class="card-title">Siniestros</div>
+              <div class="icon-btns">
+                <button class="icon-btn"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5h2v14h-2zM5 11h14v2H5z"/></svg></button>
+                <button class="icon-btn"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 4h18M6 12h12M10 20h4"/></svg></button>
+              </div>
+            </div>
+            <table>
+              <thead><tr><th>Ramo</th><th>Estatu</th><th>Fecha</th><th>Descripción</th></tr></thead>
+              <tbody>
+                <tr><td>Siniestros 102281</td><td><span class="dot dot-open"></span>Abierto</td><td>01/05/2023</td><td>Descripción Repotira...</td></tr>
+                <tr><td>Siniestros 10423</td><td><span class="dot dot-closed"></span>Cerrado</td><td>21/05/2023</td><td>Descripción de rsarlo...</td></tr>
+                <tr><td>Siniestros 10405</td><td><span class="dot dot-closed"></span>Cerrado</td><td>31/05/2023</td><td>Descripción de rracrm...</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Búsquedas Recientes</div>
+            <div class="card-sub" style="margin-bottom:8px;">Búsquedas tu recientes</div>
+            <div class="recent-search">🔍 ¿Cuentas curenta del automovilco del sistema?</div>
+            <div class="recent-search">🔍 ¿Cuentas curitata de busquedas nel sistema?</div>
+            <div class="recent-search">🔍 ¿Cuentas cuntata de búsquedas nel sistema?</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ RIGHT PANEL ============ -->
+  <div class="right">
+
+    <div class="card">
+      <div class="right-head">
+        <div class="card-title">Métricas y Gráficos</div>
+        <div class="right-search">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" d="M21 21l-4.35-4.35"/></svg>
+          <input placeholder="Buscar otros clientes"/>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div>
+          <div class="card-sub" style="margin-bottom:6px;">Interacciones por Canal</div>
+          <div class="chart-wrap">
+            <div class="bar-chart">
+              <div class="y-axis"><span>250</span><span>200</span><span>150</span><span>100</span><span>50</span><span>0</span></div>
+              <div class="bar" style="height:80%"><span class="bar-label">Llamadas</span></div>
+              <div class="bar" style="height:55%"><span class="bar-label">Correos</span></div>
+              <div class="bar" style="height:30%"><span class="bar-label">Coretos</span></div>
+              <div class="bar" style="height:18%"><span class="bar-label">Portal Web</span></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card-sub" style="margin-bottom:6px;">Distribución de Pólizas por Ramo</div>
+          <div class="donut"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="grid-2">
+        <div>
+          <div class="card-sub" style="margin-bottom:2px;">Historial de Siniestros</div>
+          <div class="card-sub" style="font-size:10px;margin-bottom:6px;">(Últimos 12 meses)</div>
+          <div class="line-chart">
+            <div class="y-axis"><span>50</span><span>40</span><span>30</span><span>20</span><span>10</span><span>0</span></div>
+            <svg viewBox="0 0 200 100" preserveAspectRatio="none">
+              <polyline fill="none" stroke="var(--chart)" stroke-width="2" points="0,80 18,60 36,75 54,40 72,55 90,30 108,50 126,25 144,45 162,20 180,35 200,50"/>
+            </svg>
+          </div>
+          <div class="line-labels"><span>Jan</span><span>Feb</span><span>Mar</span><span>Min</span><span>Jul</span><span>Ago</span><span>Sev</span><span>Dec</span></div>
+        </div>
+        <div>
+          <div class="stat">
+            <div class="stat-label">Total de Pólizas Activas</div>
+            <div class="stat-value">23</div>
+          </div>
+          <div class="divider"></div>
+          <div class="stat">
+            <div class="stat-label">Valor del Cliente (LTV)</div>
+            <div class="stat-value green">$1,12.5640</div>
+          </div>
+          <div class="divider"></div>
+          <div class="stat">
+            <div class="stat-label">Índice de Renovación</div>
+            <div class="stat-value">10,5%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title" style="margin-bottom:4px;">Métricas y Gráficos</div>
+      <div class="card-title" style="font-size:12px;margin-top:8px;">Historial de Contactos</div>
+      <div class="card-sub" style="margin-bottom:8px;">Veces que un ejecutivo se contactó</div>
+
+      <div class="contact-row">
+        <div class="contact-date">12-08.23</div>
+        <div class="contact-agent">Agente Jones<span>Agente</span></div>
+        <div class="contact-type">Llamada</div>
+        <div class="contact-note">Notes povo reunión de Vacis que para otras tu mise un ejecutivo.</div>
+      </div>
+      <div class="contact-row">
+        <div class="contact-date">23-06.24</div>
+        <div class="contact-agent">Agente Josefuonos<span>Agente</span></div>
+        <div class="contact-type">Llamada</div>
+        <div class="contact-note">Llamadıs, mıursta vecr.ion era el motes.</div>
+      </div>
+      <div class="contact-row">
+        <div class="contact-date">13-09.24</div>
+        <div class="contact-agent">Agente Cólahoros<span>Agente</span></div>
+        <div class="contact-type">Reunión</div>
+        <div class="contact-note">Notes al leunión o remueno randa aecuramente objectivo.</div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>

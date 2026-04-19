@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Configuración de Producto — Seguro de Vida Individual</title>
+<style>
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  --primary:#0F766E; --primary-soft:#E6F4F2; --primary-dark:#0B5752;
+  --bg:#F5F7F6; --card:#FFFFFF; --border:#E2E8E6; --border-strong:#CBD5D1;
+  --text:#0F1F1D; --muted:#64746F; --muted-2:#8A968F;
+  --success:#16A34A; --success-soft:#DCFCE7;
+  --warn:#D97706; --warn-soft:#FEF3C7;
+  --danger:#DC2626; --danger-soft:#FEE2E2;
+  --accent:#6B8E5A;
+  --radius:10px; --radius-sm:6px;
+  --shadow:0 1px 2px rgba(15,31,29,.04), 0 1px 3px rgba(15,31,29,.06);
+  --shadow-lg:0 10px 25px -10px rgba(15,31,29,.15);
+}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select,textarea{font-family:inherit;font-size:14px;color:var(--text)}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--primary);outline-offset:-1px}
+
+/* Header */
+.header{background:var(--card);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:30}
+.header-left{display:flex;align-items:center;gap:14px;min-width:0}
+.icon-btn{width:34px;height:34px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;color:var(--muted);transition:all .15s}
+.icon-btn:hover{background:var(--bg);color:var(--text)}
+.title-block h1{margin:0;font-size:16px;font-weight:600;letter-spacing:-.01em;display:flex;align-items:center;gap:10px}
+.title-block .crumbs{font-size:12px;color:var(--muted);margin-top:2px}
+.status-pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;background:var(--success-soft);color:var(--success);text-transform:uppercase;letter-spacing:.04em}
+.status-pill::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--success)}
+.status-pill.draft{background:var(--warn-soft);color:var(--warn)}
+.status-pill.draft::before{background:var(--warn)}
+.header-right{display:flex;gap:8px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:500;transition:all .15s;border:1px solid transparent}
+.btn-ghost{color:var(--muted)}
+.btn-ghost:hover{background:var(--bg);color:var(--text)}
+.btn-outline{border-color:var(--border-strong);color:var(--text);background:var(--card)}
+.btn-outline:hover{border-color:var(--primary);color:var(--primary)}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary-dark)}
+.btn-sm{padding:5px 10px;font-size:12px}
+
+/* Sub-toolbar: progress + tabs */
+.subbar{background:var(--card);border-bottom:1px solid var(--border);padding:0 28px;display:flex;justify-content:space-between;align-items:center;gap:24px}
+.tabs{display:flex;gap:4px}
+.tab{padding:14px 4px;font-size:13px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;display:flex;align-items:center;gap:8px;margin-right:18px;transition:color .15s}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--primary);border-bottom-color:var(--primary)}
+.tab .num{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:var(--bg);color:var(--muted);font-size:11px;font-weight:600}
+.tab.active .num{background:var(--primary);color:#fff}
+.tab.done .num{background:var(--success);color:#fff}
+.progress-mini{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted)}
+.progress-bar{width:120px;height:6px;background:var(--bg);border-radius:999px;overflow:hidden}
+.progress-fill{height:100%;background:var(--primary);border-radius:999px;transition:width .3s}
+
+/* Layout */
+.layout{display:grid;grid-template-columns:1fr 320px;gap:0;min-height:calc(100vh - 122px)}
+.main{padding:24px 28px;overflow:auto}
+.aside{background:var(--card);border-left:1px solid var(--border);padding:20px 22px;overflow:auto;position:sticky;top:122px;height:calc(100vh - 122px)}
+
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:1100px){.grid{grid-template-columns:1fr}.layout{grid-template-columns:1fr}.aside{position:static;height:auto;border-left:0;border-top:1px solid var(--border)}}
+
+/* Card */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;transition:border-color .15s}
+.card:hover{border-color:var(--border-strong)}
+.card-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,#FAFBFA 0%,#fff 100%)}
+.card-head-left{display:flex;align-items:center;gap:10px;min-width:0}
+.step-num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--primary);color:#fff;font-size:12px;font-weight:600;flex-shrink:0}
+.card-title{font-size:14px;font-weight:600;margin:0}
+.card-actions{display:flex;gap:2px}
+.card-body{padding:18px}
+.section-valid{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:var(--success);background:var(--success-soft);padding:2px 8px;border-radius:999px}
+
+/* Form */
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.field label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.field-row{display:grid;gap:12px;margin-bottom:14px}
+.field-row.cols-2{grid-template-columns:1fr 1fr}
+.field-row.cols-3{grid-template-columns:1fr 1fr 1fr}
+.field-row.cols-4{grid-template-columns:1fr 1fr 1fr 1fr}
+.input,.select,.textarea{width:100%;padding:8px 10px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);background:#fff;transition:border-color .15s}
+.input:hover,.select:hover{border-color:var(--muted-2)}
+.select{appearance:none;background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3e%3cpath d='M1 1l4 4 4-4' stroke='%2364746F' stroke-width='1.5' fill='none' stroke-linecap='round'/%3e%3c/svg%3e");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+.textarea{resize:vertical;min-height:64px;font-family:inherit}
+
+/* Chips / segmented */
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{padding:6px 12px;border:1px solid var(--border-strong);border-radius:999px;background:#fff;font-size:12px;font-weight:500;color:var(--text);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
+.chip:hover{border-color:var(--primary);color:var(--primary)}
+.chip.active{background:var(--primary-soft);border-color:var(--primary);color:var(--primary)}
+.chip.active::before{content:"✓";font-weight:700}
+
+/* Table */
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{text-align:left;font-weight:600;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.04em;padding:8px 10px;border-bottom:1px solid var(--border);background:#FAFBFA}
+.tbl td{padding:8px 10px;border-bottom:1px solid var(--border)}
+.tbl tr:last-child td{border-bottom:0}
+.tbl input{border:1px solid transparent;background:transparent;padding:4px 6px;border-radius:4px;width:100%}
+.tbl input:hover{border-color:var(--border)}
+.tbl input:focus{border-color:var(--primary);background:#fff;outline:none}
+.tbl-action{color:var(--danger);font-size:13px}
+.add-row{display:flex;align-items:center;gap:6px;color:var(--primary);font-weight:500;font-size:12px;padding:8px 10px;border-top:1px dashed var(--border);width:100%;justify-content:center}
+.add-row:hover{background:var(--primary-soft)}
+
+/* Coverage list */
+.coverage-item{display:grid;grid-template-columns:auto 1fr auto auto;gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;transition:all .15s}
+.coverage-item:hover{border-color:var(--border-strong);background:#FAFBFA}
+.coverage-item.included{background:var(--primary-soft);border-color:var(--primary)}
+.check{width:18px;height:18px;border:2px solid var(--border-strong);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;background:#fff;flex-shrink:0;transition:all .15s}
+.check.checked{background:var(--primary);border-color:var(--primary);color:#fff}
+.coverage-name{font-weight:500;font-size:13px}
+.coverage-limit{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;color:var(--text);background:#fff;padding:3px 8px;border-radius:4px;border:1px solid var(--border)}
+
+/* Tree */
+.tree{border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
+.tree-node{padding:9px 12px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;border-bottom:1px solid var(--border);font-size:13px;transition:background .15s}
+.tree-node:last-child{border-bottom:0}
+.tree-node:hover{background:#FAFBFA}
+.tree-node-left{display:flex;align-items:center;gap:8px}
+.caret{transition:transform .15s;color:var(--muted)}
+.tree-node.open .caret{transform:rotate(90deg)}
+.tree-children{padding:6px 12px 10px 36px;background:#FAFBFA;display:none;font-size:12px;color:var(--muted)}
+.tree-node.open + .tree-children{display:block}
+.tree-children > div{padding:4px 0;display:flex;align-items:center;gap:6px}
+.badge-count{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:20px;padding:0 6px;border-radius:999px;background:var(--primary-soft);color:var(--primary);font-size:11px;font-weight:600}
+
+/* Slider */
+.slider-row{display:grid;grid-template-columns:90px 1fr 64px;gap:12px;align-items:center;margin-bottom:12px}
+.slider-row label{font-size:13px;color:var(--text)}
+.slider{-webkit-appearance:none;width:100%;height:6px;background:var(--bg);border-radius:999px;outline:none}
+.slider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--primary);cursor:pointer;border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.slider::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--primary);cursor:pointer;border:3px solid #fff}
+.pct-input{position:relative}
+.pct-input input{width:100%;text-align:right;padding-right:22px;font-weight:600}
+.pct-input::after{content:"%";position:absolute;right:8px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:12px;pointer-events:none}
+
+/* Switch */
+.switch{position:relative;width:36px;height:20px;background:var(--border-strong);border-radius:999px;cursor:pointer;transition:background .15s;flex-shrink:0}
+.switch::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;background:#fff;border-radius:50%;transition:left .15s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.switch.on{background:var(--primary)}
+.switch.on::after{left:18px}
+.switch-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
+.switch-row:last-child{border-bottom:0}
+
+/* Dynamic field builder */
+.fields-list{border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin-bottom:10px}
+.field-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--border);background:#fff;cursor:grab}
+.field-item:last-child{border-bottom:0}
+.field-item:hover{background:#FAFBFA}
+.drag-handle{color:var(--muted-2);cursor:grab}
+.field-icon{width:28px;height:28px;border-radius:6px;background:var(--primary-soft);color:var(--primary);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.field-name{flex:1;font-size:13px;font-weight:500}
+.field-meta{font-size:11px;color:var(--muted);font-family:ui-monospace,monospace}
+
+/* Rule builder */
+.rule{display:flex;align-items:center;gap:6px;padding:10px;background:var(--bg);border-radius:var(--radius-sm);font-size:12px;flex-wrap:wrap;margin-bottom:8px;border:1px solid var(--border)}
+.rule-kw{font-weight:700;color:var(--primary);text-transform:uppercase;font-size:11px;letter-spacing:.05em}
+.rule .select,.rule .input{padding:5px 8px;font-size:12px;width:auto;min-width:100px;background:#fff}
+.rule-del{margin-left:auto;color:var(--muted);padding:4px}
+.rule-del:hover{color:var(--danger)}
+
+/* Upload */
+.upload{border:2px dashed var(--border-strong);border-radius:var(--radius-sm);padding:14px;text-align:center;cursor:pointer;transition:all .15s;background:#FAFBFA}
+.upload:hover{border-color:var(--primary);background:var(--primary-soft)}
+.upload.has-file{border-style:solid;border-color:var(--primary);background:var(--primary-soft);text-align:left;display:flex;align-items:center;gap:10px}
+.file-icon{width:36px;height:36px;background:#fff;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;color:var(--danger);font-weight:700;font-size:11px;flex-shrink:0;border:1px solid var(--border)}
+
+/* Aside summary */
+.aside h3{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:0 0 12px}
+.summary-stat{padding:14px 16px;background:linear-gradient(135deg,var(--primary) 0%,var(--primary-dark) 100%);color:#fff;border-radius:var(--radius);margin-bottom:18px}
+.summary-stat .label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;opacity:.8}
+.summary-stat .value{font-size:22px;font-weight:700;margin-top:2px}
+.summary-stat .sub{font-size:12px;opacity:.85;margin-top:4px}
+.kv{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}
+.kv:last-child{border-bottom:0}
+.kv-key{color:var(--muted)}
+.kv-val{font-weight:500}
+.checklist{margin-top:6px}
+.check-item{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:13px}
+.check-item .ico{width:18px;height:18px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+.check-item.ok .ico{background:var(--success-soft);color:var(--success)}
+.check-item.pending .ico{background:var(--warn-soft);color:var(--warn)}
+.check-item.todo .ico{background:var(--bg);color:var(--muted)}
+
+.muted{color:var(--muted)}
+.divider{height:1px;background:var(--border);margin:18px 0}
+
+/* Toast */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--text);color:#fff;padding:12px 18px;border-radius:8px;font-size:13px;box-shadow:var(--shadow-lg);transform:translateY(20px);opacity:0;transition:all .25s;z-index:100}
+.toast.show{transform:translateY(0);opacity:1}
+
+svg{display:block}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-left">
+    <button class="icon-btn" title="Volver">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </button>
+    <div class="title-block">
+      <h1>
+        Seguro de Vida Individual — Global
+        <span class="status-pill" id="statusPill">Activo</span>
+      </h1>
+      <div class="crumbs">Productos / Vida / SVI-GLOBAL · Última edición hace 3 min por María L.</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <button class="btn btn-ghost btn-sm" onclick="toast('Vista previa generada')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      Vista previa
+    </button>
+    <button class="btn btn-outline btn-sm" onclick="toast('Borrador guardado')">Guardar borrador</button>
+    <button class="btn btn-primary btn-sm" onclick="toast('Producto publicado ✓')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      Publicar
+    </button>
+  </div>
+</header>
+
+<div class="subbar">
+  <div class="tabs">
+    <div class="tab done"><span class="num">✓</span>Ficha</div>
+    <div class="tab active"><span class="num">2</span>Coberturas</div>
+    <div class="tab"><span class="num">3</span>Tarifación</div>
+    <div class="tab"><span class="num">4</span>Campos</div>
+    <div class="tab"><span class="num">5</span>Revisión</div>
+  </div>
+  <div class="progress-mini">
+    <span><b style="color:var(--text)">68%</b> completo</span>
+    <div class="progress-bar"><div class="progress-fill" style="width:68%"></div></div>
+  </div>
+</div>
+
+<div class="layout">
+<main class="main">
+  <div class="grid">
+
+    <!-- 1. Ficha del Producto -->
+    <section class="card">
+      <div class="card-head">
+        <div class="card-head-left">
+          <span class="step-num">1</span>
+          <h2 class="card-title">Ficha del Producto</h2>
+          <span class="section-valid">✓ Válido</span>
+        </div>
+        <div class="card-actions">
+          <button class="icon-btn" title="Duplicar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button>
+          <button class="icon-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="field-row">
+          <div class="field">
+            <label>Nombre del Producto</label>
+            <input class="input" value="Seguro de Vida Individual — Global">
+          </div>
+        </div>
+        <div class="field-row cols-2">
+          <div class="field">
+            <label>Ramo</label>
+            <select class="select"><option>Vida</option><option>Automotor</option><option>Salud</option><option>Hogar</option></select>
+          </div>
+          <div class="field">
+            <label>Compañía Aseguradora</label>
+            <select class="select"><option>Aseguradora Pacífico</option><option>Seguros Alianza</option></select>
+          </div>
+        </div>
+        <div class="field-row cols-4">
+          <div class="field"><label>Inicio</label><input type="date" class="input" value="2026-01-01"></div>
+          <div class="field"><label>Expiración</label><input type="date" class="input" value="2026-12-31"></div>
+          <div class="field"><label>Tipo</label><select class="select"><option>Individual</option><option>Grupal</option></select></div>
+          <div class="field"><label>Moneda</label><select class="select"><option>USD</option><option>BOB</option><option>EUR</option></select></div>
+        </div>
+        <div class="field">
+          <label>Modalidades de Pago</label>
+          <div class="chips" style="margin-top:4px">
+            <div class="chip active" onclick="this.classList.toggle('active')">Anual</div>
+            <div class="chip active" onclick="this.classList.toggle('active')">Semestral</div>
+            <div class="chip" onclick="this.classList.toggle('active')">Trimestral</div>
+            <div class="chip active" onclick="this.classList.toggle('active')">Mensual</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Coberturas y Condicionado -->
+    <section class="card">
+      <div class="card-head">
+        <div class="card-head-left">
+          <span class="step-num">2</span>
+          <h2 class="card-title">Coberturas y Condicionado</h2>
+        </div>
+        <div class="card-actions">
+          <button class="icon-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          <button class="icon-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>
+        </div>
+      </div>
+      <div class="card-body">
+        <label style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:8px">Coberturas Incluidas</label>
+        <div id="coverages">
+          <div class="coverage-item included">
+            <div class="check checked" onclick="toggleCheck(this)">✓</div>
+            <div class="coverage-name">Muerte Accidental</div>
+            <div class="coverage-limit">$50,000</div>
+            <button class="icon-btn" style="width:26px;height:26px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          </div>
+          <div class="coverage-item included">
+            <div class="check checked" onclick="toggleCheck(this)">✓</div>
+            <div class="coverage-name">Invalidez Total</div>
+            <div class="coverage-limit">$100,000</div>
+            <button class="icon-btn" style="width:26px;height:26px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          </div>
+          <div class="coverage-item">
+            <div class="check" onclick="toggleCheck(this)"></div>
+            <div class="coverage-name">Enfermedades Graves</div>
+            <div class="coverage-limit">$25,000</div>
+            <button class="icon-btn" style="width:26px;height:26px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          </div>
+        </div>
+        <button class="add-row" style="border:1px dashed var(--border-strong);border-radius:var(--radius-sm);margin-top:8px;padding:8px">+ Añadir cobertura</button>
+
+        <div class="divider"></div>
+
+        <div class="field-row cols-2" style="margin-bottom:0">
+          <div>
+            <label style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:8px">Cláusulas Legales Dinámicas</label>
+            <div class="tree">
+              <div class="tree-node open" onclick="this.classList.toggle('open')">
+                <div class="tree-node-left">
+                  <svg class="caret" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                  Canal Bancario
+                </div>
+                <span class="badge-count">3</span>
+              </div>
+              <div class="tree-children">
+                <div>• Cláusula de divulgación</div>
+                <div>• Política antifraude</div>
+                <div>• Términos KYC</div>
+              </div>
+              <div class="tree-node" onclick="this.classList.toggle('open')">
+                <div class="tree-node-left">
+                  <svg class="caret" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                  Canal Digital
+                </div>
+                <span class="badge-count">1</span>
+              </div>
+              <div class="tree-children">
+                <div>• Consentimiento electrónico</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:8px">Exclusiones Específicas</label>
+            <textarea class="textarea" placeholder="Ej: deportes extremos, condiciones preexistentes…" style="min-height:96px"></textarea>
+            <label style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;display:block;margin:14px 0 8px">Plantilla de Póliza</label>
+            <div class="upload has-file">
+              <div class="file-icon">PDF</div>
+              <div style="flex:1;min-width:0">
+                <div style="font-size:13px;font-weight:500;text-overflow:ellipsis;overflow:hidden;white-space:nowrap">plantilla_vida_global_v2.pdf</div>
+                <div style="font-size:11px;color:var(--muted)">324 KB · subido hoy</div>
+              </div>
+              <button class="icon-btn" style="width:26px;height:26px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Tarifación y Comisiones -->
+    <section class="card">
+      <div class="card-head">
+        <div class="card-head-left">
+          <span class="step-num">3</span>
+          <h2 class="card-title">Tarifación y Comisiones</h2>
+        </div>
+        <div class="card-actions">
+          <button class="icon-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>
+        </div>
+      </div>
+      <div class="card-body">
+        <label style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:8px">Tabla de Tarifas</label>
+        <div style="border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden">
+          <table class="tbl">
+            <thead><tr><th>Edad</th><th>Suma Asegurada</th><th>Tasa</th><th style="width:40px"></th></tr></thead>
+            <tbody id="rateRows">
+              <tr><td><input value="25-35"></td><td><input value="$100,000"></td><td><input value="0.0050"></td><td><button class="tbl-action" onclick="this.closest('tr').remove()">×</button></td></tr>
+              <tr><td><input value="36-45"></td><td><input value="$100,000"></td><td><input value="0.0078"></td><td><button class="tbl-action" onclick="this.closest('tr').remove()">×</button></td></tr>
+              <tr><td><input value="46-55"></td><td><input value="$100,000"></td><td><input value="0.0125"></td><td><button class="tbl-action" onclick="this.closest('tr').remove()">×</button></td></tr>
+            </tbody>
+          </table>
+          <button class="add-row" onclick="addRate()">+ Añadir tramo</button>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="field-row cols-2">
+          <div class="field"><label>Comisión Pactada</label>
+            <div class="pct-input"><input class="input" value="15"></div>
+          </div>
+          <div class="field"><label>Base de cálculo</label>
+            <select class="select"><option>Prima Bruta</option><option>Prima Neta</option></select>
+          </div>
+        </div>
+
+        <label style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;display:block;margin:6px 0 10px">Incentivos por rol</label>
+        <div class="slider-row">
+          <label>Ejecutivos</label>
+          <input type="range" class="slider" min="0" max="20" value="5" oninput="this.nextElementSibling.querySelector('input').value=this.value">
+          <div class="pct-input"><input class="input" value="5"></div>
+        </div>
+        <div class="slider-row">
+          <label>Supervisor</label>
+          <input type="range" class="slider" min="0" max="20" value="3" oninput="this.nextElementSibling.querySelector('input').value=this.value">
+          <div class="pct-input"><input class="input" value="3"></div>
+        </div>
+        <div class="slider-row">
+          <label>Gerente</label>
+          <input type="range" class="slider" min="0" max="20" value="2" oninput="this.nextElementSibling.querySelector('input').value=this.value">
+          <div class="pct-input"><input class="input" value="2"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Campos Dinámicos -->
+    <section class="card">
+      <div class="card-head">
+        <div class="card-head-left">
+          <span class="step-num">4</span>
+          <h2 class="card-title">Campos Dinámicos</h2>
+          <span class="section-valid">✓ Válido</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <label style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:8px">Formulario Configurable</label>
+        <div class="fields-list">
+          <div class="field-item">
+            <span class="drag-handle">⋮⋮</span>
+            <div class="field-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg></div>
+            <div class="field-name">Beneficiarios <span class="field-meta">· texto · requerido</span></div>
+            <button class="icon-btn" style="width:26px;height:26px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          </div>
+          <div class="field-item">
+            <span class="drag-handle">⋮⋮</span>
+            <div class="field-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+            <div class="field-name">Fecha Nacimiento <span class="field-meta">· fecha · requerido</span></div>
+            <button class="icon-btn" style="width:26px;height:26px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          </div>
+          <div class="field-item">
+            <span class="drag-handle">⋮⋮</span>
+            <div class="field-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div>
+            <div class="field-name">Profesión <span class="field-meta">· lista · opcional</span></div>
+            <button class="icon-btn" style="width:26px;height:26px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          </div>
+        </div>
+        <div class="chips" style="margin-bottom:14px">
+          <button class="chip" onclick="toast('Campo añadido')">+ Texto</button>
+          <button class="chip" onclick="toast('Campo añadido')">+ Fecha</button>
+          <button class="chip" onclick="toast('Campo añadido')">+ Lista</button>
+          <button class="chip" onclick="toast('Campo añadido')">+ Número</button>
+          <button class="chip" onclick="toast('Campo añadido')">+ Sí/No</button>
+        </div>
+
+        <div class="divider"></div>
+
+        <label style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:8px">Prellenado desde CRM</label>
+        <div class="switch-row"><span>Nombre Cliente</span><div class="switch on" onclick="this.classList.toggle('on')"></div></div>
+        <div class="switch-row"><span>Documento de identidad</span><div class="switch on" onclick="this.classList.toggle('on')"></div></div>
+        <div class="switch-row"><span>Fecha Nacimiento</span><div class="switch on" onclick="this.classList.toggle('on')"></div></div>
+        <div class="switch-row"><span>Email de contacto</span><div class="switch" onclick="this.classList.toggle('on')"></div></div>
+
+        <div class="divider"></div>
+
+        <label style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:8px">Reglas de Validación</label>
+        <div class="rule">
+          <span class="rule-kw">Si</span>
+          <select class="select"><option>Ramo = Vida</option><option>Edad &gt; 60</option></select>
+          <span class="rule-kw">Entonces</span>
+          <select class="select"><option>Beneficiarios = Requerido</option><option>Examen médico = Sí</option></select>
+          <button class="rule-del">×</button>
+        </div>
+        <div class="rule">
+          <span class="rule-kw">Si</span>
+          <select class="select"><option>Suma asegurada &gt; $100k</option></select>
+          <span class="rule-kw">Entonces</span>
+          <select class="select"><option>Aprobación gerencial</option></select>
+          <button class="rule-del">×</button>
+        </div>
+        <button class="btn btn-outline btn-sm" style="margin-top:4px" onclick="toast('Regla añadida')">+ Añadir regla</button>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<!-- Aside summary -->
+<aside class="aside">
+  <div class="summary-stat">
+    <div class="label">Prima estimada anual</div>
+    <div class="value">$780.00</div>
+    <div class="sub">Basada en perfil 35a · $100k · USD</div>
+  </div>
+
+  <h3>Resumen del producto</h3>
+  <div class="kv"><span class="kv-key">Código</span><span class="kv-val">SVI-GLOBAL</span></div>
+  <div class="kv"><span class="kv-key">Ramo</span><span class="kv-val">Vida</span></div>
+  <div class="kv"><span class="kv-key">Coberturas activas</span><span class="kv-val">2 de 3</span></div>
+  <div class="kv"><span class="kv-key">Tramos tarifarios</span><span class="kv-val">3</span></div>
+  <div class="kv"><span class="kv-key">Comisión</span><span class="kv-val">15% Bruta</span></div>
+  <div class="kv"><span class="kv-key">Campos dinámicos</span><span class="kv-val">3</span></div>
+
+  <div class="divider"></div>
+
+  <h3>Lista de validación</h3>
+  <div class="checklist">
+    <div class="check-item ok"><span class="ico">✓</span>Ficha completa</div>
+    <div class="check-item ok"><span class="ico">✓</span>Plantilla cargada</div>
+    <div class="check-item pending"><span class="ico">!</span>Falta 1 cobertura por revisar</div>
+    <div class="check-item ok"><span class="ico">✓</span>Tarifas configuradas</div>
+    <div class="check-item ok"><span class="ico">✓</span>Reglas válidas</div>
+    <div class="check-item todo"><span class="ico">○</span>Aprobación de Compliance</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3>Acciones rápidas</h3>
+  <button class="btn btn-outline btn-sm" style="width:100%;margin-bottom:8px;justify-content:center" onclick="toast('Simulación lanzada')">Simular cotización</button>
+  <button class="btn btn-outline btn-sm" style="width:100%;margin-bottom:8px;justify-content:center" onclick="toast('Producto duplicado')">Duplicar producto</button>
+  <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;color:var(--danger)">Archivar</button>
+</aside>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function toggleCheck(el){
+  el.classList.toggle('checked');
+  el.textContent = el.classList.contains('checked') ? '✓' : '';
+  el.closest('.coverage-item').classList.toggle('included', el.classList.contains('checked'));
+}
+function addRate(){
+  const tbody = document.getElementById('rateRows');
+  const tr = document.createElement('tr');
+  tr.innerHTML = '<td><input placeholder="edad"></td><td><input placeholder="suma"></td><td><input placeholder="tasa"></td><td><button class="tbl-action" onclick="this.closest(\'tr\').remove()">×</button></td>';
+  tbody.appendChild(tr);
+  tr.querySelector('input').focus();
+}
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._tt);
+  window._tt = setTimeout(()=>t.classList.remove('show'), 2200);
+}
+// Tab switching
+document.querySelectorAll('.tab').forEach(t=>{
+  t.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

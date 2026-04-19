@@ -129,7 +129,7 @@
                             <div class="step-num-badge">01</div>
                             <p class="item-desc">Registra las aseguradoras con las que el broker opera. Para compañías <strong>sin sistema propio</strong>, el Motor de Operaciones Interseguros actúa como su plataforma completa. Cada compañía debe configurar su integración bancaria y de facturación antes de operar.</p>
                             <div>
-                                <img style="width: 100%;" src="img/alta_compania.png" alt="Alta de Compañía" class="item-image">
+                                <iframe src="frames/compania.html" style="width:100%; height:1500px; border:none;"></iframe>
                             </div>
                             
                             <div class="sub-grid">
@@ -152,16 +152,7 @@
                                     </ul>
                                 </div>
                                 <div class="sub-card">
-                                    <h4><span class="num">3</span> Motor de Reglas (BRE)</h4>
-                                    <ul>
-                                        <li>Reglas de validación específicas por compañía y ramo.</li>
-                                        <li>Ejemplo: "no asegura vehículos anteriores a 2010".</li>
-                                        <li>Inspección física obligatoria según condicion de la materia asegurada (Nuevo/Usado).</li>
-                                        <li>Bloqueos automáticos al cotizar o emitir.</li>
-                                    </ul>
-                                </div>
-                                <div class="sub-card">
-                                    <h4><span class="num">4</span> Acceso y Roles</h4>
+                                    <h4><span class="num">3</span> Acceso y Roles</h4>
                                     <ul>
                                         <li>Portal diferenciado por compañía con datos aislados.</li>
                                         <li>Roles específicos para ejecutivos de la aseguradora.</li>
@@ -212,7 +203,7 @@
                             <div class="step-num-badge">02</div>
                             <p class="item-desc">Cada compañía gestiona su propia lista de contactos. Un contacto se convierte en <strong>cliente</strong> cuando tiene al menos un certificado vigente. Los contactos sin certificado vigente son <strong>prospectos</strong>, disponibles para campañas de marketing y cross-selling.</p>
                             <div>
-                                <img style="width: 100%;" src="img/perfil_cliente.png" alt="Alta de Compañía" class="item-image">
+                                <iframe src="frames/cliente360.html" style="width:100%; height:1800px; border:none;"></iframe>
                             </div>
                             <div class="contact-split">
                                 <div class="cs-card cs-green">
@@ -279,7 +270,7 @@
                             <div class="step-num-badge">03</div>
                             <p class="item-desc">Un <strong>Producto</strong> es el acuerdo formal entre Interseguros y una aseguradora: define coberturas, tasas y plantillas de certificado. Es prerrequisito obligatorio para emitir cualquier certificado. Un producto vencido bloquea la emisión automáticamente.</p>
                             <div>
-                                <img style="width: 100%;" src="img/registro_producto.png" alt="Alta de Compañía" class="item-image">
+                                <iframe src="frames/producto.html" style="width:100%; height:3500px; border:none;"></iframe>
                             </div>
                             <div class="sub-grid">
                                 <div class="sub-card">
@@ -339,7 +330,7 @@
                             <div class="step-num-badge">04</div>
                             <p class="item-desc">El Motor de Operaciones Interseguros emite certificados individuales o masivos a partir de los productos vigentes. Para compañías con <strong>integración API</strong>, el certificado se registra en su sistema y retorna el número oficial. Para compañías sin sistema, Interseguros emite y numera de forma propia.</p>
                             <div>
-                                <img style="width: 100%;" src="img/registro_certificados.png" alt="Alta de Compañía" class="item-image">
+                                <iframe src="frames/certificados.html" style="width:100%; height:4000px; border:none;"></iframe>
                             </div>
                             <div class="sub-grid">
                                 <div class="sub-card">
@@ -420,7 +411,7 @@
                             <div class="step-num-badge">05</div>
                             <p class="item-desc">Al emitir el certificado, el sistema genera automáticamente el <strong>Plan de pagos</strong> del asegurado. El plan de pagos define cuotas, fechas de vencimiento y moneda, y es el punto de partida para todo el flujo de cobranza posterior (Segun el tipo de producto).</p>
                             <div>
-                                <img style="width: 100%;" src="img/plan_pagos.png" alt="Alta de Compañía" class="item-image">
+                                <iframe src="frames/planpagos.html" style="width:100%; height:3000px; border:none;"></iframe>
                             </div>
                             <div class="sub-grid">
                                 <div class="sub-card">
@@ -500,7 +491,7 @@
                             <div class="step-num-badge">06</div>
                             <p class="item-desc">La cobranza fluye directamente desde el asegurado a la cuenta bancaria de la aseguradora. <strong>El broker no toca el dinero</strong>: Interseguros solo orquesta el proceso.</p>
                             <div>
-                                <img style="width: 100%;" src="img/gestion_pagos.png" alt="Alta de Compañía" class="item-image">
+                                <iframe src="frames/cobranzas.html" style="width:100%; height:2000px; border:none;"></iframe>
                             </div>
                             <div class="callout warning">
                                 <span class="callout-icon">🏦</span>
@@ -601,7 +592,7 @@
                             <div class="step-num-badge">07</div>
                             <p class="item-desc">Cada compañía gestiona sus propios siniestros con diferentes seguimientos y estados configurables. Los asegurados pueden <strong>consultar el estado en tiempo real</strong>, subir documentación y recibir notificaciones automáticas. La IA asiste en modo <em>Human-in-the-Loop</em>.</p>
                             <div>
-                                <img style="width: 100%;" src="img/siniestros.png" alt="Gestión de Siniestros" class="item-image">
+                                <iframe src="frames/siniestros.html" style="width:100%; height:2300px; border:none;"></iframe>
                             </div>
                             <div class="sub-grid">
                                 <div class="sub-card">
@@ -675,106 +666,6 @@
         <div class="acc-group-body" id="body-modulos">
             <div class="acc-group-inner"><div class="acc-group-inner-pad">
 
-                <!-- REGISTRO Y ANULACIONES -->
-                <div class="acc-item" id="registro-anulaciones">
-                    <button class="acc-item-btn" data-target="item-registro">
-                        <div class="acc-item-icon i-blue">📋</div>
-                        <div class="acc-item-text">
-                            <div class="acc-item-title">Registro y Anulación de Pólizas y Certificados</div>
-                            <div class="acc-item-sub">Orden de cobro · Devoluciones · Motivo obligatorio · 30 días de cobertura</div>
-                        </div>
-                        <div class="acc-item-tags"><span class="itag itag-blue">Motor de Operaciones</span></div>
-                        <span class="acc-item-arrow">▼</span>
-                    </button>
-                    <div class="acc-item-body" id="item-registro">
-                        <div class="acc-item-inner"><div class="acc-item-inner-pad">
-                            <p class="item-desc">El Motor de Operaciones Interseguros gestiona el ciclo de vida completo de pólizas y certificados: desde el registro inicial hasta la anulación con trazabilidad total. Al anular una póliza o certificado ya pagado, el sistema genera la devolución correspondiente.</p>
-                            <div>
-                                <img style="width: 100%;" src="img/cv_polizas_certificados.png" alt="Gestión de Siniestros" class="item-image">
-                            </div>
-                            <div class="sub-grid">
-                                <div class="sub-card">
-                                    <h4><span class="num">1</span> Registro de Pólizas</h4>
-                                    <ul>
-                                        <li>Alta de póliza madre con todos los datos parametrizados por compañía y ramo.</li>
-                                        <li>Campos obligatorios y opcionales configurables por producto.</li>
-                                        <li>Validación de reglas BRE al momento del registro automáticamente.</li>
-                                        <li>Sincronización con el sistema de la compañía vía API (si disponible).</li>
-                                    </ul>
-                                </div>
-                                <div class="sub-card">
-                                    <h4><span class="num">2</span> Registro de Certificados</h4>
-                                    <ul>
-                                        <li>Emisión individual o masiva bajo la póliza madre.</li>
-                                        <li>Numeración automática desde el talonario asignado por compañía.</li>
-                                        <li>Firma electrónica del asegurado integrada al proceso de emisión.</li>
-                                        <li>Distribución automática por email, WhatsApp o portal al emitir.</li>
-                                    </ul>
-                                </div>
-                                <div class="sub-card">
-                                    <h4><span class="num">3</span> Anulación — Motivo Obligatorio</h4>
-                                    <ul>
-                                        <li>Al anular, el ejecutivo debe ingresar el motivo de anulación (campo obligatorio).</li>
-                                        <li>Estados del proceso: Solicitada → En revisión → Aprobada / Rechazada.</li>
-                                        <li>Al anularse, el certificado deja de mostrarse en web, portal y WhatsApp del cliente.</li>
-                                        <li>Notificación automática al cliente y a la compañía aseguradora.</li>
-                                    </ul>
-                                </div>
-                                <div class="sub-card">
-                                    <h4><span class="num">4</span> Devolución al Anular ya Pagado</h4>
-                                    <ul>
-                                        <li>Si la póliza o certificado ya fue pagado, el sistema calcula automáticamente el monto a devolver.</li>
-                                        <li>Devolución proporcional por los días de cobertura no consumidos.</li>
-                                        <li>Generación de nota de crédito o reversa de cobro según método de pago original.</li>
-                                        <li>Registro contable de la devolución enviado automáticamente a Cloud Broker.</li>
-                                    </ul>
-                                </div>
-                                <div class="sub-card">
-                                    <h4><span class="num">5</span> Orden de Cobro</h4>
-                                    <ul>
-                                        <li>El Motor de Operaciones Interseguros define el orden de aplicación de pagos cuando hay múltiples pólizas activas.</li>
-                                        <li>Reglas configurables: por fecha de vencimiento, monto, tipo de riesgo o prioridad manual.</li>
-                                        <li>En débito automático: prioriza las pólizas con vencimiento más próximo primero.</li>
-                                        <li>Si el saldo no alcanza, documenta qué pólizas quedaron pendientes y continúa el reintento al día siguiente.</li>
-                                    </ul>
-                                </div>
-                                <div class="sub-card">
-                                    <h4><span class="num">6</span> 30 Días de Cobertura sin Pago</h4>
-                                    <ul>
-                                        <li>El cliente tiene 30 días desde la emisión para realizar el primer pago con cobertura activa.</li>
-                                        <li>El sistema monitorea activamente el estado de pago durante ese período.</li>
-                                        <li>Escalamiento automático: D+30 sin pago → proceso de anulación iniciado.</li>
-                                        <li>Si pasan 60 días sin cobro en débito automático, el certificado se anula automáticamente.</li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="integration-compare">
-                                <div class="ic-header">Carga y Descarga Masiva de Certificados</div>
-                                <div class="ic-grid">
-                                    <div class="ic-card ic-blue">
-                                        <div class="ic-label">📤 Carga Masiva por Excel</div>
-                                        <ul>
-                                            <li>Importación de tramas Excel con múltiples asegurados en un solo archivo.</li>
-                                            <li>El sistema verifica los nombres de columnas y reporta campos faltantes antes de procesar.</li>
-                                            <li>Procesamiento asíncrono en segundo plano con notificación al finalizar.</li>
-                                            <li>Reporte de errores fila por fila para corrección eficiente.</li>
-                                        </ul>
-                                    </div>
-                                    <div class="ic-card ic-orange">
-                                        <div class="ic-label">📥 Descarga Masiva en Background</div>
-                                        <ul>
-                                            <li>Descarga de cientos o miles de certificados en ZIP procesada en segundo plano.</li>
-                                            <li>El usuario continúa trabajando y recibe notificación cuando el ZIP esté listo.</li>
-                                            <li>SLA: 1,000 certificados procesados en menos de 5 minutos.</li>
-                                            <li>Historial de descargas masivas con fecha, usuario y cantidad de registros.</li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div></div>
-                    </div>
-                </div>
-
                 <!-- WHATSAPP IA HUB -->
                 <div class="acc-item" id="whatsapp-hub">
                     <button class="acc-item-btn" data-target="item-whatsapp">
@@ -790,7 +681,7 @@
                         <div class="acc-item-inner"><div class="acc-item-inner-pad">
                             <p class="item-desc">La IA de WhatsApp está directamente conectada al Motor de Operaciones Interseguros. Conoce los seguros del cliente, ofrece productos relevantes según las compañías disponibles, gestiona siniestros y contesta preguntas frecuentes — todo en tiempo real, 24/7.</p>
                             <div>
-                                <img style="width: 100%;" src="img/atencion_omnicanal.png" alt="Gestión de Siniestros" class="item-image">
+                                <iframe src="frames/atencion_omnicanal.html" style="width:100%; height:3700px; border:none;"></iframe>
                             </div>
                             <div class="sub-grid">
                                 <div class="sub-card">
@@ -873,7 +764,7 @@
                         <div class="acc-item-inner"><div class="acc-item-inner-pad">
                             <p class="item-desc">Cada cotizador es diferente: maneja parámetros propios según el ramo (capital, edad, sexo, maternidad, antecedentes). El creador parametrizable permite configurar cada uno sin tocar código, y la IA genera cuadros comparativos automáticos.</p>
                             <div>
-                                <img style="width: 100%;" src="img/cotizadores.png" alt="Gestión de Siniestros" class="item-image">
+                                <iframe src="frames/cotizadores_comparativos.html" style="width:100%; height:5000px; border:none;"></iframe>
                             </div>
                             <div class="sub-grid">
                                 <div class="sub-card">
@@ -932,7 +823,7 @@
                         <div class="acc-item-inner"><div class="acc-item-inner-pad">
                             <p class="item-desc">Elimina el papel del proceso. El cliente acepta la póliza con un click en un enlace enviado por WhatsApp o email. El sistema registra fecha y hora exacta, y cada certificado puede ser validado legalmente mediante un código QR único.</p>
                             <div>
-                                <img style="width: 100%;" src="img/firma_digital.png" alt="Gestión de Siniestros" class="item-image">
+                                <iframe src="frames/firma_digital.html" style="width:100%; height:5100px; border:none;"></iframe>
                             </div>
                             <div class="sub-grid">
                                 <div class="sub-card">
@@ -995,7 +886,7 @@
                         <div class="acc-item-inner"><div class="acc-item-inner-pad">
                             <p class="item-desc">Los documentos del sistema tienen fechas de vencimiento configurables. El Motor de Operaciones Interseguros controla activamente su vigencia y facilita la actualización cuando aparecen nuevas versiones de plantillas o requisitos regulatorios.</p>
                             <div>
-                                <img style="width: 100%;" src="img/gestion_documental.png" alt="Gestión de Siniestros" class="item-image">
+                                <iframe src="frames/gestion_vencimientos.html" style="width:100%; height:2200px; border:none;"></iframe>
                             </div>
                             <div class="sub-grid">
                                 <div class="sub-card">
@@ -1079,7 +970,7 @@
                     <div class="acc-item-body" id="item-comisiones">
                         <div class="acc-item-inner"><div class="acc-item-inner-pad">
                             <div>
-                                <img style="width: 100%;" src="img/modulo_comisiones.png" alt="Gestión de Siniestros" class="item-image">
+                                <iframe src="frames/gestion_comisiones.html" style="width:100%; height:3200px; border:none;"></iframe>
                             </div>
                             <div class="sub-grid">
                                 <div class="sub-card">
@@ -1145,7 +1036,7 @@
                         <div class="acc-item-inner"><div class="acc-item-inner-pad">
                             <p class="item-desc">Machear certificados generados en el sistema versus lo efectivamente cobrado por la compañía o banco. El análisis póliza por póliza permite identificar brechas de ingresos y calcular comisiones reales — no solo devengadas.</p>
                             <div>
-                                <img style="width: 100%;" src="img/modulo_conciliaciones.png" alt="Gestión de Siniestros" class="item-image">
+                                <iframe src="frames/conciliaciones.html" style="width:100%; height:3200px; border:none;"></iframe>
                             </div>
                             <div class="sub-grid">
                                 <div class="sub-card">
@@ -1213,7 +1104,7 @@
                         <div class="acc-item-inner">
                             <div class="acc-item-inner-pad">
                                 <div>
-                                    <img style="width: 100%;" src="img/reporteria_avanzada.png" alt="Gestión de Siniestros" class="item-image">
+                                    <iframe src="frames/reporteria_analitica.html" style="width:100%; height:3400px; border:none;"></iframe>
                                 </div>
                                 <div class="sub-grid">
                                     <div class="sub-card">
@@ -1270,7 +1161,7 @@
                         <div class="acc-item-inner">
                             <div class="acc-item-inner-pad">
                                 <div>
-                                    <img style="width: 100%;" src="img/trazabilidad_comercial.png" alt="Gestión de Siniestros" class="item-image">
+                                    <iframe src="frames/trazabilidad_comercial.html" style="width:100%; height:3800px; border:none;"></iframe>
                                 </div>
                                 <div class="sub-grid">
                                 <div class="sub-card">
@@ -1338,115 +1229,6 @@
         <div class="acc-group-body" id="body-config">
             <div class="acc-group-inner"><div class="acc-group-inner-pad">
 
-                <!-- BRANDING Y CONFIG -->
-                <div class="acc-item" id="branding-config">
-                    <button class="acc-item-btn" data-target="item-branding">
-                        <div class="acc-item-icon i-orange">🎨</div>
-                        <div class="acc-item-text">
-                            <div class="acc-item-title">Branding y Parametrización por Compañía y Ramo</div>
-                            <div class="acc-item-sub">White-label completo · Logo y colores · Parámetros por ramo · POS Virtual</div>
-                        </div>
-                        <div class="acc-item-tags"><span class="itag itag-orange">Config</span></div>
-                        <span class="acc-item-arrow">▼</span>
-                    </button>
-                    <div class="acc-item-body" id="item-branding">
-                        <div class="acc-item-inner"><div class="acc-item-inner-pad">
-                            <p class="item-desc">Cada compañía que se registra tiene su propio branding parametrizado. Las compañías que usan el Motor de Operaciones Interseguros como sistema propio no perciben que están usando la plataforma Interseguros — ven su propia marca.</p>
-                            <div>
-                                <img style="width: 100%;" src="img/config_perfil.png" alt="Gestión de Siniestros" class="item-image">
-                            </div>
-                            <div class="sub-grid">
-                                <div class="sub-card">
-                                    <h4><span class="num">1</span> Branding White-Label Total</h4>
-                                    <ul>
-                                        <li>Configuración de logo, colores primarios y secundarios, tipografía y eslogan por compañía.</li>
-                                        <li>Dominio personalizado: la compañía accede desde su propio subdominio o dominio.</li>
-                                        <li>Portal del cliente con identidad visual completa de la aseguradora.</li>
-                                        <li>Certificados, emails y notificaciones con el branding de la compañía, no de Interseguros.</li>
-                                    </ul>
-                                </div>
-                                <div class="sub-card">
-                                    <h4><span class="num">2</span> Parametrización de Datos por Ramo</h4>
-                                    <ul>
-                                        <li>Cada ramo tiene sus propios campos configurables: obligatorios y opcionales.</li>
-                                        <li>Al registrar un producto, el formulario se adapta automáticamente al ramo seleccionado.</li>
-                                        <li>Ejemplo: Vehículos (placa, chasis, modelo) vs. Vida (edad, beneficiarios, antecedentes médicos).</li>
-                                        <li>Una misma compañía puede tener configuraciones diferenciadas por ramo.</li>
-                                    </ul>
-                                </div>
-                                <div class="sub-card">
-                                    <h4><span class="num">3</span> POS Virtual y Monedas</h4>
-                                    <ul>
-                                        <li>Cada compañía puede tener su POS Virtual configurado en el sistema.</li>
-                                        <li>Procesamiento de tarjetas débito, crédito y QR directamente desde el portal.</li>
-                                        <li>El dinero va directo a la cuenta de la compañía en el Banco Económico.</li>
-                                        <li>Multimoneda: Bolivianos (BOB) y Dólares (USD) según el producto y la compañía.</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div></div>
-                    </div>
-                </div>
-
-                <!-- ROLES Y PERMISOS -->
-                <div class="acc-item" id="roles-permisos">
-                    <button class="acc-item-btn" data-target="item-roles">
-                        <div class="acc-item-icon i-indigo">👥</div>
-                        <div class="acc-item-text">
-                            <div class="acc-item-title">Roles, Permisos y Gestión de Ejecutivos</div>
-                            <div class="acc-item-sub">Broker · Compañías · Clientes · Metas · Comisiones por ejecutivo · Asignación de prospectos</div>
-                        </div>
-                        <div class="acc-item-tags"><span class="itag itag-blue">Config</span></div>
-                        <span class="acc-item-arrow">▼</span>
-                    </button>
-                    <div class="acc-item-body" id="item-roles">
-                        <div class="acc-item-inner">
-                            <div class="acc-item-inner-pad">
-                                <div>
-                                    <img style="width: 100%;" src="img/config_perfil.png" alt="Gestión de Siniestros" class="item-image">
-                                </div>
-                            <div class="sub-grid">
-                                <div class="sub-card">
-                                    <h4><span class="num">1</span> Roles del Sistema</h4>
-                                    <ul>
-                                        <li>Broker (Interseguros): acceso total, configuración, reportes gerenciales.</li>
-                                        <li>Compañía Aseguradora: acceso a sus pólizas, certificados y reportes propios.</li>
-                                        <li>Ejecutivo Comercial: cartera asignada, cotización, emisión y seguimiento.</li>
-                                        <li>Cliente/Asegurado: portal autogestión — consulta y descarga de certificados y siniestros.</li>
-                                    </ul>
-                                </div>
-                                <div class="sub-card">
-                                    <h4><span class="num">2</span> Ejecutivos del Banco</h4>
-                                    <ul>
-                                        <li>Cada ejecutivo del banco puede ser registrado en la plataforma.</li>
-                                        <li>Visibilidad de comisiones generadas por cada ejecutivo en tiempo real.</li>
-                                        <li>Asignación de cartera de clientes y prospectos a ejecutivos específicos.</li>
-                                        <li>Alertas de vencimiento enviadas directamente al ejecutivo que emitió la póliza.</li>
-                                    </ul>
-                                </div>
-                                <div class="sub-card">
-                                    <h4><span class="num">3</span> Metas de Cumplimiento</h4>
-                                    <ul>
-                                        <li>Definición de metas de producción por ejecutivo, producto y período.</li>
-                                        <li>Dashboard de cumplimiento: meta vs. producción real en tiempo real.</li>
-                                        <li>Semáforo de cumplimiento: rojo menos del 70%, amarillo 70-90%, verde más del 90%.</li>
-                                        <li>IA con gestión de leads y oportunidades en pipeline Kanban.</li>
-                                    </ul>
-                                </div>
-                                <div class="sub-card">
-                                    <h4><span class="num">4</span> Asignación de Prospectos</h4>
-                                    <ul>
-                                        <li>Round-Robin o asignación manual por especialidad del ejecutivo.</li>
-                                        <li>Prospectos entrantes por WhatsApp IA o formulario web asignados automáticamente.</li>
-                                        <li>Notificación inmediata al ejecutivo al recibir un nuevo prospecto.</li>
-                                        <li>Registro de primer contacto para medir tiempos de respuesta y conversión.</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div></div>
-                    </div>
-                </div>
-
                 <!-- INTEGRACIONES -->
                 <div class="acc-item" id="integraciones">
                     <button class="acc-item-btn" data-target="item-integraciones">
@@ -1462,7 +1244,7 @@
                         <div class="acc-item-inner">                            
                             <div class="acc-item-inner-pad">
                                 <div>
-                                    <img style="width: 100%;" src="img/integraciones.png" alt="Gestión de Siniestros" class="item-image">
+                                    <iframe src="frames/integraciones.html" style="width:100%; height:4500px; border:none;"></iframe>
                                 </div>
                             <p class="item-desc">El Motor de Operaciones Interseguros es el hub central de integración. Se conecta con todos los sistemas regulatorios, bancarios y contables del ecosistema boliviano, y ofrece middleware para que compañías externas se integren fácilmente a sus sistemas actuales.</p>
                             <div class="sub-grid">
@@ -1516,8 +1298,8 @@
                     <button class="acc-item-btn" data-target="item-auditoria">
                         <div class="acc-item-icon i-slate">🗂️</div>
                         <div class="acc-item-text">
-                            <div class="acc-item-title">Auditoría, Logs y Estado de Cuentas</div>
-                            <div class="acc-item-sub">Log por usuario · Historial de certificados · Presupuesto y predicción gerencial · Power BI</div>
+                            <div class="acc-item-title">Auditoría y Logs</div>
+                            <div class="acc-item-sub">Logs detallados · Auditorías</div>
                         </div>
                         <div class="acc-item-tags"><span class="itag itag-blue">Config</span></div>
                         <span class="acc-item-arrow">▼</span>
@@ -1526,11 +1308,11 @@
                         <div class="acc-item-inner">
                             <div class="acc-item-inner-pad">
                             <div>
-                                <img style="width: 100%;" src="img/integraciones.png" alt="Gestión de Siniestros" class="item-image">
+                                <iframe src="frames/auditoria_logs.html" style="width:100%; height:4500px; border:none;"></iframe>
                             </div>
                             <div class="sub-grid">
                                 <div class="sub-card">
-                                    <h4><span class="num">1</span> Logs Transaccionales por Usuario</h4>
+                                    <h4><span class="num">1</span> Logs Transaccionales Detallados</h4>
                                     <ul>
                                         <li>Cada transacción queda registrada: quién la hizo, cuándo y desde qué dispositivo.</li>
                                         <li>Log de cada operación: quién atiende, cotiza, emite, cobra, anula y modifica.</li>
@@ -1539,7 +1321,7 @@
                                     </ul>
                                 </div>
                                 <div class="sub-card">
-                                    <h4><span class="num">2</span> Historial de Auditoría de Certificados</h4>
+                                    <h4><span class="num">2</span> Historial de Auditoría Detallada</h4>
                                     <ul>
                                         <li>Registro de cuántas veces fue consultado un certificado desde web, portal o app.</li>
                                         <li>Historial de impresiones: quién imprimió, cuándo y cuántas veces.</li>
@@ -1547,23 +1329,6 @@
                                         <li>Alerta de uso sospechoso: múltiples escaneos desde ubicaciones inusuales.</li>
                                     </ul>
                                 </div>
-                                <div class="sub-card">
-                                    <h4><span class="num">3</span> Estado de Cuentas y Comisión Devengada</h4>
-                                    <ul>
-                                        <li>Estado de cuenta por cliente: todas las pólizas, cuotas pagadas y pendientes en una vista.</li>
-                                        <li>Estado de cuenta por compañía: primas recibidas, comisiones devengadas y por cobrar.</li>
-                                        <li>Comisión devengada (emitido) vs. comisión percibida (efectivamente cobrado) en un reporte.</li>
-                                        <li>Historial de movimientos financieros exportable a Excel en cualquier momento.</li>
-                                    </ul>
-                                </div>
-                                <div class="sub-card">
-                                    <h4><span class="num">4</span> Presupuesto, Predicción y Power BI</h4>
-                                    <ul>
-                                        <li>El sistema ayuda a gerencia a armar el presupuesto anual y proyectar ingresos futuros.</li>
-                                        <li>Predicción basada en histórico de renovaciones, nuevas emisiones y anulaciones esperadas.</li>
-                                        <li>Visor Power BI embebido como iframe: reportes gerenciales directamente en la plataforma.</li>
-                                        <li>Disparos contables automáticos hacia Cloud Broker en cada evento del sistema.</li>
-                                    </ul>
                                 </div>
                             </div>
                         </div></div>

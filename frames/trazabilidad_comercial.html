@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Trazabilidad Comercial · Interseguros</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --green-900:#1f3a1f;--green-800:#2d5a2d;--green-700:#3a6b3a;--green-600:#4a8a4a;
+    --green-500:#5fa55f;--green-100:#e8f0e8;--green-50:#f4f8f4;
+    --gold:#c9a227;--amber:#f59e0b;--red:#dc2626;--blue:#2563eb;--purple:#7c3aed;
+    --bg:#f1f5ee;--card:#fff;--ink:#1a2f1a;--muted:#6b7d6b;--border:#dbe5db;
+  }
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    background:var(--bg);color:var(--ink);min-height:100vh;padding:16px}
+  .header{background:var(--green-800);color:#fff;padding:18px 22px;border-radius:12px;
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px}
+  .header h1{font-size:20px;letter-spacing:.5px}
+  .header-actions{display:flex;gap:10px;flex-wrap:wrap}
+  .btn{background:#fff;color:var(--green-800);border:none;padding:9px 14px;border-radius:8px;
+    font-weight:600;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+  .btn-primary{background:var(--gold);color:#fff}
+  .btn-ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4)}
+  .btn-sm{padding:6px 10px;font-size:12px}
+
+  .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px}
+  .kpi{background:var(--card);border-radius:12px;padding:14px;border-left:4px solid var(--green-700);
+    box-shadow:0 1px 3px rgba(0,0,0,.05)}
+  .kpi-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+  .kpi-value{font-size:22px;font-weight:700;color:var(--green-900);margin-top:6px}
+  .kpi-delta{font-size:11px;margin-top:4px;display:inline-block;padding:2px 6px;border-radius:10px;font-weight:600}
+  .delta-up{background:#d1fae5;color:#065f46}
+  .delta-down{background:#fee2e2;color:#991b1b}
+  .kpi.warn{border-left-color:var(--amber)}
+  .kpi.danger{border-left-color:var(--red)}
+  .kpi.gold{border-left-color:var(--gold)}
+  .kpi.purple{border-left-color:var(--purple)}
+
+  .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px;margin-bottom:16px}
+  .card{background:var(--card);border-radius:12px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+  .card h3{font-size:13px;color:var(--green-800);text-transform:uppercase;letter-spacing:.5px;
+    margin-bottom:12px;display:flex;align-items:center;gap:8px;justify-content:space-between}
+  .card h3 .ttl{display:flex;align-items:center;gap:8px}
+  .pill{font-size:10px;padding:3px 8px;border-radius:10px;background:var(--green-100);color:var(--green-800);font-weight:600}
+
+  .col-8{grid-column:span 8}.col-6{grid-column:span 6}.col-4{grid-column:span 4}.col-12{grid-column:span 12}.col-3{grid-column:span 3}
+
+  /* Kanban */
+  .kanban{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;background:var(--green-50);
+    border-radius:10px;padding:10px;overflow-x:auto}
+  .kb-col{background:#fff;border-radius:8px;padding:8px;min-width:150px;display:flex;flex-direction:column;gap:8px}
+  .kb-head{padding:8px;border-radius:6px;text-align:center;font-weight:700;font-size:12px;color:#fff;position:relative}
+  .kb-head .cnt{display:block;font-size:18px;margin-top:2px;background:rgba(0,0,0,.18);border-radius:10px;padding:2px}
+  .kb-lead{background:var(--green-800)}
+  .kb-cont{background:var(--green-700)}
+  .kb-cot{background:var(--gold)}
+  .kb-neg{background:var(--red)}
+  .kb-win{background:var(--green-600)}
+  .kb-card{background:var(--green-50);border-radius:6px;padding:8px;font-size:11px;border-left:3px solid var(--green-600);cursor:grab}
+  .kb-card.lost{border-left-color:var(--red);opacity:.7}
+  .kb-name{font-weight:700;color:var(--green-900);font-size:11.5px;display:flex;align-items:center;gap:4px}
+  .kb-meta{color:var(--muted);font-size:10.5px;margin-top:3px;line-height:1.4}
+  .kb-foot{display:flex;justify-content:space-between;align-items:center;margin-top:6px}
+  .kb-dot{display:inline-block;width:8px;height:8px;border-radius:50%}
+  .dot-g{background:#22c55e}.dot-a{background:var(--amber)}.dot-r{background:var(--red)}
+  .kb-tag{font-size:9px;color:var(--muted);font-weight:600}
+  .funnel-foot{display:flex;align-items:center;justify-content:center;gap:6px;padding:8px;color:var(--green-800);
+    font-weight:700;font-size:12px}
+
+  /* Omnicanal flow */
+  .omni{background:var(--green-50);border-radius:10px;padding:14px;display:flex;align-items:center;
+    justify-content:space-around;gap:8px;flex-wrap:wrap}
+  .omni-node{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;flex:1;min-width:75px}
+  .omni-icon{width:50px;height:50px;background:var(--green-700);color:#fff;border-radius:12px;
+    display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 4px 10px rgba(0,0,0,.1)}
+  .omni-icon.exp{background:var(--gold)}
+  .omni-label{font-size:10.5px;color:var(--green-900);font-weight:700;line-height:1.2}
+  .omni-arrow{font-size:18px;color:var(--green-600);font-weight:700}
+
+  /* Auto rules */
+  .auto-row{display:flex;align-items:center;gap:10px;padding:10px;background:var(--green-50);
+    border-radius:8px;margin-bottom:8px;border-left:3px solid var(--green-600)}
+  .auto-icon{width:34px;height:34px;background:var(--green-700);color:#fff;border-radius:8px;
+    display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+  .auto-body{flex:1;min-width:0}
+  .auto-title{font-size:12.5px;font-weight:700;color:var(--green-900)}
+  .auto-desc{font-size:11px;color:var(--muted);margin-top:2px}
+
+  /* Lead scoring */
+  .ls-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+  .ls-row:last-child{border-bottom:none}
+  .ls-score{width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+    font-weight:700;font-size:16px;color:#fff;flex-shrink:0}
+  .ls-hi{background:var(--red)}.ls-md{background:var(--amber)}.ls-lo{background:var(--green-600)}
+  .ls-body{flex:1;min-width:0}
+  .ls-name{font-size:12.5px;font-weight:700;color:var(--green-900)}
+  .ls-meta{font-size:11px;color:var(--muted);margin-top:2px}
+  .ls-bar{height:6px;background:#eaf0ea;border-radius:3px;overflow:hidden;margin-top:4px}
+  .ls-bar > div{height:100%;border-radius:3px}
+
+  /* Win rate gauge */
+  .gauge-wrap{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:6px}
+  .gauge{background:var(--green-50);border-radius:10px;padding:12px;text-align:center}
+  .gauge-circle{width:90px;height:90px;border-radius:50%;margin:0 auto 8px;
+    background:conic-gradient(var(--green-700) 0 25%,#eaf0ea 25% 100%);
+    display:flex;align-items:center;justify-content:center;position:relative}
+  .gauge-circle.g2{background:conic-gradient(var(--gold) 0 60%,#eaf0ea 60% 100%)}
+  .gauge-circle::after{content:"";width:60px;height:60px;background:#fff;border-radius:50%;position:absolute}
+  .gauge-val{position:relative;z-index:1;font-size:16px;font-weight:700;color:var(--green-900)}
+  .gauge-lbl{font-size:11px;color:var(--muted);font-weight:600}
+  .gauge-sub{font-size:10px;color:var(--muted);margin-top:3px}
+
+  /* Tabla */
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  thead th{background:var(--green-800);color:#fff;padding:10px 8px;text-align:left;font-weight:600;font-size:11px;
+    text-transform:uppercase;letter-spacing:.3px}
+  thead th:first-child{border-radius:6px 0 0 0}
+  thead th:last-child{border-radius:0 6px 0 0}
+  tbody td{padding:10px 8px;border-bottom:1px solid var(--border)}
+  tbody tr:hover{background:var(--green-50)}
+  .td-doc{font-weight:600;color:var(--green-800)}
+  .table-wrap{overflow-x:auto}
+  .prio{display:inline-block;padding:4px 10px;border-radius:14px;font-size:10.5px;font-weight:700;color:#fff}
+  .pr-r{background:var(--red)}.pr-a{background:var(--amber)}.pr-g{background:var(--green-600)}
+  .score-pill{display:inline-block;padding:3px 9px;border-radius:10px;font-size:11px;font-weight:700;color:#fff}
+
+  /* Alertas + IA + motivos pérdida */
+  .alert-row{display:flex;gap:10px;align-items:flex-start;padding:10px;border-radius:8px;margin-bottom:8px}
+  .alert-row.warn{background:#fffbeb;border-left:3px solid var(--amber)}
+  .alert-row.danger{background:#fef2f2;border-left:3px solid var(--red)}
+  .alert-row.info{background:#eff6ff;border-left:3px solid var(--blue)}
+  .alert-row.purple{background:#f5f3ff;border-left:3px solid var(--purple)}
+  .alert-icon{font-size:16px}
+  .alert-body{flex:1;font-size:12px}
+  .alert-body strong{display:block;color:var(--green-900);font-size:12.5px;margin-bottom:2px}
+
+  .lost-bar{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:12px}
+  .lost-name{flex:1;color:var(--ink);font-weight:600}
+  .lost-track{flex:2;height:14px;background:#eaf0ea;border-radius:4px;overflow:hidden}
+  .lost-track > div{height:100%;background:linear-gradient(90deg,var(--red),var(--amber));border-radius:4px;
+    color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;padding:0 6px}
+  .lost-pct{min-width:38px;text-align:right;font-weight:700;color:var(--green-800)}
+
+  .ia-box{background:linear-gradient(135deg,var(--green-50),#fff);border:1px solid var(--green-100);
+    border-radius:10px;padding:14px}
+  .ia-box textarea{width:100%;border:1px solid var(--border);border-radius:8px;padding:10px;
+    font-family:inherit;font-size:12.5px;resize:vertical;min-height:60px;background:#fff}
+  .ia-suggest{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .ia-chip{font-size:10.5px;padding:5px 10px;border-radius:14px;background:#fff;border:1px solid var(--green-100);
+    color:var(--green-800);cursor:pointer;font-weight:500}
+  .ia-chip:hover{background:var(--green-100)}
+
+  @media (max-width:1200px){
+    .kpis{grid-template-columns:repeat(3,1fr)}
+    .col-8,.col-4,.col-6,.col-3{grid-column:span 12}
+  }
+  @media (max-width:768px){
+    body{padding:10px}
+    .header{padding:14px;flex-direction:column;align-items:stretch}
+    .header h1{font-size:16px;text-align:center}
+    .header-actions{justify-content:center}
+    .kpis{grid-template-columns:repeat(2,1fr)}
+    .kanban{grid-template-columns:repeat(5,80vw);overflow-x:scroll;scroll-snap-type:x mandatory}
+    .kb-col{scroll-snap-align:start}
+    .omni{padding:10px}
+    .omni-arrow{display:none}
+    .omni-icon{width:40px;height:40px;font-size:18px}
+    .gauge-wrap{grid-template-columns:1fr}
+  }
+  @media (max-width:480px){
+    .kpis{grid-template-columns:1fr}
+    .kpi-value{font-size:18px}
+    thead th,tbody td{padding:8px 6px;font-size:11px}
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🎯 MÓDULO DE TRAZABILIDAD COMERCIAL</h1>
+  <div class="header-actions">
+    <button class="btn btn-ghost">⚙️ Configurar Pipeline / Lead Scoring</button>
+    <button class="btn btn-primary">📊 Ver Reportes de Trazabilidad</button>
+  </div>
+</div>
+
+<!-- KPIs -->
+<div class="kpis">
+  <div class="kpi">
+    <div class="kpi-label">Leads en Pipeline</div>
+    <div class="kpi-value">330</div>
+    <span class="kpi-delta delta-up">▲ 42 esta semana</span>
+  </div>
+  <div class="kpi gold">
+    <div class="kpi-label">Win Rate Global</div>
+    <div class="kpi-value">25%</div>
+    <span class="kpi-delta delta-up">▲ 3.1 pts vs mes ant.</span>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Ciclo Venta Promedio</div>
+    <div class="kpi-value">10 días</div>
+    <span class="kpi-delta delta-up">▼ 2 días (mejor)</span>
+  </div>
+  <div class="kpi warn">
+    <div class="kpi-label">Cotiz. sin Respuesta &gt;48h</div>
+    <div class="kpi-value">15</div>
+    <span class="kpi-delta delta-down">Requieren follow-up</span>
+  </div>
+  <div class="kpi danger">
+    <div class="kpi-label">Lead Score Alto (Rojo)</div>
+    <div class="kpi-value">5</div>
+    <span class="kpi-delta delta-down">Decisión inminente</span>
+  </div>
+</div>
+
+<!-- Kanban + Omnicanal + Automatizaciones -->
+<div class="grid">
+  <div class="card col-8">
+    <h3><span class="ttl">🗂 PIPELINE KANBAN (CRM Interseguros)</span><span class="pill">Drag &amp; drop</span></h3>
+    <div class="kanban">
+      <div class="kb-col">
+        <div class="kb-head kb-lead">Lead<span class="cnt">150</span></div>
+        <div class="kb-card"><div class="kb-name">👤 Juan Pérez</div><div class="kb-meta">Prima Est: $500<br>Ramo: Auto</div><div class="kb-foot"><span class="kb-tag">Hace 2h</span><span class="kb-dot dot-g"></span></div></div>
+        <div class="kb-card"><div class="kb-name">👤 Carla M.</div><div class="kb-meta">Prima Est: $820<br>Ramo: Hogar</div><div class="kb-foot"><span class="kb-tag">Hace 5h</span><span class="kb-dot dot-g"></span></div></div>
+        <div class="kb-card"><div class="kb-name">👤 Empresa GH</div><div class="kb-meta">Prima Est: $4.200<br>Ramo: Salud</div><div class="kb-foot"><span class="kb-tag">Ayer</span><span class="kb-dot dot-a"></span></div></div>
+      </div>
+      <div class="kb-col">
+        <div class="kb-head kb-cont">Contacto<span class="cnt">80</span></div>
+        <div class="kb-card"><div class="kb-name">👤 Juan Pérez</div><div class="kb-meta">Prima Est: $500<br>Ramo: Auto</div><div class="kb-foot"><span class="kb-tag">📞 1d</span><span class="kb-dot dot-g"></span></div></div>
+        <div class="kb-card"><div class="kb-name">👤 Ana M.</div><div class="kb-meta">Prima Est: $500<br>Ramo: Auto</div><div class="kb-foot"><span class="kb-tag">📧 2d</span><span class="kb-dot dot-a"></span></div></div>
+      </div>
+      <div class="kb-col">
+        <div class="kb-head kb-cot">Cotización<span class="cnt">50</span></div>
+        <div class="kb-card"><div class="kb-name">👤 Juan Pérez</div><div class="kb-meta">Prima Est: $500<br>Ramo: Auto</div><div class="kb-foot"><span class="kb-tag">📄 12h</span><span class="kb-dot dot-g"></span></div></div>
+        <div class="kb-card"><div class="kb-name">👤 Ana M.</div><div class="kb-meta">Prima Est: $500<br>Ramo: Auto</div><div class="kb-foot"><span class="kb-tag">📄 3d</span><span class="kb-dot dot-r"></span></div></div>
+      </div>
+      <div class="kb-col">
+        <div class="kb-head kb-neg">Negociación<span class="cnt">30</span></div>
+        <div class="kb-card"><div class="kb-name">👤 Marx Díaz</div><div class="kb-meta">Prima Est: $500<br>Ramo: Auto</div><div class="kb-foot"><span class="kb-tag">💬 1h</span><span class="kb-dot dot-r"></span></div></div>
+        <div class="kb-card"><div class="kb-name">👤 Marix Pérez</div><div class="kb-meta">Prima Est: $500<br>Ramo: Auto</div><div class="kb-foot"><span class="kb-tag">💬 6h</span><span class="kb-dot dot-a"></span></div></div>
+      </div>
+      <div class="kb-col">
+        <div class="kb-head kb-win">Ganado / Perdido<span class="cnt">20</span></div>
+        <div class="kb-card"><div class="kb-name">👤 Marcis Pérez ✓</div><div class="kb-meta">Prima: $500<br>Ramo: Auto</div><div class="kb-foot"><span class="kb-tag">Ganado hoy</span><span class="kb-dot dot-g"></span></div></div>
+        <div class="kb-card lost"><div class="kb-name">👤 Marx Sívez ✕</div><div class="kb-meta">Prima Est: $500<br>Motivo: Precio</div><div class="kb-foot"><span class="kb-tag">Perdido ayer</span><span class="kb-dot dot-r"></span></div></div>
+      </div>
+    </div>
+    <div class="funnel-foot">▽ Embudo de Ventas (Vehículos · 330 oportunidades activas)</div>
+  </div>
+
+  <div class="card col-4">
+    <h3><span class="ttl">📡 EXPEDIENTE OMNICANAL Y AUTOMATIZACIÓN</span></h3>
+    <div class="omni">
+      <div class="omni-node"><div class="omni-icon">📞</div><div class="omni-label">Llamada</div></div>
+      <div class="omni-arrow">→</div>
+      <div class="omni-node"><div class="omni-icon">📧</div><div class="omni-label">Email</div></div>
+      <div class="omni-arrow">→</div>
+      <div class="omni-node"><div class="omni-icon">💬</div><div class="omni-label">WhatsApp<br>Business</div></div>
+      <div class="omni-arrow">→</div>
+      <div class="omni-node"><div class="omni-icon">🤝</div><div class="omni-label">Reunión</div></div>
+      <div class="omni-arrow">→</div>
+      <div class="omni-node"><div class="omni-icon exp">📁</div><div class="omni-label">Expediente<br>Centralizado</div></div>
+    </div>
+    <p style="font-size:11.5px;color:var(--muted);margin-top:10px;line-height:1.4">
+      Seguimiento centralizado de todas las interacciones con el cliente — cada touchpoint queda registrado en el expediente digital.
+    </p>
+
+    <h4 style="font-size:11px;color:var(--green-800);text-transform:uppercase;margin:14px 0 8px;font-weight:700">⚙️ Automatización comercial y seguimiento</h4>
+    <div class="auto-row">
+      <div class="auto-icon">⏰</div>
+      <div class="auto-body">
+        <div class="auto-title">Follow-up automático (48h sin respuesta)</div>
+        <div class="auto-desc">Envía recordatorio multicanal al lead</div>
+      </div>
+      <button class="btn btn-sm" style="background:var(--green-700);color:#fff">✓ Activar</button>
+    </div>
+    <div class="auto-row">
+      <div class="auto-icon">↻</div>
+      <div class="auto-body">
+        <div class="auto-title">Oportunidades de Renovación (D-60)</div>
+        <div class="auto-desc">Crea oportunidad 60 días antes del vencimiento</div>
+      </div>
+      <button class="btn btn-sm" style="background:var(--green-700);color:#fff">📅 Programar</button>
+    </div>
+    <div class="auto-row">
+      <div class="auto-icon">⚠</div>
+      <div class="auto-body">
+        <div class="auto-title">Reportes de Vencimiento de Riesgo</div>
+        <div class="auto-desc">Detecta pólizas en riesgo de no renovar</div>
+      </div>
+      <button class="btn btn-sm" style="background:var(--green-700);color:#fff">📊 Ver datos</button>
+    </div>
+  </div>
+</div>
+
+<!-- Lead scoring + Win rate + Motivos pérdida -->
+<div class="grid">
+  <div class="card col-4">
+    <h3><span class="ttl">🎯 LEAD SCORING IA · TOP PRIORIDAD</span><span class="pill">Modelo XGBoost</span></h3>
+    <div class="ls-row">
+      <div class="ls-score ls-hi">85</div>
+      <div class="ls-body">
+        <div class="ls-name">Lead #1001 · Carlos G.</div>
+        <div class="ls-meta">Auto · cotización abierta · llamada hace 1h</div>
+        <div class="ls-bar"><div style="width:85%;background:var(--red)"></div></div>
+      </div>
+    </div>
+    <div class="ls-row">
+      <div class="ls-score ls-hi">78</div>
+      <div class="ls-body">
+        <div class="ls-name">Lead #1023 · Empresa ACME</div>
+        <div class="ls-meta">Salud Corp · negociación · contrato pendiente</div>
+        <div class="ls-bar"><div style="width:78%;background:var(--red)"></div></div>
+      </div>
+    </div>
+    <div class="ls-row">
+      <div class="ls-score ls-md">60</div>
+      <div class="ls-body">
+        <div class="ls-name">Prospect #52 · Ana M.</div>
+        <div class="ls-meta">Salud · email hace 2 días · sin respuesta</div>
+        <div class="ls-bar"><div style="width:60%;background:var(--amber)"></div></div>
+      </div>
+    </div>
+    <div class="ls-row">
+      <div class="ls-score ls-md">55</div>
+      <div class="ls-body">
+        <div class="ls-name">Lead #998 · Distribuidora Sur</div>
+        <div class="ls-meta">Hogar · interesado · esperando propuesta</div>
+        <div class="ls-bar"><div style="width:55%;background:var(--amber)"></div></div>
+      </div>
+    </div>
+    <div class="ls-row">
+      <div class="ls-score ls-lo">32</div>
+      <div class="ls-body">
+        <div class="ls-name">Prospect #71 · Juan H.</div>
+        <div class="ls-meta">Vida · primer contacto · explorando</div>
+        <div class="ls-bar"><div style="width:32%;background:var(--green-600)"></div></div>
+      </div>
+    </div>
+    <div style="margin-top:10px;padding:10px;background:var(--green-50);border-radius:8px;font-size:11.5px;color:var(--muted)">
+      <b style="color:var(--green-800)">📌 Asignación:</b> Round-Robin + Especialidad por ramo
+    </div>
+  </div>
+
+  <div class="card col-4">
+    <h3><span class="ttl">📊 WIN RATE Y CICLO DE VENTA</span><span class="pill">Por ramo</span></h3>
+    <div class="gauge-wrap">
+      <div class="gauge">
+        <div class="gauge-circle"><div class="gauge-val">25%</div></div>
+        <div class="gauge-lbl">Win Rate · Auto</div>
+        <div class="gauge-sub">Meta 30%</div>
+      </div>
+      <div class="gauge">
+        <div class="gauge-circle g2"><div class="gauge-val">10d</div></div>
+        <div class="gauge-lbl">Ciclo Venta · Auto</div>
+        <div class="gauge-sub">Meta 7 días</div>
+      </div>
+      <div class="gauge">
+        <div class="gauge-circle" style="background:conic-gradient(var(--green-700) 0 38%,#eaf0ea 38% 100%)"><div class="gauge-val">38%</div></div>
+        <div class="gauge-lbl">Win Rate · Hogar</div>
+        <div class="gauge-sub">Meta 35% ✓</div>
+      </div>
+      <div class="gauge">
+        <div class="gauge-circle g2" style="background:conic-gradient(var(--gold) 0 80%,#eaf0ea 80% 100%)"><div class="gauge-val">15d</div></div>
+        <div class="gauge-lbl">Ciclo Venta · Salud</div>
+        <div class="gauge-sub">Meta 12 días</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card col-4">
+    <h3><span class="ttl">📉 CAPTURA DE MOTIVOS DE PÉRDIDA</span><span class="pill">Últ. 30 días</span></h3>
+    <div style="margin-bottom:12px">
+      <select style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:#fff">
+        <option>Seleccionar Motivo · Registrar pérdida</option>
+        <option>Precio</option><option>Cobertura insuficiente</option>
+        <option>Competencia</option><option>Sin presupuesto</option>
+        <option>No respondió</option><option>Producto inadecuado</option>
+      </select>
+    </div>
+    <div class="lost-bar">
+      <div class="lost-name">💰 Precio</div>
+      <div class="lost-track"><div style="width:42%">42%</div></div>
+      <div class="lost-pct">42%</div>
+    </div>
+    <div class="lost-bar">
+      <div class="lost-name">🏢 Competencia</div>
+      <div class="lost-track"><div style="width:24%">24%</div></div>
+      <div class="lost-pct">24%</div>
+    </div>
+    <div class="lost-bar">
+      <div class="lost-name">📵 No respondió</div>
+      <div class="lost-track"><div style="width:18%">18%</div></div>
+      <div class="lost-pct">18%</div>
+    </div>
+    <div class="lost-bar">
+      <div class="lost-name">📋 Cobertura</div>
+      <div class="lost-track"><div style="width:9%">9%</div></div>
+      <div class="lost-pct">9%</div>
+    </div>
+    <div class="lost-bar">
+      <div class="lost-name">🚫 Sin presupuesto</div>
+      <div class="lost-track"><div style="width:7%">7%</div></div>
+      <div class="lost-pct">7%</div>
+    </div>
+    <div style="margin-top:12px;padding:10px;background:#fef2f2;border-radius:8px;font-size:11.5px;color:var(--ink);border-left:3px solid var(--red)">
+      <b style="color:var(--red)">🤖 Insight IA:</b> el 42% se pierde por precio — sugiere activar tarifa promocional para leads con score &gt;70.
+    </div>
+  </div>
+</div>
+
+<!-- Tabla seguimiento -->
+<div class="grid">
+  <div class="card col-12">
+    <h3><span class="ttl">📋 PANEL DE SEGUIMIENTO Y LEAD SCORING</span>
+      <span style="display:flex;gap:6px">
+        <button class="btn btn-sm" style="background:var(--green-100);color:var(--green-800)">Filtros</button>
+        <button class="btn btn-sm" style="background:var(--green-100);color:var(--green-800)">⬇ Exportar</button>
+      </span>
+    </h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>KPIs Comercial</th><th>Lead Scoring</th><th>Ejecutivo</th>
+            <th>Ramo</th><th>Etapa Pipeline</th><th>Última Acción</th>
+            <th>Prioridad</th><th>Win Rate Est %</th><th>Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="td-doc">Lead #1001</td><td><span class="score-pill ls-hi">85</span></td><td>Carlos G.</td><td>Auto</td><td>Cotización</td><td>📞 Llamada 1h</td><td><span class="prio pr-r">Rojo (Inminente)</span></td><td>35%</td><td><button class="btn btn-sm" style="background:var(--red);color:#fff">Cerrar</button></td></tr>
+          <tr><td class="td-doc">Prospect #52</td><td><span class="score-pill ls-md">60</span></td><td>Ana M.</td><td>Salud</td><td>Negociación</td><td>📧 Email 2d</td><td><span class="prio pr-a">Amarillo (7d)</span></td><td>20%</td><td><button class="btn btn-sm" style="background:var(--amber);color:#fff">Follow-up</button></td></tr>
+          <tr><td class="td-doc">Lead #1023</td><td><span class="score-pill ls-hi">78</span></td><td>María L.</td><td>Salud Corp</td><td>Negociación</td><td>💬 WhatsApp 3h</td><td><span class="prio pr-r">Rojo (Inminente)</span></td><td>42%</td><td><button class="btn btn-sm" style="background:var(--red);color:#fff">Cerrar</button></td></tr>
+          <tr><td class="td-doc">Lead #998</td><td><span class="score-pill ls-md">55</span></td><td>Pedro R.</td><td>Hogar</td><td>Cotización</td><td>📄 Cot. enviada 1d</td><td><span class="prio pr-a">Amarillo (5d)</span></td><td>28%</td><td><button class="btn btn-sm" style="background:var(--amber);color:#fff">Llamar</button></td></tr>
+          <tr><td class="td-doc">Lead #1010</td><td><span class="score-pill ls-md">48</span></td><td>Carlos G.</td><td>Vida</td><td>Contacto</td><td>📞 Llamada 4d</td><td><span class="prio pr-a">Amarillo (10d)</span></td><td>15%</td><td><button class="btn btn-sm" style="background:var(--amber);color:#fff">Reactivar</button></td></tr>
+          <tr><td class="td-doc">Prospect #71</td><td><span class="score-pill ls-lo">32</span></td><td>Ana M.</td><td>Vida</td><td>Lead</td><td>📧 Email hoy</td><td><span class="prio pr-g">Verde</span></td><td>8%</td><td><button class="btn btn-sm" style="background:var(--green-600);color:#fff">Nutrir</button></td></tr>
+          <tr><td class="td-doc">Lead #1042</td><td><span class="score-pill ls-lo">28</span></td><td>María L.</td><td>Auto</td><td>Lead</td><td>🌐 Web ayer</td><td><span class="prio pr-g">Verde</span></td><td>5%</td><td><button class="btn btn-sm" style="background:var(--green-600);color:#fff">Calificar</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Alertas + IA -->
+<div class="grid">
+  <div class="card col-6">
+    <h3><span class="ttl">🔔 ALERTAS COMERCIALES Y LEAD SCORING</span><span class="pill">5 críticas</span></h3>
+    <div class="alert-row danger">
+      <span class="alert-icon">🔥</span>
+      <div class="alert-body"><strong>Lead Score Alto: 5 clientes prioritarios</strong>
+        Semáforo rojo · decisión inminente · asignar al ejecutivo top</div>
+    </div>
+    <div class="alert-row warn">
+      <span class="alert-icon">⏳</span>
+      <div class="alert-body"><strong>15 cotizaciones sin respuesta &gt;48h</strong>
+        Activar follow-up automático multicanal · <a href="#" style="color:var(--green-700);font-weight:700">Ver leads</a></div>
+    </div>
+    <div class="alert-row purple">
+      <span class="alert-icon">🤖</span>
+      <div class="alert-body"><strong>IA reasignó 7 leads inactivos</strong>
+        Round-Robin por especialidad · ejecutivos con menor carga recibieron prioridad</div>
+    </div>
+    <div class="alert-row info">
+      <span class="alert-icon">↻</span>
+      <div class="alert-body"><strong>23 oportunidades de renovación creadas (D-60)</strong>
+        Cartera vence en 60 días · valor potencial $ 312K</div>
+    </div>
+    <div class="alert-row warn">
+      <span class="alert-icon">📞</span>
+      <div class="alert-body"><strong>Ejecutivo Carlos G. saturado: 38 leads activos</strong>
+        Recomendado redistribuir 8 leads para mantener calidad</div>
+    </div>
+  </div>
+
+  <div class="card col-6">
+    <h3><span class="ttl">🤖 PREGUNTAS DE TRAZABILIDAD COMERCIAL (IA)</span><span class="pill">GPT · CRM en vivo</span></h3>
+    <div class="ia-box">
+      <textarea placeholder="¿Cuáles son los leads con mayor probabilidad de cierre esta semana y qué acciones recomiendas?"></textarea>
+      <div class="ia-suggest">
+        <span class="ia-chip">Top vendedores por win rate</span>
+        <span class="ia-chip">¿Por qué se está perdiendo en Auto?</span>
+        <span class="ia-chip">Leads sin actividad &gt;7 días</span>
+        <span class="ia-chip">Predicción de cierre próx. 15 días</span>
+        <span class="ia-chip">Ramo con mejor conversión</span>
+        <span class="ia-chip">Sugerir reasignación de cartera</span>
+      </div>
+      <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn btn-sm" style="background:var(--green-100);color:var(--green-800)">🎙 Voz</button>
+        <button class="btn btn-sm" style="background:var(--green-100);color:var(--green-800)">📊 Generar reporte</button>
+        <button class="btn btn-sm" style="background:var(--green-800);color:#fff">📨 Enviar pregunta</button>
+      </div>
+      <div style="margin-top:12px;padding:10px;background:#fff;border-radius:8px;border-left:3px solid var(--green-600);font-size:12px;color:var(--ink)">
+        <b style="color:var(--green-800)">💡 Respuesta sugerida:</b><br>
+        Esta semana hay <b>5 leads en rojo</b> con score &gt;75: Carlos G./Auto ($1.2K), Empresa ACME/Salud ($8.4K), María Pérez/Hogar ($600), Distribuidora Sur ($3.1K) y Constructora JKL ($12K).
+        Acciones: 1) llamada en próximas 4h, 2) propuesta personalizada con 3% descuento, 3) reunión virtual antes del viernes.
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

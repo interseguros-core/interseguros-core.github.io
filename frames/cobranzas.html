@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<title>Gestión de Cobranzas - INTERSEGUROS</title>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<style>
+:root{
+ --primary:#15803D; --primary-dark:#14532D; --primary-light:#DCFCE7;
+ --bg:#F5F7F4; --card:#FFFFFF; --border:#E2E8E0; --text:#1F2A24; --muted:#64748B;
+ --warn:#F59E0B; --danger:#DC2626; --info:#0EA5E9; --ok:#16A34A;
+ --shadow:0 1px 2px rgba(0,0,0,.04),0 4px 12px rgba(0,0,0,.05);
+ --radius:14px;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:13.5px}
+.titlebar{background:var(--primary-dark);color:#fff;padding:6px 14px;font-size:12px;display:flex;justify-content:space-between}
+.topbar{background:#fff;border-bottom:1px solid var(--border);padding:10px 18px;display:flex;align-items:center;gap:14px}
+.logo{width:34px;height:34px;border-radius:8px;background:var(--primary);color:#fff;display:grid;place-items:center;font-weight:800}
+.crumb h1{margin:0;font-size:15px;color:var(--primary-dark)}
+.crumb p{margin:2px 0 0;font-size:11.5px;color:var(--muted)}
+.actions{margin-left:auto;display:flex;gap:8px;align-items:center}
+.icon-btn{width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:#fff;cursor:pointer;position:relative}
+.dot{position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--danger)}
+.layout{display:grid;min-height:calc(100vh - 80px)}
+.side{background:#fff;border-right:1px solid var(--border);padding:14px 0;display:flex;flex-direction:column;align-items:center;gap:6px}
+.side a{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;color:var(--muted);text-decoration:none;font-size:16px}
+.side a.active{background:var(--primary-light);color:var(--primary-dark)}
+.main{padding:18px 22px}
+.page-head{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.page-head h2{margin:0;font-size:18px;color:var(--primary-dark);letter-spacing:.3px}
+.page-head .alert{margin-left:auto;display:flex;gap:8px;align-items:center;background:#FEF3C7;color:#854D0E;padding:8px 14px;border-radius:10px;font-size:12.5px;border:1px solid #FDE68A}
+.nav-arrows{display:flex;gap:4px}
+.nav-arrows button{width:32px;height:32px;border-radius:8px;border:none;background:var(--primary);color:#fff;cursor:pointer;font-weight:700}
+
+/* KPI strip */
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:14px}
+.kpi{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;box-shadow:var(--shadow)}
+.kpi .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.kpi .val{font-size:20px;font-weight:700;color:var(--primary-dark);margin-top:4px}
+.kpi .sub{font-size:11px;color:var(--muted);margin-top:2px}
+.kpi .sub.up{color:var(--ok)} .kpi .sub.dn{color:var(--danger)}
+
+/* grid */
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow);position:relative}
+.card h3{margin:0 0 4px;font-size:13.5px;color:var(--primary-dark);display:flex;align-items:center;gap:8px}
+.num{width:22px;height:22px;border-radius:50%;background:var(--primary);color:#fff;font-size:11px;display:grid;place-items:center;font-weight:700}
+.card .menu{position:absolute;top:12px;right:12px;color:var(--muted);font-size:14px;cursor:pointer}
+.card .desc{font-size:11.5px;color:var(--muted);margin:0 0 10px}
+.row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px dashed var(--border);font-size:12px}
+.row:last-child{border:none}
+.row .l{color:var(--muted)}
+.tag{display:inline-block;padding:2px 8px;border-radius:999px;font-size:10.5px;font-weight:600}
+.tag.green{background:var(--primary-light);color:var(--primary-dark)}
+.tag.amber{background:#FEF3C7;color:#92400E}
+.tag.red{background:#FEE2E2;color:#991B1B}
+.tag.blue{background:#DBEAFE;color:#1E40AF}
+.tag.gray{background:#E5E7EB;color:#374151}
+
+/* Inputs */
+input,select,textarea{width:100%;padding:7px 9px;border:1px solid var(--border);border-radius:8px;font-size:12.5px;background:#fff;font-family:inherit}
+label{font-size:11px;color:var(--muted);display:block;margin:6px 0 3px}
+.btn{padding:7px 12px;border-radius:8px;border:none;background:var(--primary);color:#fff;font-weight:600;font-size:12px;cursor:pointer}
+.btn.outline{background:#fff;color:var(--primary-dark);border:1px solid var(--border)}
+.btn.danger{background:var(--danger)}
+.btn.warn{background:var(--warn);color:#fff}
+.btn.sm{padding:4px 8px;font-size:11px}
+.switch{position:relative;display:inline-block;width:34px;height:20px}
+.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;cursor:pointer;inset:0;background:#cbd5d1;border-radius:20px;transition:.2s}
+.slider:before{content:"";position:absolute;height:14px;width:14px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+.switch input:checked + .slider{background:var(--primary)}
+.switch input:checked + .slider:before{transform:translateX(14px)}
+
+/* Tablas compactas */
+table{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:6px}
+th{text-align:left;font-weight:600;color:var(--muted);padding:5px 4px;border-bottom:1px solid var(--border);font-size:10.5px;text-transform:uppercase;letter-spacing:.3px}
+td{padding:6px 4px;border-bottom:1px solid #F1F4F1}
+.linkish{color:var(--primary);text-decoration:underline;cursor:pointer}
+
+/* Pipeline */
+.pipeline{display:flex;align-items:center;gap:6px;margin:8px 0}
+.stage{flex:1;text-align:center;padding:6px 4px;background:#F1F4F1;border-radius:8px;font-size:10.5px;color:var(--muted);position:relative}
+.stage.active{background:var(--primary);color:#fff;font-weight:600}
+.stage.done{background:var(--primary-light);color:var(--primary-dark)}
+
+/* Aging buckets */
+.bucket{display:flex;justify-content:space-between;align-items:center;padding:6px 8px;border-radius:8px;margin-bottom:4px}
+.bar{height:6px;border-radius:4px;background:#E5E7EB;overflow:hidden;flex:1;margin:0 8px}
+.bar > i{display:block;height:100%;border-radius:4px}
+
+/* Footer bar */
+.footbar{margin-top:14px;background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow)}
+.footbar .total{font-weight:700;color:var(--primary-dark);font-size:14px}
+.footbar .ml{margin-left:auto;display:flex;gap:8px}
+
+@media (max-width:1300px){.grid{grid-template-columns:repeat(2,1fr)} .kpis{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+<div class="titlebar"><span>INTERSEGUROS · Sistema · Módulo: Gestión de Cobranzas</span><span>— □ ✕</span></div>
+<div class="topbar">
+  <div class="logo">IS</div>
+  <div class="crumb">
+    <h1>Módulo: Gestión de Cobranzas</h1>
+    <p>Recuperación de cartera, cobro proactivo y reducción de mora</p>
+  </div>
+  <div class="actions">
+    <button class="btn outline">Exportar</button>
+    <button class="btn">+ Nueva campaña</button>
+    <button class="icon-btn">?</button>
+    <button class="icon-btn">🔔<span class="dot"></span></button>
+    <button class="icon-btn">👤</button>
+  </div>
+</div>
+
+<div class="layout">
+  
+  <main class="main">
+
+    <!-- KPIs -->
+    <div class="kpis">
+      <div class="kpi"><div class="lbl">Cartera vencida</div><div class="val">Bs 482.350</div><div class="sub dn">▲ 3,2% vs mes anterior</div></div>
+      <div class="kpi"><div class="lbl">Recuperado mes</div><div class="val">Bs 1.245.800</div><div class="sub up">▲ 12,4% meta cumplida</div></div>
+      <div class="kpi"><div class="lbl">Tasa de recobro</div><div class="val">87,3%</div><div class="sub up">+2,1 pts</div></div>
+      <div class="kpi"><div class="lbl">Promesas activas</div><div class="val">142</div><div class="sub">68% cumplimiento</div></div>
+      <div class="kpi"><div class="lbl">Pólizas en gestión</div><div class="val">3.241</div><div class="sub">427 críticas</div></div>
+    </div>
+
+    <div class="grid">
+      <!-- 1. Segmentación por antigüedad -->
+      <div class="card">
+        <span class="menu">⋯</span>
+        <h3><span class="num">1</span> Segmentación de Cartera</h3>
+        <p class="desc">Aging automático por antigüedad de mora</p>
+        <div class="bucket"><span style="font-size:11px">1–30 días</span><div class="bar"><i style="width:78%;background:var(--ok)"></i></div><b style="font-size:11px;color:var(--ok)">Bs 142K</b></div>
+        <div class="bucket"><span style="font-size:11px">31–60 días</span><div class="bar"><i style="width:55%;background:var(--warn)"></i></div><b style="font-size:11px;color:var(--warn)">Bs 98K</b></div>
+        <div class="bucket"><span style="font-size:11px">61–90 días</span><div class="bar"><i style="width:38%;background:#F97316"></i></div><b style="font-size:11px;color:#F97316">Bs 76K</b></div>
+        <div class="bucket"><span style="font-size:11px">+90 días</span><div class="bar"><i style="width:62%;background:var(--danger)"></i></div><b style="font-size:11px;color:var(--danger)">Bs 166K</b></div>
+        <div class="row"><span class="l">Reglas de segmento</span><span class="tag green">12 activas</span></div>
+        <button class="btn outline sm" style="margin-top:8px;width:100%">Reasignar carteras</button>
+      </div>
+
+      <!-- 2. Asignación de gestores -->
+      <div class="card">
+        <span class="menu">⋯</span>
+        <h3><span class="num">2</span> Asignación de Gestores</h3>
+        <p class="desc">Distribución automática por carga y skill</p>
+        <table>
+          <thead><tr><th>Gestor</th><th>Cuentas</th><th>Recobro</th></tr></thead>
+          <tbody>
+            <tr><td>M. Rojas</td><td>87</td><td><span class="tag green">92%</span></td></tr>
+            <tr><td>L. Quispe</td><td>74</td><td><span class="tag green">88%</span></td></tr>
+            <tr><td>J. Mendoza</td><td>91</td><td><span class="tag amber">76%</span></td></tr>
+            <tr><td>S. Vargas</td><td>62</td><td><span class="tag green">94%</span></td></tr>
+          </tbody>
+        </table>
+        <div class="row" style="margin-top:6px"><span class="l">Auto-asignar nuevas</span><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+      </div>
+
+      <!-- 3. Estrategias de contacto -->
+      <div class="card">
+        <span class="menu">⋯</span>
+        <h3><span class="num">3</span> Estrategia Multicanal</h3>
+        <p class="desc">Secuencia automatizada por tramo</p>
+        <div class="pipeline">
+          <div class="stage done">SMS<br>D+1</div>
+          <div class="stage done">WApp<br>D+5</div>
+          <div class="stage active">Email<br>D+10</div>
+          <div class="stage">Llamada<br>D+15</div>
+          <div class="stage">Visita<br>D+30</div>
+        </div>
+        <div class="row"><span class="l">📱 WhatsApp Business</span><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+        <div class="row"><span class="l">📧 Email automatizado</span><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+        <div class="row"><span class="l">📞 IVR predictivo</span><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+        <div class="row"><span class="l">🏠 Visita en terreno</span><label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
+      </div>
+
+      <!-- 4. Promesas de pago -->
+      <div class="card">
+        <span class="menu">⋯</span>
+        <h3><span class="num">4</span> Promesas de Pago</h3>
+        <p class="desc">Compromisos registrados con seguimiento</p>
+        <label>Buscar póliza</label>
+        <input placeholder="POL-2024-0000"/>
+        <label>Monto prometido (Bs)</label>
+        <input value="2.450,00"/>
+        <label>Fecha compromiso</label>
+        <input type="date" value="2026-04-25"/>
+        <button class="btn sm" style="width:100%;margin-top:8px">Registrar promesa</button>
+        <div class="row" style="margin-top:6px"><span class="l">Cumplimiento mes</span><b style="color:var(--ok)">68%</b></div>
+      </div>
+
+      <!-- 5. Negociación / acuerdos -->
+      <div class="card">
+        <span class="menu">⋯</span>
+        <h3><span class="num">5</span> Acuerdos y Refinanciación</h3>
+        <p class="desc">Planes de pago especiales con descuento</p>
+        <table>
+          <thead><tr><th>Tipo</th><th>Cuotas</th><th>Dscto.</th></tr></thead>
+          <tbody>
+            <tr><td>Quita mora</td><td>1</td><td><span class="tag green">15%</span></td></tr>
+            <tr><td>Refinanciamiento</td><td>3</td><td><span class="tag green">8%</span></td></tr>
+            <tr><td>Refinanciamiento</td><td>6</td><td><span class="tag amber">5%</span></td></tr>
+            <tr><td>Plan extendido</td><td>12</td><td><span class="tag gray">0%</span></td></tr>
+          </tbody>
+        </table>
+        <button class="btn outline sm" style="margin-top:8px;width:100%">Simular acuerdo</button>
+      </div>
+
+      <!-- 6. Score de cobrabilidad -->
+      <div class="card">
+        <span class="menu">⋯</span>
+        <h3><span class="num">6</span> Score de Cobrabilidad</h3>
+        <p class="desc">Modelo predictivo IA por cliente</p>
+        <div class="row"><span class="l">🟢 Alta probabilidad</span><b>1.842</b></div>
+        <div class="row"><span class="l">🟡 Media</span><b>987</b></div>
+        <div class="row"><span class="l">🔴 Baja</span><b>412</b></div>
+        <div class="row"><span class="l">⚫ Incobrable</span><b>87</b></div>
+        <div class="row"><span class="l">Modelo IA</span><span class="tag blue">v3.2 · 91% precisión</span></div>
+        <button class="btn outline sm" style="margin-top:6px;width:100%">Reentrenar modelo</button>
+      </div>
+
+      <!-- 7. Casos críticos -->
+      <div class="card">
+        <span class="menu">⋯</span>
+        <h3><span class="num">7</span> Cola de Casos Críticos</h3>
+        <p class="desc">Pólizas próximas a cancelación</p>
+        <table>
+          <thead><tr><th>Póliza</th><th>Días</th><th>Monto</th><th>Acción</th></tr></thead>
+          <tbody>
+            <tr><td>POL-8421</td><td><span class="tag red">85</span></td><td>4.200</td><td><span class="linkish">Gestionar</span></td></tr>
+            <tr><td>POL-7732</td><td><span class="tag red">78</span></td><td>2.890</td><td><span class="linkish">Gestionar</span></td></tr>
+            <tr><td>POL-9104</td><td><span class="tag amber">62</span></td><td>1.540</td><td><span class="linkish">Gestionar</span></td></tr>
+            <tr><td>POL-6655</td><td><span class="tag amber">58</span></td><td>3.720</td><td><span class="linkish">Gestionar</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 8. Cobranza judicial -->
+      <div class="card">
+        <span class="menu">⋯</span>
+        <h3><span class="num">8</span> Cobranza Judicial</h3>
+        <p class="desc">Casos derivados a estudio jurídico</p>
+        <div class="pipeline">
+          <div class="stage done">Carta<br>notarial</div>
+          <div class="stage active">Demanda</div>
+          <div class="stage">Sentencia</div>
+          <div class="stage">Embargo</div>
+        </div>
+        <div class="row"><span class="l">Casos en juicio</span><b>34</b></div>
+        <div class="row"><span class="l">Recuperado vía legal</span><b style="color:var(--ok)">Bs 187K</b></div>
+        <div class="row"><span class="l">Estudio asignado</span><span class="tag gray">Vargas & Asoc.</span></div>
+        <button class="btn warn sm" style="margin-top:6px;width:100%">Derivar caso</button>
+      </div>
+
+      <!-- 9. Campañas -->
+      <div class="card">
+        <span class="menu">⋯</span>
+        <h3><span class="num">9</span> Campañas de Recupero</h3>
+        <p class="desc">Iniciativas masivas con incentivos</p>
+        <div class="row"><span class="l">🎯 Quita 20% +90d</span><span class="tag green">Activa</span></div>
+        <div class="row"><span class="l">📅 Refi sin intereses</span><span class="tag green">Activa</span></div>
+        <div class="row"><span class="l">🎁 Bono al día</span><span class="tag amber">Pausada</span></div>
+        <div class="row"><span class="l">Conversión campaña</span><b>23,8%</b></div>
+        <button class="btn sm" style="margin-top:6px;width:100%">+ Nueva campaña</button>
+      </div>
+
+      <!-- 10. Bandeja del gestor -->
+      <div class="card">
+        <span class="menu">⋯</span>
+        <h3><span class="num">10</span> Bandeja del Gestor</h3>
+        <p class="desc">Tareas del día priorizadas por IA</p>
+        <div class="row"><span class="l">📞 Llamadas pendientes</span><b>24</b></div>
+        <div class="row"><span class="l">💬 WhatsApp por responder</span><b>17</b></div>
+        <div class="row"><span class="l">📧 Emails sin abrir</span><b>9</b></div>
+        <div class="row"><span class="l">⏰ Promesas vencen hoy</span><b style="color:var(--warn)">11</b></div>
+        <div class="row"><span class="l">🎯 Meta diaria</span><b>78%</b></div>
+      </div>
+
+      <!-- 11. Integraciones -->
+      <div class="card">
+        <span class="menu">⋯</span>
+        <h3><span class="num">11</span> Integraciones</h3>
+        <p class="desc">Burós, bancos y canales conectados</p>
+        <div class="row"><span class="l">📊 Infocred (Buró)</span><span class="tag green">●  Conectado</span></div>
+        <div class="row"><span class="l">🏦 Banco Económico</span><span class="tag green">●  Conectado</span></div>
+        <div class="row"><span class="l">📱 WhatsApp BSP</span><span class="tag green">●  Conectado</span></div>
+        <div class="row"><span class="l">☎️ Contact Center</span><span class="tag green">●  Conectado</span></div>
+        <div class="row"><span class="l">⚖️ Estudio Jurídico</span><span class="tag amber">●  Sincronizando</span></div>
+      </div>
+
+      <!-- 12. Indicadores y reportes -->
+      <div class="card">
+        <span class="menu">⋯</span>
+        <h3><span class="num">12</span> Indicadores Operativos</h3>
+        <p class="desc">KPIs en tiempo real del proceso</p>
+        <div class="row"><span class="l">DSO (días promedio cobro)</span><b>32 d</b></div>
+        <div class="row"><span class="l">Costo por cobro</span><b>Bs 14,20</b></div>
+        <div class="row"><span class="l">% mora total cartera</span><b style="color:var(--warn)">4,8%</b></div>
+        <div class="row"><span class="l">Roll-rate 30→60</span><b>18%</b></div>
+        <div class="row"><span class="l">Productividad gestor</span><b style="color:var(--ok)">87 ctas/día</b></div>
+        <button class="btn outline sm" style="margin-top:6px;width:100%">Ver dashboard completo</button>
+      </div>
+    </div>
+
+    <div class="footbar">
+      <span class="total">Recupero proyectado mes:</span>
+      <span style="font-size:18px;color:var(--primary-dark);font-weight:700">Bs 1.487.200</span>
+      <span class="tag green">▲ 19,4% vs meta</span>
+      <div class="ml">
+        <button class="btn outline">Programar campaña</button>
+        <button class="btn">Ejecutar gestión masiva</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+document.querySelectorAll('.linkish').forEach(el=>el.addEventListener('click',()=>alert('Abriendo gestión de '+el.closest('tr').children[0].textContent)));
+</script>
+</body>
+</html>

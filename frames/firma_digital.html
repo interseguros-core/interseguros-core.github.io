@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Firma Digital & Legalización de Certificados — Interseguros</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+body{background:#f1f5f4;color:#1a2e29;font-size:13px;padding:16px}
+.shell{max-width:1600px;margin:0 auto}
+.topbar{background:linear-gradient(135deg,#0d4f3c,#1a6e54);color:#fff;padding:14px 22px;border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.topbar h1{font-size:17px;font-weight:600}
+.topbar .sub{font-size:11px;opacity:.85;margin-top:2px}
+.topbar .actions{display:flex;gap:10px;align-items:center}
+.icon-btn{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;position:relative}
+.icon-btn .dot{position:absolute;top:6px;right:6px;width:8px;height:8px;background:#ef4444;border-radius:50%}
+
+.statusbar{background:#fff;padding:14px 22px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;border-bottom:1px solid #e5ebe9}
+.crumb{font-weight:700;color:#0d4f3c;font-size:14px;margin-right:auto}
+.pill{padding:7px 14px;border-radius:20px;font-size:12px;display:inline-flex;align-items:center;gap:7px;font-weight:500;border:1px solid transparent;white-space:nowrap}
+.pill .ic{width:9px;height:9px;border-radius:50%;display:inline-block}
+.pill.ok{background:#dcfce7;color:#15803d;border-color:#bbf7d0}.pill.ok .ic{background:#22c55e}
+.pill.warn{background:#fef3c7;color:#a16207;border-color:#fde68a}.pill.warn .ic{background:#f59e0b}
+.pill.live{background:#fee2e2;color:#b91c1c;border-color:#fecaca}.pill.live .ic{background:#ef4444;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+.kpis{background:#fff;padding:16px 22px;display:grid;grid-template-columns:repeat(6,1fr);gap:12px;border-bottom:1px solid #e5ebe9}
+.kpi{padding:12px;border-radius:10px;background:#f8faf9;border-left:3px solid #0d4f3c}
+.kpi .lbl{font-size:10px;color:#64746f;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.kpi .val{font-size:20px;font-weight:700;color:#0d4f3c}
+.kpi .delta{font-size:10px;color:#15803d;margin-top:2px}
+.kpi.alert{border-left-color:#ef4444}.kpi.alert .val{color:#b91c1c}
+.kpi.warn{border-left-color:#f59e0b}
+
+.grid{background:#fff;padding:18px 22px 22px;border-radius:0 0 12px 12px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.card{background:#fff;border:1px solid #e5ebe9;border-radius:10px;padding:14px;display:flex;flex-direction:column;min-height:340px;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.card.wide{grid-column:span 2}
+.card-h{display:flex;align-items:center;gap:9px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #eef2f0}
+.num{width:26px;height:26px;border-radius:50%;background:#0d4f3c;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0}
+.card-h h3{font-size:13px;font-weight:600;flex:1;color:#1a2e29}
+.card-h .menu{color:#94a3a0;cursor:pointer}
+.subtitle{font-size:11px;color:#64746f;margin-bottom:10px}
+
+/* Phone mockup */
+.phone-wrap{display:grid;grid-template-columns:140px 1fr;gap:12px;flex:1}
+.phone{background:#1a2e29;border-radius:18px;padding:6px;position:relative;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.phone::before{content:'';position:absolute;top:6px;left:50%;transform:translateX(-50%);width:40px;height:4px;background:#000;border-radius:2px;z-index:2}
+.phone-screen{background:#e7e0d4;border-radius:14px;padding:6px;height:220px;display:flex;flex-direction:column;gap:5px;overflow:hidden;padding-top:14px}
+.ph-h{background:#0d4f3c;color:#fff;padding:5px 8px;border-radius:8px 8px 0 0;display:flex;align-items:center;gap:6px;margin:-6px -6px 4px;font-size:9px}
+.ph-h .av{width:18px;height:18px;border-radius:50%;background:#fff;color:#0d4f3c;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700}
+.ph-msg{background:#dcf8c6;padding:5px 7px;border-radius:6px;font-size:10px;line-height:1.3;align-self:flex-end;max-width:90%}
+.ph-msg.in{background:#fff;align-self:flex-start}
+.ph-msg .lk{color:#0066cc;text-decoration:underline}
+.ph-msg .t{font-size:8px;color:#64746f;text-align:right;margin-top:2px}
+.ph-input{background:#fff;border-radius:14px;padding:4px 8px;display:flex;align-items:center;gap:5px;margin-top:auto;font-size:9px;color:#94a3a0}
+.ph-input .ic{margin-left:auto;color:#0d4f3c}
+
+/* Workflow */
+.workflow{display:flex;flex-direction:column;gap:6px;flex:1}
+.wf-step{display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f8faf9;border-radius:6px;font-size:11px;border-left:3px solid #0d4f3c;position:relative}
+.wf-step.done{border-left-color:#22c55e;background:#dcfce7}
+.wf-step.active{border-left-color:#f59e0b;background:#fef3c7}
+.wf-step .n{width:22px;height:22px;border-radius:50%;background:#0d4f3c;color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.wf-step.done .n{background:#22c55e}
+.wf-step.active .n{background:#f59e0b}
+.wf-step .info{flex:1;min-width:0}
+.wf-step .info .t{font-weight:600}
+.wf-step .info .d{font-size:10px;color:#64746f;margin-top:1px}
+
+/* Tables */
+.table-wrap{flex:1;overflow:auto;border:1px solid #e5ebe9;border-radius:6px}
+table{width:100%;border-collapse:collapse;font-size:11px}
+th{background:#f8faf9;color:#64746f;text-transform:uppercase;letter-spacing:.4px;font-size:10px;padding:7px;text-align:left;border-bottom:1px solid #e5ebe9;font-weight:600;position:sticky;top:0;z-index:1}
+td{padding:7px;border-bottom:1px solid #eef2f0;color:#1a2e29}
+tr:hover td{background:#f8faf9}
+
+/* QR */
+.qr-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:center;margin-bottom:10px}
+.qr-box{background:#fff;border:2px solid #0d4f3c;border-radius:8px;padding:10px;text-align:center}
+.qr-pattern{width:100%;aspect-ratio:1;background:#fff;background-image:
+  linear-gradient(45deg,#000 25%,transparent 25%),
+  linear-gradient(-45deg,#000 25%,transparent 25%),
+  linear-gradient(45deg,transparent 75%,#000 75%),
+  linear-gradient(-45deg,transparent 75%,#000 75%);
+  background-size:8px 8px;background-position:0 0,0 4px,4px -4px,-4px 0;
+  border:8px solid #fff;outline:1px solid #000;position:relative}
+.qr-pattern::before, .qr-pattern::after{content:'';position:absolute;width:24%;height:24%;background:#fff;border:5px solid #000;top:8%;left:8%}
+.qr-pattern::after{left:auto;right:8%}
+.qr-cert{background:#fff;border:1px solid #e5ebe9;border-radius:8px;padding:10px;text-align:center;position:relative;overflow:hidden}
+.qr-cert::before{content:'VIGENTE';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-25deg);font-size:28px;font-weight:900;color:rgba(34,197,94,.18);letter-spacing:3px;border:4px solid rgba(34,197,94,.18);padding:6px 12px;border-radius:4px;pointer-events:none;white-space:nowrap}
+.qr-cert .seal{font-size:30px;margin-bottom:4px}
+.qr-cert .lbl{font-size:10px;font-weight:700;color:#0d4f3c}
+.qr-cert .small{font-size:9px;color:#64746f;margin-top:3px;line-height:1.4}
+
+.btn{padding:8px 12px;background:#0d4f3c;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:5px;justify-content:center}
+.btn.sec{background:#fff;color:#0d4f3c;border:1px solid #0d4f3c}
+.btn.full{width:100%}
+.btn.amber{background:#f59e0b}
+.btn.red{background:#ef4444}
+.btn-row{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.btn-row .btn{flex:1;min-width:90px}
+
+.badge{padding:2px 7px;border-radius:10px;font-size:10px;font-weight:600;display:inline-flex;align-items:center;gap:3px;white-space:nowrap}
+.badge.green{background:#dcfce7;color:#15803d}
+.badge.amber{background:#fef3c7;color:#a16207}
+.badge.red{background:#fee2e2;color:#b91c1c}
+.badge.blue{background:#dbeafe;color:#1e40af}
+.badge.gray{background:#e5e7eb;color:#4b5563}
+
+/* Status pill in row */
+.legal-pill{display:inline-flex;align-items:center;gap:5px;padding:6px 10px;background:#dcfce7;border-radius:6px;color:#15803d;font-size:11px;font-weight:600}
+
+/* Lists */
+.list{display:flex;flex-direction:column;gap:6px;flex:1}
+.list-item{padding:8px 10px;background:#f8faf9;border-radius:6px;display:flex;align-items:center;gap:8px;font-size:11px;border-left:3px solid #0d4f3c}
+.list-item.warn{border-left-color:#f59e0b}
+.list-item.alert{border-left-color:#ef4444}
+.list-item .ic{font-size:14px}
+.list-item .body{flex:1;min-width:0}
+.list-item .body .t{font-weight:600;font-size:11px}
+.list-item .body .d{color:#64746f;font-size:10px;margin-top:1px}
+
+/* Switch */
+.switch{position:relative;width:32px;height:18px;background:#cbd5d1;border-radius:9px;cursor:pointer;flex-shrink:0;transition:.2s}
+.switch.on{background:#0d4f3c}
+.switch::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;background:#fff;border-radius:50%;transition:.2s}
+.switch.on::after{left:16px}
+.opt-row{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;background:#f8faf9;border-radius:6px;font-size:11px;margin-bottom:5px;gap:8px}
+
+/* AI Brain */
+.brain{background:linear-gradient(135deg,#0d4f3c,#1a6e54);color:#fff}
+.brain .card-h{border-bottom-color:rgba(255,255,255,.2)}
+.brain .num{background:#fff;color:#0d4f3c}
+.brain h3{color:#fff}
+.brain .stat{display:flex;justify-content:space-between;padding:7px 10px;background:rgba(255,255,255,.1);border-radius:6px;margin-bottom:6px;font-size:11px;gap:8px}
+.brain .stat .v{font-weight:700;text-align:right}
+
+/* Mini */
+.mini-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:11px;border-bottom:1px solid #eef2f0;gap:8px}
+.mini-row:last-child{border-bottom:none}
+.mini-row .l{color:#64746f}
+.mini-row .v{font-weight:600;color:#0d4f3c;text-align:right}
+
+/* Talonarios */
+.talonario{background:#f8faf9;border-radius:8px;padding:10px;margin-bottom:8px;border-left:3px solid #0d4f3c}
+.talonario.warn{border-left-color:#f59e0b}
+.talonario.alert{border-left-color:#ef4444}
+.talonario .head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.talonario .name{font-size:12px;font-weight:600;color:#1a2e29}
+.talonario .range{font-size:10px;color:#64746f;font-family:monospace}
+.bar{background:#eef2f0;border-radius:10px;height:18px;overflow:hidden;position:relative;margin:6px 0}
+.bar > div{height:100%;background:linear-gradient(90deg,#0d4f3c,#1a6e54);border-radius:10px;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;color:#fff;font-size:10px;font-weight:700}
+.bar.warn > div{background:linear-gradient(90deg,#f59e0b,#fbbf24)}
+.bar.alert > div{background:linear-gradient(90deg,#ef4444,#dc2626)}
+.bar-legend{display:flex;justify-content:space-between;font-size:10px;color:#64746f}
+
+/* Field */
+.field{margin-bottom:8px}
+.field label{display:block;font-size:10px;color:#64746f;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;font-weight:600}
+.field input, .field select{width:100%;padding:7px 10px;border:1px solid #d4dcd9;border-radius:6px;font-size:12px;color:#1a2e29;background:#fff}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+/* Robot AI */
+.robot-row{display:flex;align-items:center;gap:10px;padding:10px;background:#f8faf9;border-radius:8px;margin-bottom:8px}
+.robot{width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,#0d4f3c,#1a6e54);color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;animation:pulse 2s infinite}
+.robot-text{flex:1;font-size:11px}
+.robot-text .t{font-weight:600;color:#0d4f3c}
+.robot-text .d{color:#64746f;font-size:10px;margin-top:2px}
+
+/* Inbox */
+.inbox-row{display:flex;align-items:center;gap:8px;padding:8px;background:#f8faf9;border-radius:6px;margin-bottom:5px;font-size:11px;border-left:3px solid #0d4f3c}
+.inbox-row.unread{background:#dcfce7;font-weight:600}
+.inbox-row .ic{font-size:14px}
+.inbox-row .info{flex:1;min-width:0}
+.inbox-row .info .t{font-weight:600;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.inbox-row .info .d{font-size:10px;color:#64746f}
+.inbox-row .time{font-size:9px;color:#94a3a0;flex-shrink:0}
+
+/* Auth methods */
+.auth-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.auth-card{background:#f8faf9;border-radius:8px;padding:10px;text-align:center;border-top:3px solid #0d4f3c;position:relative}
+.auth-card.active{background:#dcfce7;border-top-color:#22c55e}
+.auth-card .ic{font-size:24px;margin-bottom:4px}
+.auth-card .lbl{font-size:10px;font-weight:600;color:#1a2e29}
+.auth-card .check{position:absolute;top:5px;right:5px;width:16px;height:16px;border-radius:50%;background:#22c55e;color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px}
+
+/* Footer */
+.footer{background:#0d4f3c;color:#fff;padding:12px 22px;border-radius:12px;margin-top:14px;display:flex;justify-content:space-between;align-items:center;font-size:11px;gap:10px;flex-wrap:wrap}
+.footer .meta{opacity:.85}
+.footer .acts{display:flex;gap:8px;flex-wrap:wrap}
+.footer .btn{background:rgba(255,255,255,.15);color:#fff}
+
+/* Map / location */
+.map-mini{background:linear-gradient(135deg,#dcfce7,#bbf7d0);border-radius:8px;padding:10px;height:100px;position:relative;margin-bottom:8px;overflow:hidden}
+.map-mini::before{content:'';position:absolute;inset:0;background-image:
+  linear-gradient(rgba(13,79,60,.08) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(13,79,60,.08) 1px,transparent 1px);
+  background-size:20px 20px}
+.map-pin{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:24px}
+.map-info{position:absolute;bottom:6px;left:6px;right:6px;background:rgba(255,255,255,.9);padding:4px 8px;border-radius:4px;font-size:10px;color:#1a2e29}
+
+/* Timeline */
+.timeline-vert{position:relative;padding-left:20px;margin-bottom:8px}
+.timeline-vert::before{content:'';position:absolute;left:6px;top:5px;bottom:5px;width:2px;background:#e5ebe9}
+.tl-event{position:relative;padding:6px 0;font-size:11px}
+.tl-event::before{content:'';position:absolute;left:-17px;top:9px;width:10px;height:10px;border-radius:50%;background:#0d4f3c;border:2px solid #fff;box-shadow:0 0 0 1px #0d4f3c}
+.tl-event.done::before{background:#22c55e;box-shadow:0 0 0 1px #22c55e}
+.tl-event .t{font-weight:600}
+.tl-event .d{font-size:10px;color:#64746f}
+
+/* ============= RESPONSIVE ============= */
+@media (max-width: 1400px){
+  .grid{grid-template-columns:repeat(3,1fr)}
+  .kpis{grid-template-columns:repeat(3,1fr)}
+}
+@media (max-width: 1024px){
+  .grid{grid-template-columns:repeat(2,1fr)}
+  .kpis{grid-template-columns:repeat(3,1fr)}
+  .topbar h1{font-size:15px}
+}
+@media (max-width: 768px){
+  body{padding:8px}
+  .topbar{padding:12px 14px;flex-wrap:wrap;border-radius:10px 10px 0 0}
+  .topbar h1{font-size:14px;line-height:1.3}
+  .topbar .sub{font-size:10px}
+  .icon-btn{width:30px;height:30px;font-size:12px}
+  
+  .statusbar{padding:10px 12px;gap:6px;overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch}
+  .statusbar::-webkit-scrollbar{height:4px}
+  .crumb{font-size:12px;width:100%;margin-right:0;margin-bottom:4px}
+  .pill{padding:5px 10px;font-size:10px;flex-shrink:0}
+  
+  .kpis{grid-template-columns:repeat(2,1fr);padding:12px;gap:8px}
+  .kpi{padding:10px}
+  .kpi .val{font-size:17px}
+  .kpi .lbl{font-size:9px}
+  .kpi .delta{font-size:9px}
+  
+  .grid{grid-template-columns:1fr;padding:12px;gap:10px;border-radius:0 0 10px 10px}
+  .card, .card.wide{grid-column:span 1;padding:12px;min-height:auto}
+  .card-h{margin-bottom:10px;padding-bottom:8px}
+  .card-h h3{font-size:13px}
+  .num{width:24px;height:24px;font-size:11px}
+  
+  .phone-wrap{grid-template-columns:1fr;gap:10px}
+  .phone{max-width:180px;margin:0 auto}
+  .qr-grid{grid-template-columns:1fr 1fr;gap:8px}
+  .auth-grid{grid-template-columns:repeat(3,1fr)}
+  .field-row{grid-template-columns:1fr}
+  
+  .table-wrap{max-height:280px}
+  table{font-size:10px}
+  th, td{padding:6px 5px}
+  
+  .footer{padding:12px;flex-direction:column;gap:10px;text-align:center;border-radius:10px}
+  .footer .acts{justify-content:center;width:100%}
+  .footer .btn{flex:1;min-width:90px}
+}
+@media (max-width: 420px){
+  .kpis{grid-template-columns:1fr 1fr}
+  .topbar h1{font-size:13px}
+  .topbar .sub{font-size:9px}
+  .crumb{font-size:11px}
+  .qr-grid{grid-template-columns:1fr}
+  .auth-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<div class="topbar">
+  <div>
+    <h1>✍️ Módulo: Firma Digital & Legalización de Certificados</h1>
+    <div class="sub">Aceptación electrónica · QR de validación legal · talonarios · normativa boliviana</div>
+  </div>
+  <div class="actions">
+    <div class="icon-btn">❓</div>
+    <div class="icon-btn">🔔<div class="dot"></div></div>
+    <div class="icon-btn">👤</div>
+  </div>
+</div>
+
+<div class="statusbar">
+  <div class="crumb">← MÓDULO: FIRMA DIGITAL Y LEGALIZACIÓN</div>
+  <div class="pill ok"><span class="ic"></span>Cumple Normativa ASFI / APS</div>
+  <div class="pill ok"><span class="ic"></span>QR Verificable Público</div>
+  <div class="pill warn"><span class="ic"></span>2 Talonarios por agotarse</div>
+  <div class="pill live"><span class="ic"></span>34 firmas pendientes</div>
+</div>
+
+<div class="kpis">
+  <div class="kpi"><div class="lbl">Firmas Hoy</div><div class="val">487</div><div class="delta">▲ 14% vs ayer</div></div>
+  <div class="kpi"><div class="lbl">Tasa Aceptación</div><div class="val">96.2%</div><div class="delta">▲ 1.8 pts</div></div>
+  <div class="kpi"><div class="lbl">Tiempo Promedio</div><div class="val">2.4 min</div><div class="delta">Cliente firma</div></div>
+  <div class="kpi"><div class="lbl">QR Escaneados</div><div class="val">1,247</div><div class="delta">Validaciones hoy</div></div>
+  <div class="kpi warn"><div class="lbl">Pendientes</div><div class="val">34</div><div class="delta">Firma cliente</div></div>
+  <div class="kpi alert"><div class="lbl">Talonarios &lt;15%</div><div class="val">2</div><div class="delta">Solicitar urgente</div></div>
+</div>
+
+<div class="grid">
+
+<!-- 1. Firma Electrónica del Cliente -->
+<div class="card wide">
+  <div class="card-h"><div class="num">1</div><h3>Firma Electrónica del Cliente</h3><span class="menu">⋯</span></div>
+  <div class="subtitle">Workflow de firma vía WhatsApp · Email · SMS con un click</div>
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="ph-h"><div class="av">IS</div><div>Interseguros</div></div>
+        <div class="ph-msg in">Hola Juan 👋, tu póliza #4432 está lista. Haz click aquí para aceptar legalmente:<br><span class="lk">→ firma.iseg.bo/x9a2k</span><div class="t">16:30</div></div>
+        <div class="ph-msg">✓ Acepto y firmo<div class="t">16:32 ✓✓</div></div>
+        <div class="ph-msg in">✅ ¡Firmado! Tu certificado ya es legal. Te enviamos copia por email.<div class="t">16:32</div></div>
+        <div class="ph-input">😊 Texto y archivo 📎 <span class="ic">🎤</span></div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <label style="font-size:10px;color:#64746f;text-transform:uppercase;letter-spacing:.4px;font-weight:600">Workflow de firma</label>
+      <div class="workflow">
+        <div class="wf-step done"><div class="n">1</div><div class="info"><div class="t">Generar enlace único</div><div class="d">Token encriptado · expira 72h</div></div><span class="badge green">✓</span></div>
+        <div class="wf-step done"><div class="n">2</div><div class="info"><div class="t">Enviar al cliente</div><div class="d">WhatsApp + Email + SMS</div></div><span class="badge green">✓</span></div>
+        <div class="wf-step active"><div class="n">3</div><div class="info"><div class="t">Cliente acepta</div><div class="d">Click + OTP + geo · IP capturada</div></div><span class="badge amber">En curso</span></div>
+        <div class="wf-step"><div class="n">4</div><div class="info"><div class="t">Sellado legal</div><div class="d">Hash SHA-256 · timestamp</div></div></div>
+        <div class="wf-step"><div class="n">5</div><div class="info"><div class="t">Distribución</div><div class="d">Cliente · compañía · custodia</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="legal-pill" style="margin-top:8px">✓ Legalmente firmado · Cumple Normativa Boliviana (DS 1793 / Ley 164)</div>
+</div>
+
+<!-- 2. QR de Validación Legal -->
+<div class="card wide">
+  <div class="card-h"><div class="num">2</div><h3>QR de Validación Legal del Certificado</h3><span class="menu">⋯</span></div>
+  <div class="subtitle">Generador único encriptado · verificación pública por terceros</div>
+  <div class="qr-grid">
+    <div class="qr-box">
+      <div class="qr-pattern"></div>
+      <div style="font-size:10px;color:#64746f;margin-top:6px;font-family:monospace">CERT-2024-4432</div>
+    </div>
+    <div class="qr-cert">
+      <div class="seal">📜</div>
+      <div class="lbl">Certificado Inmutable</div>
+      <div class="small">✓ Original Oficial<br>✓ Validación Legal<br>✓ Verificable por terceros</div>
+    </div>
+  </div>
+  <label style="font-size:10px;color:#64746f;text-transform:uppercase;letter-spacing:.4px;margin:6px 0;font-weight:600">Vigilancia de estado QR (tiempo real)</label>
+  <div class="table-wrap" style="max-height:160px">
+    <table>
+      <thead><tr><th>Cert ID</th><th>Estado</th><th>Último escaneo</th><th>Ubicación</th></tr></thead>
+      <tbody>
+        <tr><td>#4432</td><td><span class="badge green">Vigente</span></td><td>Hoy 16:32</td><td>La Paz</td></tr>
+        <tr><td>#4431</td><td><span class="badge red">Vencido</span></td><td>Ayer 11:14</td><td>Santa Cruz</td></tr>
+        <tr><td>#4430</td><td><span class="badge gray">Anulado</span></td><td>03/12 09:42</td><td>Cochabamba</td></tr>
+        <tr><td>#4429</td><td><span class="badge amber">Pend. pago</span></td><td>Hoy 14:08</td><td>El Alto</td></tr>
+        <tr><td>#4428</td><td><span class="badge green">Vigente</span></td><td>Hoy 15:50</td><td>Tarija</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="btn-row">
+    <button class="btn">🔍 Verificar QR</button>
+    <button class="btn sec">📥 Descargar QR</button>
+    <button class="btn sec">🔗 Copiar link público</button>
+  </div>
+</div>
+
+<!-- 3. IA Detecta Aceptación de Compañía -->
+<div class="card wide">
+  <div class="card-h"><div class="num">3</div><h3>IA · Detecta Aceptación de la Compañía</h3><span class="menu">⋯</span></div>
+  <div class="subtitle">Monitoreo automático de bandeja de correo · captura de aceptación</div>
+  <div class="robot-row">
+    <div class="robot">🤖</div>
+    <div class="robot-text">
+      <div class="t">IA Monitoreo Bandeja · Activo</div>
+      <div class="d">Procesando 1,247 correos/día · OCR + NLP detección "ACEPTADO"</div>
+    </div>
+    <span class="badge green">Live</span>
+  </div>
+  <label style="font-size:10px;color:#64746f;text-transform:uppercase;letter-spacing:.4px;margin:4px 0;font-weight:600">Inbox monitoreado</label>
+  <div class="inbox-row unread"><span class="ic">📧</span><div class="info"><div class="t">Aceptación Certificado #4432 — Pacífico</div><div class="d">aceptaciones@pacifico.bo</div></div><span class="time">16:18</span></div>
+  <div class="inbox-row"><span class="ic">📧</span><div class="info"><div class="t">Aceptación Póliza #4431 — El Sol</div><div class="d">operaciones@elsol.bo</div></div><span class="time">15:42</span></div>
+  <div class="inbox-row"><span class="ic">📧</span><div class="info"><div class="t">Aceptación Endoso #4429 — Bolivia</div><div class="d">suscripcion@bolivia.bo</div></div><span class="time">14:08</span></div>
+  
+  <label style="font-size:10px;color:#64746f;text-transform:uppercase;letter-spacing:.4px;margin:8px 0 4px;font-weight:600">Historial de aceptación IA</label>
+  <div class="table-wrap" style="max-height:140px">
+    <table>
+      <thead><tr><th>Cert ID</th><th>Compañía</th><th>Método</th><th>Fecha</th><th>Trazab.</th></tr></thead>
+      <tbody>
+        <tr><td>#4432</td><td>Pacífico</td><td>Correo / Link Click</td><td>16:18 hoy</td><td><span class="badge green">✓</span></td></tr>
+        <tr><td>#4431</td><td>El Sol</td><td>Correo / Auto</td><td>15:42 hoy</td><td><span class="badge green">✓</span></td></tr>
+        <tr><td>#4430</td><td>Bolivia</td><td>Manual / Portal</td><td>03/12 09:42</td><td><span class="badge green">✓</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="btn-row">
+    <button class="btn">📜 Historial completo</button>
+    <button class="btn sec">🔗 Alternativa: Link de aceptación</button>
+  </div>
+</div>
+
+<!-- 4. Talonarios de Numeración -->
+<div class="card wide">
+  <div class="card-h"><div class="num">4</div><h3>Talonarios de Numeración</h3><span class="menu">⋯</span></div>
+  <div class="subtitle">Control de rangos · solicitud automática a compañía</div>
+  
+  <div class="talonario">
+    <div class="head"><div class="name">🏢 Talonario Pacífico</div><span class="range">Nro. 1001 — 2000</span></div>
+    <div class="bar"><div style="width:75%">75%</div></div>
+    <div class="bar-legend"><span>Usados: 750</span><span>Disp: 250</span><span>Reserva: 50</span></div>
+  </div>
+  
+  <div class="talonario warn">
+    <div class="head"><div class="name">🏢 Talonario El Sol ⚠️</div><span class="range">Nro. 5001 — 6000</span></div>
+    <div class="bar warn"><div style="width:88%">88%</div></div>
+    <div class="bar-legend"><span>Usados: 880</span><span>Disp: 120</span><span>Reserva: 0</span></div>
+  </div>
+  
+  <div class="talonario alert">
+    <div class="head"><div class="name">🏢 Talonario Bolivia 🚨</div><span class="range">Nro. 8001 — 9000</span></div>
+    <div class="bar alert"><div style="width:94%">94%</div></div>
+    <div class="bar-legend"><span>Usados: 940</span><span>Disp: 60</span><span>Reserva: 0</span></div>
+  </div>
+  
+  <label style="font-size:10px;color:#64746f;text-transform:uppercase;letter-spacing:.4px;margin:8px 0 4px;font-weight:600">Solicitud nuevo talonario</label>
+  <div class="field-row">
+    <div class="field"><label>Compañía</label><select><option>Bolivia Seguros</option><option>El Sol</option></select></div>
+    <div class="field"><label>Cantidad</label><input value="1000" type="number"></div>
+  </div>
+  <button class="btn full" style="margin-top:6px">✉️ Solicitar talonario a compañía</button>
+</div>
+
+<!-- 5. Métodos de Autenticación -->
+<div class="card">
+  <div class="card-h"><div class="num">5</div><h3>Métodos de Autenticación</h3><span class="menu">⋯</span></div>
+  <div class="subtitle">Multi-factor para garantizar identidad legal</div>
+  <div class="auth-grid">
+    <div class="auth-card active"><div class="check">✓</div><div class="ic">📱</div><div class="lbl">OTP SMS</div></div>
+    <div class="auth-card active"><div class="check">✓</div><div class="ic">📧</div><div class="lbl">Email Link</div></div>
+    <div class="auth-card active"><div class="check">✓</div><div class="ic">💬</div><div class="lbl">WhatsApp</div></div>
+    <div class="auth-card active"><div class="check">✓</div><div class="ic">📍</div><div class="lbl">Geo-IP</div></div>
+    <div class="auth-card active"><div class="check">✓</div><div class="ic">📷</div><div class="lbl">Selfie</div></div>
+    <div class="auth-card"><div class="ic">🆔</div><div class="lbl">CI biométrico</div></div>
+  </div>
+  <div class="mini-row"><span class="l">Factores activos</span><span class="v">5 de 6</span></div>
+  <div class="mini-row"><span class="l">Nivel de seguridad</span><span class="v" style="color:#15803d">ALTO ✓</span></div>
+  <div class="mini-row"><span class="l">Cumple normativa</span><span class="v">DS 1793 ✓</span></div>
+  <button class="btn sec full" style="margin-top:8px">⚙️ Configurar factores</button>
+</div>
+
+<!-- 6. Ubicación firma -->
+<div class="card">
+  <div class="card-h"><div class="num">6</div><h3>Ubicación & Dispositivo</h3><span class="menu">⋯</span></div>
+  <div class="subtitle">Captura geo-IP y device fingerprint al momento de la firma</div>
+  <div class="map-mini">
+    <div class="map-pin">📍</div>
+    <div class="map-info"><b>La Paz, Bolivia</b> · -16.5000, -68.1500</div>
+  </div>
+  <div class="mini-row"><span class="l">📍 Ubicación</span><span class="v">La Paz · Sopocachi</span></div>
+  <div class="mini-row"><span class="l">🌐 IP pública</span><span class="v" style="font-family:monospace;font-size:10px">186.27.84.142</span></div>
+  <div class="mini-row"><span class="l">📱 Dispositivo</span><span class="v">iPhone 14 · iOS 17.2</span></div>
+  <div class="mini-row"><span class="l">🌍 Navegador</span><span class="v">Safari 17</span></div>
+  <div class="mini-row"><span class="l">🕒 Timestamp</span><span class="v">16:32:18 UTC-4</span></div>
+  <div class="mini-row"><span class="l">🔐 Hash SHA-256</span><span class="v" style="font-family:monospace;font-size:9px">a3f2…b7e4</span></div>
+</div>
+
+<!-- 7. AI Brain -->
+<div class="card brain">
+  <div class="card-h"><div class="num">7</div><h3>🧠 Motor IA · Validación Legal</h3><span class="menu" style="color:#fff">⋯</span></div>
+  <div style="font-size:11px;opacity:.85;margin-bottom:10px">OCR + NLP + Blockchain timestamp</div>
+  <div class="stat"><span>Modelo</span><span class="v">GPT-4o + Tesseract</span></div>
+  <div class="stat"><span>Correos procesados</span><span class="v">1,247/día</span></div>
+  <div class="stat"><span>Precisión detección</span><span class="v">99.6%</span></div>
+  <div class="stat"><span>Tiempo análisis</span><span class="v">1.2s</span></div>
+  <div class="stat"><span>Hashes generados</span><span class="v">487 hoy</span></div>
+  <div class="stat"><span>Anti-tampering</span><span class="v">Blockchain ✓</span></div>
+  <div style="margin-top:auto;padding-top:10px;border-top:1px solid rgba(255,255,255,.2);font-size:10px;opacity:.85">
+    Bases: Certificados · Pólizas · Talonarios · Logs ASFI
+  </div>
+</div>
+
+<!-- 8. Pendientes de firma -->
+<div class="card">
+  <div class="card-h"><div class="num">8</div><h3>Pendientes de Firma</h3><span class="menu">⋯</span></div>
+  <div class="subtitle">Cola de certificados esperando aceptación</div>
+  <div class="list">
+    <div class="list-item warn"><span class="ic">⏳</span><div class="body"><div class="t">Cert #4432 · Juan Mendoza</div><div class="d">Enviado 16:30 · pend. 8 min</div></div><span class="badge amber">Cliente</span></div>
+    <div class="list-item warn"><span class="ic">⏳</span><div class="body"><div class="t">Cert #4431 · Ana Pérez</div><div class="d">Enviado 14:08 · pend. 2h</div></div><span class="badge amber">Cliente</span></div>
+    <div class="list-item alert"><span class="ic">🚨</span><div class="body"><div class="t">Cert #4425 · Luis Rojas</div><div class="d">Enviado ayer · vence 4h</div></div><span class="badge red">Urgente</span></div>
+    <div class="list-item"><span class="ic">📨</span><div class="body"><div class="t">Cert #4419 · Pacífico</div><div class="d">Esperando compañía · 1d</div></div><span class="badge blue">Compañía</span></div>
+    <div class="list-item"><span class="ic">📨</span><div class="body"><div class="t">Cert #4418 · El Sol</div><div class="d">Esperando compañía · 6h</div></div><span class="badge blue">Compañía</span></div>
+  </div>
+  <button class="btn full" style="margin-top:8px">🔔 Reenviar recordatorios (5)</button>
+</div>
+
+<!-- 9. Timeline Auditoría -->
+<div class="card">
+  <div class="card-h"><div class="num">9</div><h3>Auditoría Cert #4432</h3><span class="menu">⋯</span></div>
+  <div class="subtitle">Trazabilidad completa · evento por evento</div>
+  <div class="timeline-vert">
+    <div class="tl-event done"><div class="t">Generado</div><div class="d">16:28 · Sistema · auto</div></div>
+    <div class="tl-event done"><div class="t">Enviado WhatsApp</div><div class="d">16:30 · +591 7XXX1234</div></div>
+    <div class="tl-event done"><div class="t">Cliente abrió link</div><div class="d">16:31 · La Paz · iPhone 14</div></div>
+    <div class="tl-event done"><div class="t">OTP validado</div><div class="d">16:31 · código 4-7-2-1</div></div>
+    <div class="tl-event done"><div class="t">Firma electrónica</div><div class="d">16:32 · hash SHA-256</div></div>
+    <div class="tl-event"><div class="t">Aceptación compañía</div><div class="d">Pendiente · esperando</div></div>
+    <div class="tl-event"><div class="t">Sellado QR público</div><div class="d">Pendiente</div></div>
+  </div>
+  <button class="btn sec full">📄 Exportar log auditoría</button>
+</div>
+
+<!-- 10. Custodia Digital -->
+<div class="card">
+  <div class="card-h"><div class="num">10</div><h3>Custodia Digital · Inmutable</h3><span class="menu">⋯</span></div>
+  <div class="subtitle">Almacenamiento legal con anti-tampering</div>
+  <div class="opt-row"><span>🔒 Encriptación AES-256</span><div class="switch on"></div></div>
+  <div class="opt-row"><span>⛓️ Hash en blockchain</span><div class="switch on"></div></div>
+  <div class="opt-row"><span>📦 Backup geo-redundante</span><div class="switch on"></div></div>
+  <div class="opt-row"><span>🕒 Timestamp certificado RFC 3161</span><div class="switch on"></div></div>
+  <div class="opt-row"><span>👁️ Acceso solo con doble factor</span><div class="switch on"></div></div>
+  <div class="mini-row"><span class="l">Certificados custodiados</span><span class="v">847,231</span></div>
+  <div class="mini-row"><span class="l">Volumen total</span><span class="v">2.4 TB</span></div>
+  <div class="mini-row"><span class="l">Retención (años)</span><span class="v">10</span></div>
+  <div class="mini-row"><span class="l">Última verificación</span><span class="v">Hoy 14:00</span></div>
+</div>
+
+<!-- 11. Plantillas certificados -->
+<div class="card">
+  <div class="card-h"><div class="num">11</div><h3>Plantillas de Certificados</h3><span class="menu">⋯</span></div>
+  <div class="subtitle">Diseños regulatorios por ramo y compañía</div>
+  <div class="list">
+    <div class="list-item"><span class="ic">❤️</span><div class="body"><div class="t">Vida Individual · v3.2</div><div class="d">Pacífico · El Sol</div></div><span class="badge green">Live</span></div>
+    <div class="list-item"><span class="ic">🚗</span><div class="body"><div class="t">Auto Particular · v2.8</div><div class="d">7 compañías</div></div><span class="badge green">Live</span></div>
+    <div class="list-item"><span class="ic">🏠</span><div class="body"><div class="t">Hogar Multirriesgo · v1.9</div><div class="d">5 compañías</div></div><span class="badge green">Live</span></div>
+    <div class="list-item"><span class="ic">🏥</span><div class="body"><div class="t">Salud Familiar · v2.0</div><div class="d">3 compañías</div></div><span class="badge green">Live</span></div>
+    <div class="list-item warn"><span class="ic">🛡️</span><div class="body"><div class="t">SOAT 2026 · v1.0</div><div class="d">Pendiente APS</div></div><span class="badge amber">Borrador</span></div>
+  </div>
+  <button class="btn full" style="margin-top:8px">+ Nueva plantilla</button>
+</div>
+
+<!-- 12. Notificaciones Multi-Canal -->
+<div class="card">
+  <div class="card-h"><div class="num">12</div><h3>Notificaciones Multi-Canal</h3><span class="menu">⋯</span></div>
+  <div class="subtitle">Recordatorios automáticos al cliente y compañía</div>
+  <div class="opt-row"><span>💬 WhatsApp Business</span><div class="switch on"></div></div>
+  <div class="opt-row"><span>📧 Email transaccional</span><div class="switch on"></div></div>
+  <div class="opt-row"><span>📱 SMS OTP</span><div class="switch on"></div></div>
+  <div class="opt-row"><span>📞 Llamada IA recordatoria</span><div class="switch on"></div></div>
+  <div class="opt-row"><span>⏰ Reenvío automático 24h</span><div class="switch on"></div></div>
+  <div class="opt-row"><span>⏰ Reenvío automático 48h</span><div class="switch on"></div></div>
+  <div class="opt-row"><span>🚨 Escalar a ejecutivo si vence</span><div class="switch on"></div></div>
+  <div class="mini-row"><span class="l">Tasa apertura WA</span><span class="v">94.7%</span></div>
+  <div class="mini-row"><span class="l">Tasa apertura Email</span><span class="v">68.2%</span></div>
+</div>
+
+<!-- 13. Validación QR Pública -->
+<div class="card">
+  <div class="card-h"><div class="num">13</div><h3>Validación QR Pública</h3><span class="menu">⋯</span></div>
+  <div class="subtitle">Portal público para verificar autenticidad</div>
+  <div style="background:#f8faf9;padding:10px;border-radius:8px;font-family:monospace;font-size:10px;color:#0d4f3c;margin-bottom:8px;text-align:center;border:1px dashed #0d4f3c">
+    🌐 verifica.iseg.bo/cert/CERT-2024-4432
+  </div>
+  <div class="mini-row"><span class="l">Verificaciones hoy</span><span class="v">1,247</span></div>
+  <div class="mini-row"><span class="l">Verificaciones (mes)</span><span class="v">38,472</span></div>
+  <div class="mini-row"><span class="l">Por terceros (auto)</span><span class="v">68%</span></div>
+  <div class="mini-row"><span class="l">Por cliente</span><span class="v">22%</span></div>
+  <div class="mini-row"><span class="l">Por autoridad</span><span class="v">10%</span></div>
+  <div class="mini-row"><span class="l">Falsificaciones detect.</span><span class="v" style="color:#b91c1c">3 (mes)</span></div>
+  <button class="btn sec full" style="margin-top:8px">🌐 Ver portal público</button>
+</div>
+
+<!-- 14. Integraciones legales -->
+<div class="card">
+  <div class="card-h"><div class="num">14</div><h3>Integraciones Legales</h3><span class="menu">⋯</span></div>
+  <div class="subtitle">Conectores con autoridades y registros oficiales</div>
+  <div class="opt-row"><span>🏛️ ASFI · Reportes automáticos</span><div><span class="badge green">Conectado</span></div></div>
+  <div class="opt-row"><span>🏛️ APS · Cuadros mensuales</span><div><span class="badge green">Conectado</span></div></div>
+  <div class="opt-row"><span>📋 SEGIP · Validación CI</span><div><span class="badge green">Conectado</span></div></div>
+  <div class="opt-row"><span>🚗 RUAT · Vehículos</span><div><span class="badge green">Conectado</span></div></div>
+  <div class="opt-row"><span>📜 ADSIB · Firma digital</span><div><span class="badge green">Conectado</span></div></div>
+  <div class="opt-row"><span>⛓️ Blockchain notarial</span><div><span class="badge blue">Beta</span></div></div>
+  <div class="mini-row"><span class="l">Reportes automáticos</span><span class="v">47/mes</span></div>
+  <div class="mini-row"><span class="l">Cumplimiento</span><span class="v" style="color:#15803d">100%</span></div>
+</div>
+
+<!-- 15. Anulaciones -->
+<div class="card">
+  <div class="card-h"><div class="num">15</div><h3>Anulaciones & Endosos</h3><span class="menu">⋯</span></div>
+  <div class="subtitle">Gestión de cambios con re-firma legal</div>
+  <div class="list">
+    <div class="list-item warn"><span class="ic">📝</span><div class="body"><div class="t">Endoso #4419 · Beneficiarios</div><div class="d">Re-firma cliente requerida</div></div><span class="badge amber">Pend.</span></div>
+    <div class="list-item"><span class="ic">📝</span><div class="body"><div class="t">Endoso #4415 · Capital</div><div class="d">Firmado · QR actualizado</div></div><span class="badge green">OK</span></div>
+    <div class="list-item alert"><span class="ic">❌</span><div class="body"><div class="t">Anulación #4410 · Solicitud</div><div class="d">Doble firma + reembolso</div></div><span class="badge red">Crítico</span></div>
+    <div class="list-item"><span class="ic">❌</span><div class="body"><div class="t">Anulación #4405 · Mora</div><div class="d">Auto · QR invalidado</div></div><span class="badge gray">Anulado</span></div>
+  </div>
+  <button class="btn red full" style="margin-top:8px">📋 Ver gestión completa</button>
+</div>
+
+<!-- 16. Configuración -->
+<div class="card">
+  <div class="card-h"><div class="num">16</div><h3>Configuración Global</h3><span class="menu">⋯</span></div>
+  <div class="subtitle">Preferencias del módulo de firma digital</div>
+  <div class="opt-row"><span>✍️ Firma electrónica simple</span><div class="switch on"></div></div>
+  <div class="opt-row"><span>🔐 Firma electrónica avanzada (FEA)</span><div class="switch on"></div></div>
+  <div class="opt-row"><span>📜 Firma digital cualificada (FDC)</span><div class="switch"></div></div>
+  <div class="opt-row"><span>🤖 IA detección aceptación</span><div class="switch on"></div></div>
+  <div class="opt-row"><span>🔔 Recordatorios automáticos</span><div class="switch on"></div></div>
+  <div class="opt-row"><span>⛓️ Sellado en blockchain</span><div class="switch on"></div></div>
+  <div class="opt-row"><span>📍 Geo-IP obligatoria</span><div class="switch on"></div></div>
+  <div class="opt-row"><span>📷 Selfie en firmas &gt;$50k</span><div class="switch on"></div></div>
+</div>
+
+</div>
+
+<div class="footer">
+  <div class="meta">🟢 Sistema operativo · ADSIB conectado · Última firma: hace 8s · v3.5.1</div>
+  <div class="acts">
+    <button class="btn">💾 Guardar</button>
+    <button class="btn">📊 Exportar reporte</button>
+    <button class="btn">⚙️ Configuración</button>
+  </div>
+</div>
+
+</div>
+
+<script>
+document.querySelectorAll('.switch').forEach(s=>s.addEventListener('click',()=>s.classList.toggle('on')));
+document.querySelectorAll('.auth-card').forEach(c=>c.addEventListener('click',()=>{
+  c.classList.toggle('active');
+  if(!c.querySelector('.check') && c.classList.contains('active')){
+    const ck=document.createElement('div');ck.className='check';ck.textContent='✓';c.appendChild(ck);
+  } else if(!c.classList.contains('active') && c.querySelector('.check')){
+    c.querySelector('.check').remove();
+  }
+}));
+</script>
+</body>
+</html>
