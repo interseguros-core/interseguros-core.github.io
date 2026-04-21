@@ -1,345 +1,399 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Mi Compañía — Configuración</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mi Compañía — Interseguros</title>
 <style>
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
   :root{
-    --bg:#f7f8fa;--card:#fff;--border:#e5e7eb;--muted:#6b7280;--fg:#0f172a;
-    --primary:#0F766E;--primary-hover:#0d6660;--primary-soft:#ccfbf1;--destructive:#dc2626;
-    --hover:#f3f4f6;--header:#f9fafb;
+    --bg:#f1f5ee; --card:#ffffff; --border:#e2e8d8;
+    --text:#1a2e1a; --muted:#6b7d6b;
+    --green-50:#ecf5e8; --green-100:#d6ead0; --green-600:#3d7a3d; --green-700:#2f6130; --green-800:#234a24;
+    --gold:#b8902e; --gold-soft:#f5e9c8;
+    --danger:#b54545; --warn:#c98a1a;
+    --radius:10px; --shadow:0 1px 2px rgba(0,0,0,.04), 0 4px 12px rgba(35,74,36,.06);
   }
-  html,body{background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
-  .container{max-width:672px;margin:0 auto;padding:40px 24px}
-  h1{font-size:24px;font-weight:700}
-  h2{font-size:14px;font-weight:600}
-  h3{font-size:18px;font-weight:600}
-  p{margin:0}
-  .subtitle{font-size:14px;color:var(--muted);margin-top:4px;margin-bottom:32px}
-  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px}
-  .card + .card{margin-top:24px}
-  .stack > * + *{margin-top:24px}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5}
+  .wrap{max-width:880px;margin:0 auto;padding:32px 20px 64px}
+  h1{font-size:24px;font-weight:700;margin:0 0 4px;color:var(--green-800)}
+  h2{font-size:15px;font-weight:600;margin:0 0 4px;color:var(--green-800);display:flex;align-items:center;gap:8px}
+  .sub{color:var(--muted);margin:0 0 28px;font-size:13px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;margin-bottom:20px}
+  .card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:16px}
+  .card-head .desc{font-size:12px;color:var(--muted);margin:2px 0 0}
   .row{display:flex;align-items:center;gap:16px}
-  .row-between{display:flex;align-items:center;justify-content:space-between;padding-top:16px;border-top:1px solid var(--border)}
-  .flex-1{flex:1}
-  .shrink-0{flex-shrink:0}
-  .min-w-0{min-width:0}
-  .gap-1{gap:4px}.gap-2{gap:8px}.gap-3{gap:12px}
-  .mt-1{margin-top:4px}.mt-4{margin-top:16px}.mt-6{margin-top:24px}
-  .mb-4{margin-bottom:16px}
-  .py-3{padding-top:12px;padding-bottom:12px}
-  .text-center{text-align:center}
-  .text-right{text-align:right}
-  .truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .text-sm{font-size:14px}.text-xs{font-size:12px}
-  .font-medium{font-weight:500}.font-mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase}
-  .text-muted{color:var(--muted)}
-  .label{font-size:12px;color:var(--muted);display:block}
+  .logo-box{height:72px;width:72px;border:2px dashed var(--border);border-radius:8px;background:#fafbf6;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;color:var(--muted);overflow:hidden}
+  .logo-box:hover{border-color:var(--green-600)}
+  .logo-box img{width:100%;height:100%;object-fit:contain;padding:4px}
+  .field{flex:1}
+  label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;font-weight:500}
+  input[type=text],input[type=password],input[type=url],select{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;background:#fff;color:var(--text);outline:none;transition:border-color .15s}
+  input:focus,select:focus{border-color:var(--green-600);box-shadow:0 0 0 3px rgba(61,122,61,.12)}
+  .mono{font-family:"SF Mono",Menlo,monospace;font-size:12px}
+  .color-row{display:flex;align-items:center;gap:12px;margin-top:6px}
+  .swatch{position:relative;height:38px;width:48px;border-radius:7px;border:1px solid var(--border);cursor:pointer;overflow:hidden}
+  .swatch input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;border:0;padding:0}
+  .integ{display:flex;align-items:center;justify-content:space-between;padding-top:18px;margin-top:18px;border-top:1px solid var(--border);gap:12px}
+  .integ-info p.t{margin:0 0 2px;font-size:14px;font-weight:600;color:var(--text)}
+  .integ-info p.d{margin:0;font-size:12px;color:var(--muted)}
+  .btn{padding:7px 16px;border-radius:7px;border:0;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:background .15s}
+  .btn-primary{background:var(--green-700);color:#fff}
+  .btn-primary:hover{background:var(--green-800)}
+  .btn-outline{background:#fff;color:var(--text);border:1px solid var(--border)}
+  .btn-outline:hover{background:#f5f7f2}
+  .btn-sm{padding:5px 10px;font-size:12px}
+  .btn-icon{background:transparent;color:var(--muted);padding:6px;border-radius:6px}
+  .btn-icon:hover{background:var(--green-50);color:var(--green-700)}
+  .btn-danger-icon{background:transparent;color:var(--danger);padding:6px;border-radius:6px}
+  .btn-danger-icon:hover{background:#fdeaea}
+  .badge{display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border-radius:999px;background:var(--green-50);color:var(--green-700);font-size:12px;font-weight:600;border:1px solid var(--green-100)}
+  .badge-gold{background:var(--gold-soft);color:var(--gold);border-color:#ecd9a0}
+  .badge-muted{background:#f0f3eb;color:var(--muted);border:1px solid var(--border)}
+  .save-row{display:flex;justify-content:flex-end;margin-top:24px}
 
-  /* logo box */
-  .logo-box{height:80px;width:80px;border-radius:8px;border:2px dashed var(--border);background:#fafafa;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;transition:border-color .15s}
-  .logo-box:hover{border-color:var(--primary)}
-  .logo-box img{height:100%;width:100%;object-fit:contain;padding:4px}
-  .logo-box svg{height:24px;width:24px;color:#9ca3af}
+  /* Ramos */
+  .ramos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+  .ramo{display:flex;align-items:center;gap:10px;padding:12px;border:1px solid var(--border);border-radius:8px;background:#fafbf6;cursor:pointer;transition:all .15s;position:relative}
+  .ramo:hover{border-color:var(--green-600);background:#fff}
+  .ramo.on{border-color:var(--green-700);background:var(--green-50)}
+  .ramo .ico{width:32px;height:32px;border-radius:7px;background:#fff;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--green-700);flex-shrink:0}
+  .ramo.on .ico{background:var(--green-700);color:#fff;border-color:var(--green-700)}
+  .ramo .nm{font-size:13px;font-weight:500}
+  .ramo .ck{position:absolute;top:6px;right:6px;width:14px;height:14px;border-radius:50%;background:var(--green-700);color:#fff;display:none;align-items:center;justify-content:center}
+  .ramo.on .ck{display:flex}
 
-  /* color picker */
-  .color-row{display:flex;align-items:center;gap:12px;margin-top:4px}
-  .color-wrap{position:relative}
-  .color-swatch{height:40px;width:48px;border-radius:6px;border:1px solid var(--border)}
-  .color-input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;border:0;padding:0}
+  /* Roles table */
+  table{width:100%;border-collapse:collapse;margin-top:8px;font-size:13px}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border)}
+  th{font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);font-weight:600;background:#fafbf6}
+  tbody tr:hover{background:#fafbf6}
+  td.actions{text-align:right;white-space:nowrap}
+  .perm-chips{display:flex;flex-wrap:wrap;gap:4px}
+  .chip{font-size:11px;padding:3px 8px;border-radius:5px;background:#f0f3eb;color:var(--text);border:1px solid var(--border)}
+  .chip.crit{background:#fdeaea;color:var(--danger);border-color:#f5c8c8}
+  .chip.gold{background:var(--gold-soft);color:var(--gold);border-color:#ecd9a0}
 
-  /* inputs */
-  .input,.textarea{width:100%;border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:14px;background:#fff;font-family:inherit;color:var(--fg);outline:none;transition:border-color .15s,box-shadow .15s}
-  .input:focus,.textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(15,118,110,.15)}
-  .textarea{resize:vertical;min-height:80px}
+  /* Permission matrix */
+  .perm-matrix{margin-top:8px}
+  .perm-group{margin-bottom:14px}
+  .perm-group-title{font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);font-weight:600;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--border)}
+  .perm-row{display:grid;grid-template-columns:1fr repeat(4,60px);gap:6px;align-items:center;padding:7px 0;font-size:13px}
+  .perm-row.head{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;font-weight:600;border-bottom:1px solid var(--border);padding-bottom:6px;margin-bottom:4px}
+  .perm-row.head > div{text-align:center}
+  .perm-cell{text-align:center}
+  .perm-cell input{width:16px;height:16px;accent-color:var(--green-700);cursor:pointer}
 
-  /* buttons */
-  .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 16px;border-radius:8px;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;border:1px solid transparent;transition:background .15s,border-color .15s,opacity .15s;line-height:1;white-space:nowrap}
-  .btn-primary{background:var(--primary);color:#fff}
-  .btn-primary:hover{background:var(--primary-hover)}
-  .btn-outline{background:#fff;border-color:var(--border);color:var(--fg)}
-  .btn-outline:hover{background:var(--hover)}
-  .btn-ghost{background:transparent;color:var(--fg)}
-  .btn-ghost:hover{background:var(--hover)}
-  .btn-sm{padding:6px 12px;font-size:13px}
-  .btn-icon{padding:0;width:32px;height:32px}
-  .btn-danger{color:var(--destructive)}
+  /* Toggle */
+  .switch{position:relative;display:inline-block;width:34px;height:20px}
+  .switch input{opacity:0;width:0;height:0}
+  .slider-tg{position:absolute;cursor:pointer;inset:0;background:#cbd2c0;border-radius:20px;transition:.2s}
+  .slider-tg:before{position:absolute;content:"";height:14px;width:14px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s}
+  input:checked + .slider-tg{background:var(--green-700)}
+  input:checked + .slider-tg:before{transform:translateX(14px)}
 
-  /* badge */
-  .badge-ok{display:inline-flex;align-items:center;gap:4px;background:var(--primary-soft);color:var(--primary);padding:4px 10px;border-radius:999px;font-size:12px;font-weight:500}
-
-  /* section header */
-  .section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-  .section-title{display:flex;align-items:center;gap:8px}
-  .section-title svg{height:16px;width:16px;color:var(--muted)}
-
-  /* divide */
-  .divide > * + *{border-top:1px solid var(--border)}
-  .item-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0}
-
-  /* tabs */
-  .tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;background:#f3f4f6;padding:4px;border-radius:8px}
-  .tab{padding:8px 12px;font-size:13px;border-radius:6px;cursor:pointer;text-align:center;color:var(--muted);font-weight:500;transition:background .15s,color .15s;border:0;background:transparent;font-family:inherit}
-  .tab.active{background:#fff;color:var(--fg);box-shadow:0 1px 2px rgba(0,0,0,.06)}
-
-  /* table */
-  .table-wrap{margin-top:16px;overflow:hidden;border-radius:8px;border:1px solid var(--border)}
-  table{border-collapse:collapse;width:100%;font-size:14px}
-  thead{background:var(--header)}
-  th{padding:10px 12px;text-align:left;font-weight:500;font-size:12px;color:var(--muted)}
-  th.center{text-align:center;width:80px}
-  td{padding:10px 12px}
-  td.center{text-align:center}
-  tbody tr{border-top:1px solid var(--border)}
-  input[type=checkbox]{width:16px;height:16px;accent-color:var(--primary);cursor:pointer;margin:0}
-
-  /* footer */
-  .footer-actions{display:flex;justify-content:flex-end;margin-top:24px}
-
-  /* modal */
-  .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:50;padding:16px;animation:fade .15s}
+  /* Modal */
+  .modal-bg{position:fixed;inset:0;background:rgba(20,40,20,.45);display:none;align-items:center;justify-content:center;z-index:50;padding:20px;backdrop-filter:blur(2px)}
   .modal-bg.open{display:flex}
-  .modal{background:#fff;border-radius:12px;max-width:480px;width:100%;padding:24px;box-shadow:0 20px 50px rgba(0,0,0,.2)}
-  .modal h3{margin-bottom:4px}
-  .modal-desc{font-size:14px;color:var(--muted);margin-bottom:8px}
-  .modal-fields{padding:12px 0}
-  .modal-fields > * + *{margin-top:14px}
-  .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:8px}
-  @keyframes fade{from{opacity:0}to{opacity:1}}
+  .modal{background:#fff;border-radius:12px;max-width:560px;width:100%;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.2);max-height:90vh;overflow-y:auto}
+  .modal h3{margin:0 0 4px;font-size:18px;color:var(--green-800)}
+  .modal p.desc{margin:0 0 18px;font-size:13px;color:var(--muted)}
+  .modal .grp{margin-bottom:14px}
+  .modal-foot{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;padding-top:14px;border-top:1px solid var(--border)}
 
-  /* toast */
-  .toast{position:fixed;bottom:20px;right:20px;background:#0f172a;color:#fff;padding:12px 20px;border-radius:8px;font-size:14px;opacity:0;transform:translateY(10px);transition:opacity .25s,transform .25s;z-index:100;box-shadow:0 10px 25px rgba(0,0,0,.2);pointer-events:none}
+  /* Toast */
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--green-800);color:#fff;padding:12px 18px;border-radius:8px;font-size:13px;font-weight:500;box-shadow:0 8px 24px rgba(0,0,0,.2);opacity:0;transform:translateY(10px);transition:all .25s;pointer-events:none;z-index:100}
   .toast.show{opacity:1;transform:translateY(0)}
-  .toast.error{background:var(--destructive)}
+  .toast.err{background:var(--danger)}
 
-  /* empty */
-  .empty{font-size:14px;color:var(--muted);padding:24px 0;text-align:center}
-
-  /* icon helpers */
-  .icn{width:16px;height:16px;display:inline-block;vertical-align:-2px}
-  .icn-lg{width:20px;height:20px}
+  @media(max-width:560px){
+    .wrap{padding:20px 14px 40px}
+    .card{padding:18px}
+    h1{font-size:20px}
+    .integ{flex-direction:column;align-items:flex-start}
+    .perm-row{grid-template-columns:1fr repeat(4,46px)}
+    table{font-size:12px}
+    th,td{padding:8px 6px}
+    .perm-chips{display:none}
+  }
 </style>
 </head>
 <body>
-<div class="container">
+
+<div class="wrap">
   <h1>Mi Compañía</h1>
-  <p class="subtitle">Configura tu marca e integraciones.</p>
+  <p class="sub">Configura tu marca, ramos, integraciones y permisos.</p>
 
-  <div class="card stack">
+  <!-- Identidad + integraciones -->
+  <div class="card">
     <div class="row">
-      <div id="logoBox" class="logo-box">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4-4a3 3 0 014 0l4 4m-2-2l1-1a3 3 0 014 0l3 3M4 8h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-      </div>
-      <input id="logoInput" type="file" accept="image/*" style="display:none"/>
-      <div class="flex-1">
-        <label class="label">Nombre</label>
-        <input class="input mt-1" value="Seguros Alianza S.A."/>
+      <label class="logo-box" for="logo-input" id="logoBox">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+        <input type="file" id="logo-input" accept="image/*" hidden />
+      </label>
+      <div class="field">
+        <label>Nombre</label>
+        <input type="text" value="Seguros Alianza S.A." />
       </div>
     </div>
 
-    <div>
-      <label class="label">Color de marca</label>
+    <div style="margin-top:20px">
+      <label>Color de marca</label>
       <div class="color-row">
-        <div class="color-wrap">
-          <div id="colorSwatch" class="color-swatch" style="background:#0F766E"></div>
-          <input id="colorPicker" type="color" value="#0F766E" class="color-input"/>
+        <div class="swatch" style="background:#0F766E" id="swatch">
+          <input type="color" value="#0F766E" id="colorPick" />
         </div>
-        <input id="colorText" class="input font-mono" value="#0F766E"/>
+        <input type="text" class="mono" value="#0F766E" id="colorTxt" style="text-transform:uppercase" />
       </div>
     </div>
 
-    <div class="row-between">
-      <div>
-        <p class="text-sm font-medium">SIAT — Impuestos</p>
-        <p class="text-xs text-muted">Facturación electrónica</p>
-      </div>
-      <div id="siatStatus"><button class="btn btn-primary btn-sm" onclick="openModal('siat')">Conectar</button></div>
+    <div class="integ">
+      <div class="integ-info"><p class="t">SIAT — Impuestos</p><p class="d">Facturación electrónica</p></div>
+      <div id="siat-action"><button class="btn btn-primary" onclick="openModal('siat')">Conectar</button></div>
     </div>
-
-    <div class="row-between">
-      <div>
-        <p class="text-sm font-medium">Banco Económico</p>
-        <p class="text-xs text-muted">Cuenta para cobros</p>
-      </div>
-      <div id="bankStatus"><button class="btn btn-primary btn-sm" onclick="openModal('bank')">Vincular</button></div>
+    <div class="integ">
+      <div class="integ-info"><p class="t">Banco Económico</p><p class="d">Cuenta para cobros</p></div>
+      <div id="bank-action"><button class="btn btn-primary" onclick="openModal('bank')">Vincular</button></div>
+    </div>
+    <div class="integ">
+      <div class="integ-info"><p class="t">API Emisión & Amortización</p><p class="d">Conexión con el core de la compañía</p></div>
+      <div id="api-action"><button class="btn btn-primary" onclick="openModal('api')">Integrar</button></div>
     </div>
   </div>
 
+  <!-- RAMOS -->
   <div class="card">
-    <div class="section-head">
-      <div class="section-title">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14-4H5m14 8H5m14 4H5"/></svg>
-        <h2>Ramos</h2>
+    <div class="card-head">
+      <div>
+        <h2>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7h-7L10 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg>
+          Ramos comercializados
+        </h2>
+        <p class="desc">Selecciona los ramos que tu compañía emite. Solo aparecerán en cotizaciones y emisiones.</p>
       </div>
-      <button class="btn btn-primary btn-sm" onclick="openBranch()">+ Nuevo</button>
+      <span class="badge" id="ramos-count">0 activos</span>
     </div>
-    <div id="branchList" class="divide"></div>
+
+    <div class="ramos-grid" id="ramos-grid"></div>
   </div>
 
+  <!-- ROLES -->
   <div class="card">
-    <div class="section-title mb-4">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-      <h2>Roles y permisos</h2>
+    <div class="card-head">
+      <div>
+        <h2>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Roles y permisos avanzados
+        </h2>
+        <p class="desc">Control granular por módulo. Aprobaciones, límites y segregación de funciones.</p>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="openRoleModal()">+ Nuevo rol</button>
     </div>
-    <div id="roleTabs" class="tabs"></div>
-    <div id="rolePanel" class="table-wrap"></div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Rol</th>
+          <th>Usuarios</th>
+          <th>Permisos clave</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="roles-body"></tbody>
+    </table>
   </div>
 
-  <div class="footer-actions">
+  <div class="save-row">
     <button class="btn btn-primary" onclick="showToast('Cambios guardados')">
-      <svg class="icn" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
       Guardar
     </button>
   </div>
 </div>
 
 <!-- SIAT modal -->
-<div id="siatModal" class="modal-bg">
-  <div class="modal">
-    <h3>Conectar SIAT</h3>
-    <p class="modal-desc">Ingresa las credenciales de facturación electrónica.</p>
-    <div class="modal-fields">
-      <div><label class="label">NIT</label><input id="siat_nit" class="input mt-1" placeholder="1234567890"/></div>
-      <div><label class="label">CUIS</label><input id="siat_cuis" class="input mt-1" placeholder="Código único de inicio"/></div>
-      <div><label class="label">CUFD</label><input id="siat_cufd" class="input mt-1" placeholder="Código único diario"/></div>
-      <div><label class="label">Token</label><input id="siat_token" type="password" class="input mt-1" placeholder="••••••••"/></div>
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-outline" onclick="closeModal('siat')">Cancelar</button>
-      <button class="btn btn-primary" onclick="saveSiat()">Conectar</button>
-    </div>
-  </div>
-</div>
+<div class="modal-bg" id="m-siat"><div class="modal">
+  <h3>Conectar SIAT</h3><p class="desc">Credenciales de facturación electrónica.</p>
+  <div class="grp"><label>NIT</label><input type="text" id="siat-nit" placeholder="1234567890"/></div>
+  <div class="grp"><label>CUIS</label><input type="text" placeholder="Código único de inicio de sistema"/></div>
+  <div class="grp"><label>CUFD</label><input type="text" placeholder="Código único de facturación diaria"/></div>
+  <div class="grp"><label>Token</label><input type="password" id="siat-token" placeholder="••••••••"/></div>
+  <div class="modal-foot"><button class="btn btn-outline" onclick="closeModal('siat')">Cancelar</button><button class="btn btn-primary" onclick="connectSiat()">Conectar</button></div>
+</div></div>
 
 <!-- Bank modal -->
-<div id="bankModal" class="modal-bg">
-  <div class="modal">
-    <h3>Vincular Banco Económico</h3>
-    <p class="modal-desc">Conecta tu cuenta para recibir pagos.</p>
-    <div class="modal-fields">
-      <div><label class="label">Número de cuenta</label><input id="bank_acc" class="input mt-1" placeholder="0000-0000-0000-0000"/></div>
-      <div><label class="label">Titular</label><input id="bank_holder" class="input mt-1" placeholder="Seguros Alianza S.A."/></div>
-      <div><label class="label">API Key</label><input id="bank_key" type="password" class="input mt-1" placeholder="••••••••"/></div>
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-outline" onclick="closeModal('bank')">Cancelar</button>
-      <button class="btn btn-primary" onclick="saveBank()">Vincular</button>
-    </div>
-  </div>
-</div>
+<div class="modal-bg" id="m-bank"><div class="modal">
+  <h3>Vincular Banco Económico</h3><p class="desc">Conecta tu cuenta para recibir pagos.</p>
+  <div class="grp"><label>Número de cuenta</label><input type="text" id="bank-acc" placeholder="0000-0000-0000-0000"/></div>
+  <div class="grp"><label>Titular</label><input type="text" placeholder="Seguros Alianza S.A."/></div>
+  <div class="grp"><label>API Key</label><input type="password" id="bank-key" placeholder="••••••••"/></div>
+  <div class="modal-foot"><button class="btn btn-outline" onclick="closeModal('bank')">Cancelar</button><button class="btn btn-primary" onclick="connectBank()">Vincular</button></div>
+</div></div>
 
-<!-- Branch modal -->
-<div id="branchModal" class="modal-bg">
-  <div class="modal">
-    <h3 id="branchTitle">Nuevo ramo</h3>
-    <div class="modal-fields">
-      <div><label class="label">Nombre</label><input id="br_name" class="input mt-1" placeholder="Ej. Caución"/></div>
-      <div><label class="label">Descripción</label><textarea id="br_desc" class="textarea mt-1" placeholder="Breve descripción"></textarea></div>
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-outline" onclick="closeModal('branch')">Cancelar</button>
-      <button id="branchSave" class="btn btn-primary" onclick="saveBranch()">Crear</button>
-    </div>
-  </div>
-</div>
+<!-- API modal -->
+<div class="modal-bg" id="m-api"><div class="modal">
+  <h3>Integrar API de la compañía</h3><p class="desc">Endpoints de emisión y amortización.</p>
+  <div class="grp"><label>Base URL</label><input type="url" id="api-url" class="mono" placeholder="https://api.alianza.com.bo"/></div>
+  <div class="grp"><label>Endpoint Emisión</label><input type="text" class="mono" value="/v1/policies/issue"/></div>
+  <div class="grp"><label>Endpoint Amortización</label><input type="text" class="mono" value="/v1/policies/schedule"/></div>
+  <div class="grp"><label>API Key</label><input type="password" id="api-key" placeholder="••••••••"/></div>
+  <div class="grp"><label>Secret</label><input type="password" placeholder="••••••••"/></div>
+  <div class="modal-foot"><button class="btn btn-outline" onclick="closeModal('api')">Cancelar</button><button class="btn btn-primary" onclick="connectApi()">Probar e integrar</button></div>
+</div></div>
 
-<div id="toast" class="toast"></div>
+<!-- Role modal -->
+<div class="modal-bg" id="m-role"><div class="modal" style="max-width:640px">
+  <h3 id="role-title">Nuevo rol</h3>
+  <p class="desc">Define el alcance, los permisos por módulo y los límites operativos.</p>
+
+  <div class="grp"><label>Nombre del rol</label><input type="text" id="role-name" placeholder="Ej: Suscriptor Senior"/></div>
+
+  <div class="grp" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div><label>Límite de emisión (Bs)</label><input type="text" id="role-limit" placeholder="50.000" class="mono"/></div>
+    <div><label>Aprobación requerida sobre</label><input type="text" id="role-approval" placeholder="100.000" class="mono"/></div>
+  </div>
+
+  <div class="grp" style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:#fafbf6;border-radius:7px;border:1px solid var(--border)">
+    <div>
+      <p style="margin:0;font-size:13px;font-weight:500">Doble factor obligatorio</p>
+      <p style="margin:2px 0 0;font-size:11px;color:var(--muted)">Para anulaciones y modificaciones de prima</p>
+    </div>
+    <label class="switch"><input type="checkbox" checked/><span class="slider-tg"></span></label>
+  </div>
+
+  <div class="perm-matrix">
+    <div class="perm-row head"><div>Módulo</div><div>Ver</div><div>Crear</div><div>Editar</div><div>Aprobar</div></div>
+    <div class="perm-group" id="perm-group-container"></div>
+  </div>
+
+  <div class="modal-foot">
+    <button class="btn btn-outline" onclick="closeModal('role')">Cancelar</button>
+    <button class="btn btn-primary" onclick="saveRole()">Guardar rol</button>
+  </div>
+</div></div>
+
+<div class="toast" id="toast"></div>
 
 <script>
-  function showToast(msg, err){
-    const t=document.getElementById('toast');
-    t.textContent=msg; t.className='toast show'+(err?' error':'');
-    clearTimeout(window._tt); window._tt=setTimeout(()=>t.className='toast',2200);
-  }
-  const logoBox=document.getElementById('logoBox'),logoInput=document.getElementById('logoInput');
-  logoBox.onclick=()=>logoInput.click();
-  logoInput.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{logoBox.innerHTML=`<img src="${r.result}" alt="logo"/>`;};r.readAsDataURL(f);};
-  const cp=document.getElementById('colorPicker'),cs=document.getElementById('colorSwatch'),ct=document.getElementById('colorText');
-  cp.oninput=e=>{cs.style.background=e.target.value;ct.value=e.target.value.toUpperCase();};
-  ct.oninput=e=>{cs.style.background=e.target.value;cp.value=e.target.value;};
+  /* -------------------- Logo / color / modales generales -------------------- */
+  const logoInput=document.getElementById('logo-input'),logoBox=document.getElementById('logoBox');
+  logoInput.addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{logoBox.innerHTML=`<img src="${r.result}"/>`;logoBox.appendChild(logoInput);};r.readAsDataURL(f);});
+  const cp=document.getElementById('colorPick'),ct=document.getElementById('colorTxt'),sw=document.getElementById('swatch');
+  cp.addEventListener('input',e=>{ct.value=e.target.value.toUpperCase();sw.style.background=e.target.value});
+  ct.addEventListener('input',e=>{const v=e.target.value;if(/^#[0-9a-f]{6}$/i.test(v)){cp.value=v;sw.style.background=v}});
 
-  function openModal(k){document.getElementById(k+'Modal').classList.add('open');}
-  function closeModal(k){document.getElementById(k+'Modal').classList.remove('open');}
-  document.querySelectorAll('.modal-bg').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');}));
+  function openModal(k){document.getElementById('m-'+k).classList.add('open')}
+  function closeModal(k){document.getElementById('m-'+k).classList.remove('open')}
+  document.querySelectorAll('.modal-bg').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')}));
 
-  function saveSiat(){
-    if(!document.getElementById('siat_nit').value||!document.getElementById('siat_token').value){showToast('Completa NIT y Token',true);return;}
-    document.getElementById('siatStatus').innerHTML='<span class="badge-ok">✓ Conectado</span>';
-    closeModal('siat');showToast('SIAT conectado');
-  }
-  function saveBank(){
-    if(!document.getElementById('bank_acc').value||!document.getElementById('bank_key').value){showToast('Completa cuenta y API Key',true);return;}
-    document.getElementById('bankStatus').innerHTML='<span class="badge-ok">✓ Vinculado</span>';
-    closeModal('bank');showToast('Banco vinculado');
-  }
+  let tt;
+  function showToast(msg,err=false){const t=document.getElementById('toast');t.textContent=msg;t.classList.toggle('err',err);t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2400);}
+  const checkSvg='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
 
-  let branches=[
-    {id:'1',name:'Automotor',description:'Vehículos livianos y pesados'},
-    {id:'2',name:'Vida',description:'Seguros de vida individual y colectivo'},
-    {id:'3',name:'Salud',description:'Cobertura médica y hospitalaria'},
-    {id:'4',name:'Hogar',description:'Incendio y contenido del hogar'},
+  function connectSiat(){if(!document.getElementById('siat-nit').value||!document.getElementById('siat-token').value){return showToast('Completa NIT y Token',true)}document.getElementById('siat-action').innerHTML=`<span class="badge">${checkSvg} Conectado</span>`;closeModal('siat');showToast('SIAT conectado');}
+  function connectBank(){if(!document.getElementById('bank-acc').value||!document.getElementById('bank-key').value){return showToast('Completa cuenta y API Key',true)}document.getElementById('bank-action').innerHTML=`<span class="badge">${checkSvg} Vinculado</span>`;closeModal('bank');showToast('Banco vinculado');}
+  function connectApi(){if(!document.getElementById('api-url').value||!document.getElementById('api-key').value){return showToast('Completa Base URL y API Key',true)}document.getElementById('api-action').innerHTML=`<span class="badge">${checkSvg} Integrada</span>`;closeModal('api');showToast('API integrada correctamente');}
+
+  /* -------------------- RAMOS -------------------- */
+  const RAMOS=[
+    {id:'auto',nm:'Automotor',ico:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 17h14M3 17l2-7h14l2 7M7 17v3M17 17v3"/><circle cx="7" cy="14" r="1.5"/><circle cx="17" cy="14" r="1.5"/></svg>',on:true},
+    {id:'vida',nm:'Vida',ico:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',on:true},
+    {id:'salud',nm:'Salud',ico:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/><circle cx="12" cy="12" r="9"/></svg>',on:true},
+    {id:'hogar',nm:'Hogar',ico:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12 12 3l9 9M5 10v10h14V10"/></svg>',on:false},
+    {id:'incendio',nm:'Incendio',ico:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 17c1.7 0 3-1.3 3-3 0-2-1.3-3-2-4-1.6-2-1-4-1-4S6 8 6 13a6 6 0 0 0 12 0c0-3-2-4-3-6"/></svg>',on:false},
+    {id:'transporte',nm:'Transporte',ico:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="6" width="15" height="12" rx="1"/><path d="M16 10h4l3 3v5h-7"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="19" r="2"/></svg>',on:false},
+    {id:'soat',nm:'SOAT',ico:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',on:true},
+    {id:'caucion',nm:'Caución',ico:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',on:false},
+    {id:'rc',nm:'Resp. Civil',ico:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>',on:false},
+    {id:'agro',nm:'Agropecuario',ico:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 22c0-6 4-10 10-10s10 4 10 10M12 12V2M8 5l4-3 4 3"/></svg>',on:false},
+    {id:'micro',nm:'Microseguros',ico:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9 12h6M12 9v6"/></svg>',on:false},
+    {id:'tecnico',nm:'Riesgos Técnicos',ico:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>',on:false},
   ];
-  let editingBranch=null;
-  function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
-  function renderBranches(){
-    const c=document.getElementById('branchList');
-    if(!branches.length){c.innerHTML='<p class="empty">Sin ramos</p>';return;}
-    c.innerHTML=branches.map(b=>`
-      <div class="item-row">
-        <div class="min-w-0">
-          <p class="text-sm font-medium">${esc(b.name)}</p>
-          <p class="text-xs text-muted truncate">${esc(b.description)}</p>
-        </div>
-        <div class="row gap-1 shrink-0">
-          <button class="btn btn-ghost btn-icon" onclick="openBranch('${b.id}')" title="Editar">✎</button>
-          <button class="btn btn-ghost btn-icon btn-danger" onclick="removeBranch('${b.id}')" title="Eliminar">🗑</button>
-        </div>
-      </div>`).join('');
+  const grid=document.getElementById('ramos-grid');
+  function renderRamos(){
+    grid.innerHTML=RAMOS.map(r=>`<div class="ramo ${r.on?'on':''}" data-id="${r.id}" onclick="toggleRamo('${r.id}')">
+      <div class="ico">${r.ico}</div><div class="nm">${r.nm}</div>
+      <div class="ck">${checkSvg}</div></div>`).join('');
+    document.getElementById('ramos-count').textContent=RAMOS.filter(r=>r.on).length+' activos';
   }
-  function openBranch(id){
-    editingBranch=id?branches.find(b=>b.id===id):null;
-    document.getElementById('branchTitle').textContent=editingBranch?'Editar ramo':'Nuevo ramo';
-    document.getElementById('branchSave').textContent=editingBranch?'Guardar':'Crear';
-    document.getElementById('br_name').value=editingBranch?.name||'';
-    document.getElementById('br_desc').value=editingBranch?.description||'';
-    openModal('branch');
-  }
-  function saveBranch(){
-    const n=document.getElementById('br_name').value.trim(),d=document.getElementById('br_desc').value;
-    if(!n){showToast('Nombre requerido',true);return;}
-    if(editingBranch){editingBranch.name=n;editingBranch.description=d;showToast('Ramo actualizado');}
-    else{branches.push({id:Date.now().toString(),name:n,description:d});showToast('Ramo creado');}
-    closeModal('branch');renderBranches();
-  }
-  function removeBranch(id){branches=branches.filter(b=>b.id!==id);renderBranches();showToast('Ramo eliminado');}
-  renderBranches();
+  function toggleRamo(id){const r=RAMOS.find(x=>x.id===id);r.on=!r.on;renderRamos();}
+  renderRamos();
 
-  const roles=['Admin','Suscriptor','Agente','Cobranzas'];
-  const modules=[{k:'polizas',l:'Pólizas'},{k:'ramos',l:'Ramos'},{k:'clientes',l:'Clientes'},{k:'cobranzas',l:'Cobranzas'},{k:'reportes',l:'Reportes'},{k:'config',l:'Configuración'}];
-  const actions=['Ver','Crear','Editar','Eliminar'];
-  const perms={};
-  roles.forEach(r=>{perms[r]={};modules.forEach(m=>{perms[r][m.k]={
-    Ver: r==='Admin'||r==='Suscriptor'||(r==='Agente'&&['polizas','clientes','reportes'].includes(m.k))||(r==='Cobranzas'&&['polizas','cobranzas','clientes'].includes(m.k)),
-    Crear: r==='Admin'||(r==='Suscriptor'&&['polizas','clientes'].includes(m.k))||(r==='Agente'&&m.k==='clientes')||(r==='Cobranzas'&&m.k==='cobranzas'),
-    Editar: r==='Admin'||(r==='Suscriptor'&&['polizas','clientes'].includes(m.k))||(r==='Cobranzas'&&m.k==='cobranzas'),
-    Eliminar: r==='Admin'
-  };});});
-  let activeRole='Admin';
-  function renderTabs(){
-    document.getElementById('roleTabs').innerHTML=roles.map(r=>`<button class="tab ${r===activeRole?'active':''}" onclick="setRole('${r}')">${r}</button>`).join('');
+  /* -------------------- ROLES Y PERMISOS -------------------- */
+  const PERM_GROUPS=[
+    {title:'Comercial',mods:['Cotizaciones','Pólizas','Endosos','Renovaciones']},
+    {title:'Cobranzas',mods:['Recibos','Cobro QR','Anulaciones','Conciliación']},
+    {title:'Siniestros',mods:['Reportes','Liquidación','Pagos a terceros']},
+    {title:'Administración',mods:['Usuarios','Roles','Ramos','Integraciones','Auditoría']},
+  ];
+
+  let ROLES=[
+    {id:1,name:'Administrador',users:3,limit:'Sin límite',mfa:true,permsKey:['Acceso total','Auditoría','Roles']},
+    {id:2,name:'Gerente Comercial',users:5,limit:'Bs 500.000',mfa:true,permsKey:['Aprobar emisión','Anular','Reportes']},
+    {id:3,name:'Suscriptor',users:18,limit:'Bs 50.000',mfa:false,permsKey:['Cotizar','Emitir','Endosos']},
+    {id:4,name:'Cajero',users:12,limit:'Bs 10.000',mfa:true,permsKey:['Cobrar','Conciliar']},
+    {id:5,name:'Auditor',users:2,limit:'Solo lectura',mfa:true,permsKey:['Ver todo','Exportar logs']},
+    {id:6,name:'Productor / Agente',users:47,limit:'Bs 30.000',mfa:false,permsKey:['Cotizar','Emitir','Ver cartera propia']},
+  ];
+
+  const tbody=document.getElementById('roles-body');
+  function chipClass(p){if(/total|aprob|anul|roles|auditor/i.test(p))return'chip crit';if(/exportar|reportes/i.test(p))return'chip gold';return'chip';}
+  function renderRoles(){
+    tbody.innerHTML=ROLES.map(r=>`<tr>
+      <td>
+        <div style="font-weight:600">${r.name}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">${r.limit} · ${r.mfa?'2FA':'sin 2FA'}</div>
+      </td>
+      <td><span class="badge-muted badge">${r.users}</span></td>
+      <td><div class="perm-chips">${r.permsKey.map(p=>`<span class="${chipClass(p)}">${p}</span>`).join('')}</div></td>
+      <td class="actions">
+        <button class="btn btn-icon" onclick="openRoleModal(${r.id})" title="Editar">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>
+        <button class="btn btn-danger-icon" onclick="deleteRole(${r.id})" title="Eliminar">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        </button>
+      </td>
+    </tr>`).join('');
   }
-  function renderPanel(){
-    const r=activeRole;
-    document.getElementById('rolePanel').innerHTML=`
-      <table>
-        <thead><tr><th>Módulo</th>${actions.map(a=>`<th class="center">${a}</th>`).join('')}</tr></thead>
-        <tbody>${modules.map(m=>`<tr><td>${m.l}</td>${actions.map(a=>`<td class="center"><input type="checkbox" ${perms[r][m.k][a]?'checked':''} onchange="perms['${r}']['${m.k}']['${a}']=this.checked"/></td>`).join('')}</tr>`).join('')}</tbody>
-      </table>`;
+  function deleteRole(id){if(!confirm('¿Eliminar este rol?'))return;ROLES=ROLES.filter(r=>r.id!==id);renderRoles();showToast('Rol eliminado');}
+  renderRoles();
+
+  /* Render permission matrix */
+  const pgc=document.getElementById('perm-group-container');
+  pgc.innerHTML=PERM_GROUPS.map(g=>`<div class="perm-group">
+    <div class="perm-group-title">${g.title}</div>
+    ${g.mods.map(m=>`<div class="perm-row">
+      <div>${m}</div>
+      ${[0,1,2,3].map(i=>`<div class="perm-cell"><input type="checkbox" ${i===0?'checked':''}/></div>`).join('')}
+    </div>`).join('')}
+  </div>`).join('');
+
+  let editingRole=null;
+  function openRoleModal(id){
+    editingRole=id||null;
+    document.getElementById('role-title').textContent=id?'Editar rol':'Nuevo rol';
+    if(id){
+      const r=ROLES.find(x=>x.id===id);
+      document.getElementById('role-name').value=r.name;
+      document.getElementById('role-limit').value=r.limit.replace(/[^0-9.]/g,'')||'';
+    }else{
+      document.getElementById('role-name').value='';
+      document.getElementById('role-limit').value='';
+      document.getElementById('role-approval').value='';
+    }
+    openModal('role');
   }
-  function setRole(r){activeRole=r;renderTabs();renderPanel();}
-  renderTabs();renderPanel();
+  function saveRole(){
+    const nm=document.getElementById('role-name').value.trim();
+    if(!nm)return showToast('Ingresa un nombre',true);
+    if(editingRole){
+      const r=ROLES.find(x=>x.id===editingRole);r.name=nm;
+    }else{
+      ROLES.push({id:Date.now(),name:nm,users:0,limit:'Bs '+(document.getElementById('role-limit').value||'0'),mfa:true,permsKey:['Personalizado']});
+    }
+    renderRoles();closeModal('role');showToast(editingRole?'Rol actualizado':'Rol creado');
+  }
 </script>
 </body>
 </html>
