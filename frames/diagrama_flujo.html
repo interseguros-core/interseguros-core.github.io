@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagrama de Flujo — Ciclo Operativo</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  --primary:#0F766E; --primary-soft:#E6F4F2; --primary-dark:#0B5752;
+  --bg:#F5F7F6; --card:#FFFFFF; --border:#E2E8E6; --border-strong:#CBD5D1;
+  --text:#0F1F1D; --muted:#64746F; --muted-2:#8A968F;
+  --success:#16A34A; --success-soft:#DCFCE7;
+  --radius:10px; --radius-sm:6px;
+  --shadow:0 1px 2px rgba(15,31,29,.04), 0 1px 3px rgba(15,31,29,.06);
+  --shadow-lg:0 10px 25px -10px rgba(15,31,29,.15);
+}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+
+.header{background:var(--card);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:30}
+.header-left{display:flex;align-items:center;gap:14px;min-width:0}
+.icon-btn{width:34px;height:34px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;color:var(--muted);transition:all .15s}
+.icon-btn:hover{background:var(--bg);color:var(--text)}
+.title-block h1{margin:0;font-size:16px;font-weight:600;letter-spacing:-.01em;display:flex;align-items:center;gap:10px}
+.title-block .crumbs{font-size:12px;color:var(--muted);margin-top:2px}
+.status-pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;background:var(--primary-soft);color:var(--primary);text-transform:uppercase;letter-spacing:.04em}
+.status-pill::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--primary)}
+.header-right{display:flex;gap:8px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:500;transition:all .15s;border:1px solid transparent}
+.btn-outline{border-color:var(--border-strong);color:var(--text);background:var(--card)}
+.btn-outline:hover{border-color:var(--primary);color:var(--primary)}
+.btn-sm{padding:5px 10px;font-size:12px}
+
+.main{padding:28px;display:flex;flex-direction:column;align-items:center;min-height:calc(100vh - 64px)}
+
+.diagram-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-lg);padding:32px 40px;width:100%;max-width:1100px;overflow:auto}
+.diagram-card h2{margin:0 0 24px;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;gap:8px}
+.diagram-card h2 .dot{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--primary);color:#fff;font-size:11px;font-weight:700}
+
+.mermaid{display:flex;justify-content:center}
+
+.legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:24px;padding-top:20px;border-top:1px solid var(--border);justify-content:center}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+.legend-dot{width:12px;height:12px;border-radius:3px;background:var(--primary-soft);border:1px solid var(--primary);flex-shrink:0}
+.legend-line-solid{width:24px;height:2px;background:var(--primary);border-radius:1px;flex-shrink:0}
+.legend-line-dashed{width:24px;height:0;border-top:2px dashed var(--muted-2);flex-shrink:0}
+
+.toast{position:fixed;bottom:20px;right:20px;background:var(--text);color:#fff;padding:12px 18px;border-radius:8px;font-size:13px;box-shadow:var(--shadow-lg);transform:translateY(20px);opacity:0;transition:all .25s;z-index:100}
+.toast.show{transform:translateY(0);opacity:1}
+svg{display:block}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-left">
+    <button class="icon-btn" title="Volver">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </button>
+    <div class="title-block">
+      <h1>
+        Diagrama de Flujo
+        <span class="status-pill">Ciclo Operativo</span>
+      </h1>
+      <div class="crumbs">Sistema · Vista general del ciclo de operaciones</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <button class="btn btn-outline btn-sm" onclick="window.print()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Imprimir
+    </button>
+  </div>
+</header>
+
+<main class="main">
+  <div class="diagram-card">
+    <h2>
+      <span class="dot">→</span>
+      Flujo del Ciclo Operativo — Interseguros
+    </h2>
+
+    <div class="mermaid">
+flowchart TD
+    Start([Inicio del ciclo operativo]) --> C1[1. Compañía<br/>Alta de compañía aseguradora]
+    C1 --> C2[2. Contactos<br/>CRM con IA - Gestión de clientes]
+    C2 --> C3[3. Productos<br/>Catálogo de productos por compañía]
+    C3 --> C4[4. Certificados<br/>Emisión vía API o plataforma]
+    C4 --> C5[5. Plan de Pagos<br/>Configuración de cuotas]
+    C5 --> C6[6. Cobranzas<br/>Banco Económico: QR, tarjeta, débito]
+    C6 --> C7[7. Siniestros<br/>Gestión manual y asistida por IA]
+
+    subgraph Pilares[Los 4 Pilares Fundamentales]
+        P1[CRM con IA<br/>Recordatorios y atención 24/7]
+        P2[Emisión de Certificados<br/>Integración con APIs]
+        P3[Siniestros con IA<br/>Seguimiento en tiempo real]
+        P4[Cobranzas y Conciliaciones<br/>Broker no toca el dinero]
+    end
+
+    subgraph Integraciones[Integraciones]
+        I1[WhatsApp IA]
+        I2[Firma Digital]
+        I3[Cloud Broker]
+        I4[Banco Económico]
+        I5[Conciliaciones]
+    end
+
+    C2 -.-> P1
+    C4 -.-> P2
+    C7 -.-> P3
+    C6 -.-> P4
+
+    P1 -.-> I1
+    P2 -.-> I2
+    P2 -.-> I3
+    P4 -.-> I4
+    P4 -.-> I5
+
+    C7 --> End([Cierre del ciclo])
+    </div>
+
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-line-solid"></div>
+        <span>Flujo principal del ciclo</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-line-dashed"></div>
+        <span>Relación con pilares e integraciones</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot"></div>
+        <span>Nodo del ciclo operativo</span>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+      primaryColor: '#E6F4F2',
+      primaryTextColor: '#0F1F1D',
+      primaryBorderColor: '#0F766E',
+      lineColor: '#0F766E',
+      secondaryColor: '#F5F7F6',
+      tertiaryColor: '#DBEAFE',
+      clusterBkg: '#F5F7F6',
+      clusterBorder: '#CBD5D1',
+      edgeLabelBackground: '#ffffff',
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+      fontSize: '13px'
+    },
+    flowchart: {
+      curve: 'basis',
+      padding: 20,
+      nodeSpacing: 50,
+      rankSpacing: 60
+    }
+  });
+
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(window._tt);
+    window._tt = setTimeout(() => t.classList.remove('show'), 2500);
+  }
+</script>
+</body>
+</html>

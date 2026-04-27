@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Gestión de Campañas Promocionales</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#f7f8fa;--card:#fff;--border:#e5e7eb;--muted:#6b7280;--fg:#0f172a;
+    --primary:#0F766E;--primary-hover:#0d6660;--primary-soft:#ccfbf1;--primary-dark:#134e4a;
+    --gold:#D4AF37;--gold-soft:#fef3c7;--gold-dark:#92400e;
+    --destructive:#dc2626;--destructive-soft:#fee2e2;
+    --success:#16a34a;--success-soft:#dcfce7;
+    --warning:#ea580c;--warning-soft:#ffedd5;
+    --info:#2563eb;--info-soft:#dbeafe;
+    --hover:#f3f4f6;--header:#f9fafb;
+  }
+  html,body{background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  .container{max-width:1280px;margin:0 auto;padding:32px 24px}
+  h1{font-size:26px;font-weight:700;color:var(--fg)}
+  h2{font-size:18px;font-weight:600}
+  h3{font-size:16px;font-weight:600}
+  .subtitle{font-size:14px;color:var(--muted);margin-top:4px}
+
+  /* Header */
+  .page-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:24px;flex-wrap:wrap}
+  .header-title{display:flex;align-items:center;gap:12px}
+  .header-icon{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px;flex-shrink:0}
+  .header-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+  /* KPIs */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+  @media(max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:480px){.kpis{grid-template-columns:1fr}}
+  .kpi{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;align-items:center;gap:12px}
+  .kpi-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+  .kpi-icon.green{background:var(--primary-soft);color:var(--primary-dark)}
+  .kpi-icon.gold{background:var(--gold-soft);color:var(--gold-dark)}
+  .kpi-icon.blue{background:var(--info-soft);color:var(--info)}
+  .kpi-icon.orange{background:var(--warning-soft);color:var(--warning)}
+  .kpi-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;font-weight:500}
+  .kpi-value{font-size:22px;font-weight:700;line-height:1.1;margin-top:2px}
+  .kpi-sub{font-size:11px;color:var(--muted);margin-top:2px}
+
+  /* Toolbar */
+  .toolbar{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .search-box{flex:1;min-width:240px;position:relative}
+  .search-box input{width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px 9px 36px;font-size:14px;font-family:inherit;outline:none;transition:border-color .15s,box-shadow .15s}
+  .search-box input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(15,118,110,.15)}
+  .search-box::before{content:"🔍";position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;opacity:.6}
+  .filter-group{display:flex;gap:8px;align-items:center}
+
+  /* Inputs */
+  .input,.select,.textarea{width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:14px;background:#fff;font-family:inherit;color:var(--fg);outline:none;transition:border-color .15s,box-shadow .15s}
+  .input:focus,.select:focus,.textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(15,118,110,.15)}
+  .textarea{resize:vertical;min-height:80px}
+  .label{font-size:12px;color:var(--muted);font-weight:500;display:block;margin-bottom:4px}
+  .label-required::after{content:" *";color:var(--destructive)}
+
+  /* Buttons */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 16px;border-radius:8px;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;border:1px solid transparent;transition:all .15s;line-height:1;white-space:nowrap}
+  .btn-primary{background:var(--primary);color:#fff}
+  .btn-primary:hover{background:var(--primary-hover)}
+  .btn-gold{background:var(--gold);color:#fff}
+  .btn-gold:hover{background:var(--gold-dark)}
+  .btn-outline{background:#fff;border-color:var(--border);color:var(--fg)}
+  .btn-outline:hover{background:var(--hover)}
+  .btn-danger{background:var(--destructive);color:#fff}
+  .btn-danger:hover{opacity:.9}
+  .btn-ghost{background:transparent;color:var(--muted);padding:6px 8px}
+  .btn-ghost:hover{background:var(--hover);color:var(--fg)}
+  .btn-sm{padding:6px 12px;font-size:13px}
+
+  /* Tabs */
+  .tabs{display:flex;gap:4px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:4px;margin-bottom:16px;overflow-x:auto}
+  .tab{padding:8px 14px;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;color:var(--muted);background:transparent;border:0;white-space:nowrap;font-family:inherit;transition:all .15s}
+  .tab:hover{color:var(--fg);background:var(--hover)}
+  .tab.active{background:var(--primary);color:#fff}
+
+  /* Table */
+  .table-wrap{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+  table{width:100%;border-collapse:collapse}
+  thead th{background:var(--header);text-align:left;padding:12px 16px;font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--border);white-space:nowrap}
+  tbody td{padding:14px 16px;border-bottom:1px solid var(--border);font-size:14px;vertical-align:middle}
+  tbody tr:last-child td{border-bottom:0}
+  tbody tr{transition:background .12s}
+  tbody tr:hover{background:var(--hover)}
+  .table-empty{padding:48px 16px;text-align:center;color:var(--muted)}
+
+  /* Badges */
+  .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:999px;font-size:11px;font-weight:600;letter-spacing:.02em}
+  .badge-active{background:var(--success-soft);color:var(--success)}
+  .badge-scheduled{background:var(--info-soft);color:var(--info)}
+  .badge-paused{background:var(--warning-soft);color:var(--warning)}
+  .badge-expired{background:var(--hover);color:var(--muted)}
+  .badge-draft{background:#f3e8ff;color:#7c3aed}
+  .badge-gold{background:var(--gold-soft);color:var(--gold-dark)}
+  .badge-dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+
+  /* Discount type chip */
+  .discount-chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:8px;font-size:13px;font-weight:600;background:var(--primary-soft);color:var(--primary-dark)}
+  .discount-chip.gold{background:var(--gold-soft);color:var(--gold-dark)}
+
+  /* Modal */
+  .modal-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.55);display:none;align-items:flex-start;justify-content:center;z-index:50;padding:24px;overflow-y:auto}
+  .modal-backdrop.open{display:flex}
+  .modal{background:#fff;border-radius:14px;width:100%;max-width:880px;max-height:calc(100vh - 48px);display:flex;flex-direction:column;overflow:hidden;box-shadow:0 25px 50px -12px rgba(0,0,0,.25)}
+  .modal-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .modal-body{padding:24px;overflow-y:auto;flex:1}
+  .modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:8px;background:var(--header);align-items:center;flex-wrap:wrap}
+  .close-btn{background:transparent;border:0;color:var(--muted);cursor:pointer;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px}
+  .close-btn:hover{background:var(--hover);color:var(--fg)}
+
+  /* Wizard steps */
+  .wizard-steps{display:flex;align-items:center;gap:0;margin-bottom:24px;overflow-x:auto;padding-bottom:4px}
+  .wstep{display:flex;align-items:center;gap:8px;flex-shrink:0}
+  .wstep-circle{width:30px;height:30px;border-radius:50%;background:var(--hover);color:var(--muted);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;border:2px solid transparent;transition:all .2s}
+  .wstep.active .wstep-circle{background:var(--primary);color:#fff}
+  .wstep.completed .wstep-circle{background:var(--success);color:#fff}
+  .wstep-label{font-size:13px;font-weight:500;color:var(--muted);white-space:nowrap}
+  .wstep.active .wstep-label{color:var(--fg);font-weight:600}
+  .wstep-line{flex:1;height:2px;background:var(--border);margin:0 8px;min-width:20px}
+  .wstep.completed + .wstep .wstep-line,.wstep.completed .wstep-line{background:var(--success)}
+
+  /* Forms */
+  .form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  .form-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media(max-width:640px){.form-grid,.form-grid-3{grid-template-columns:1fr}}
+  .form-full{grid-column:1/-1}
+  .form-section{padding-top:16px;margin-top:16px;border-top:1px solid var(--border)}
+  .form-section:first-child{margin-top:0;padding-top:0;border-top:0}
+  .section-title{font-size:13px;font-weight:600;color:var(--primary-dark);text-transform:uppercase;letter-spacing:.04em;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+
+  /* Card-style picker */
+  .picker-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  @media(max-width:640px){.picker-grid{grid-template-columns:repeat(2,1fr)}}
+  .picker-card{border:2px solid var(--border);border-radius:10px;padding:12px;cursor:pointer;background:#fff;text-align:center;transition:all .15s;font-family:inherit;font-size:13px;color:var(--fg)}
+  .picker-card:hover{border-color:var(--primary);background:var(--primary-soft)}
+  .picker-card.selected{border-color:var(--primary);background:var(--primary-soft);font-weight:600}
+  .picker-icon{font-size:22px;margin-bottom:4px;display:block}
+
+  /* Product chips */
+  .product-list{display:flex;flex-wrap:wrap;gap:8px;padding:12px;border:1px solid var(--border);border-radius:8px;min-height:60px;background:#fafafa}
+  .product-tag{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--border);border-radius:999px;padding:5px 10px 5px 12px;font-size:13px}
+  .product-tag .remove{cursor:pointer;width:18px;height:18px;border-radius:50%;background:var(--hover);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--muted);border:0}
+  .product-tag .remove:hover{background:var(--destructive-soft);color:var(--destructive)}
+
+  /* Switch */
+  .switch{position:relative;display:inline-block;width:40px;height:22px;flex-shrink:0}
+  .switch input{opacity:0;width:0;height:0}
+  .slider{position:absolute;cursor:pointer;inset:0;background:#cbd5e1;transition:.2s;border-radius:999px}
+  .slider:before{position:absolute;content:"";height:16px;width:16px;left:3px;top:3px;background:#fff;transition:.2s;border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+  input:checked + .slider{background:var(--primary)}
+  input:checked + .slider:before{transform:translateX(18px)}
+
+  /* Toggle row */
+  .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px;border:1px solid var(--border);border-radius:8px;background:#fafafa}
+  .toggle-row + .toggle-row{margin-top:8px}
+  .toggle-info strong{font-size:13px;font-weight:600;display:block}
+  .toggle-info span{font-size:12px;color:var(--muted)}
+
+  /* Preview */
+  .preview-box{background:linear-gradient(135deg,#f0fdfa,#ecfeff);border:1px solid var(--primary-soft);border-radius:12px;padding:20px;margin-top:16px}
+  .preview-cert{background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:12px}
+  .preview-row{display:flex;justify-content:space-between;padding:6px 0;font-size:13px;border-bottom:1px dashed var(--border)}
+  .preview-row:last-child{border-bottom:0}
+  .preview-row .lbl{color:var(--muted)}
+  .preview-row .val{font-weight:600}
+  .price-old{text-decoration:line-through;color:var(--muted);font-size:12px;margin-right:6px}
+  .price-new{color:var(--primary);font-weight:700;font-size:15px}
+  .discount-tag{display:inline-block;background:var(--gold);color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;margin-left:6px;vertical-align:middle;text-transform:uppercase;letter-spacing:.04em}
+
+  /* Empty state */
+  .empty-state{text-align:center;padding:48px 16px;color:var(--muted)}
+  .empty-state .icon{font-size:42px;display:block;margin-bottom:12px}
+
+  /* Alert */
+  .alert{padding:12px 14px;border-radius:8px;font-size:13px;display:flex;align-items:flex-start;gap:10px;margin-bottom:16px}
+  .alert-info{background:var(--info-soft);color:var(--info);border:1px solid #bfdbfe}
+  .alert-warn{background:var(--warning-soft);color:var(--warning-dark,#9a3412);border:1px solid #fed7aa}
+  .alert-success{background:var(--success-soft);color:var(--success);border:1px solid #bbf7d0}
+
+  /* Stat row in cards */
+  .mini-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:8px}
+  .mini-stat{padding:10px;background:var(--header);border-radius:8px;text-align:center}
+  .mini-stat .v{font-size:16px;font-weight:700;color:var(--primary-dark)}
+  .mini-stat .l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-top:2px}
+
+  .row-actions{display:flex;gap:4px;justify-content:flex-end}
+
+  /* Promo banner row */
+  .promo-row{display:flex;align-items:center;gap:10px}
+  .promo-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;background:var(--gold-soft);color:var(--gold-dark)}
+  .promo-name{font-weight:600;font-size:14px}
+  .promo-code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;color:var(--muted)}
+
+  .text-muted{color:var(--muted)}
+  .text-right{text-align:right}
+  .text-center{text-align:center}
+  .nowrap{white-space:nowrap}
+  .hidden{display:none !important}
+  .mb-2{margin-bottom:8px}.mb-3{margin-bottom:12px}.mb-4{margin-bottom:16px}
+  .mt-2{margin-top:8px}.mt-3{margin-top:12px}.mt-4{margin-top:16px}
+</style>
+</head>
+<body>
+<div class="container">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-title">
+      <div class="header-icon">🎯</div>
+      <div>
+        <h1>Gestión de Campañas Promocionales</h1>
+        <p class="subtitle">Crea y administra promociones que aplican descuentos automáticos a los certificados emitidos.</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-outline btn-sm" onclick="exportCSV()">📥 Exportar</button>
+      <button class="btn btn-primary" onclick="openWizard()">＋ Nueva Campaña</button>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpis">
+    <div class="kpi">
+      <div class="kpi-icon green">🎯</div>
+      <div>
+        <div class="kpi-label">Campañas activas</div>
+        <div class="kpi-value" id="kpiActive">3</div>
+        <div class="kpi-sub">de 6 totales</div>
+      </div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-icon gold">💰</div>
+      <div>
+        <div class="kpi-label">Descuento promedio</div>
+        <div class="kpi-value" id="kpiDiscount">15.2%</div>
+        <div class="kpi-sub">campañas vigentes</div>
+      </div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-icon blue">📄</div>
+      <div>
+        <div class="kpi-label">Certificados c/ promo</div>
+        <div class="kpi-value" id="kpiCerts">487</div>
+        <div class="kpi-sub">últimos 30 días</div>
+      </div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-icon orange">📊</div>
+      <div>
+        <div class="kpi-label">Ahorro otorgado</div>
+        <div class="kpi-value" id="kpiSavings">Bs 142K</div>
+        <div class="kpi-sub">acumulado mes</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-filter="all">Todas</button>
+    <button class="tab" data-filter="active">Activas</button>
+    <button class="tab" data-filter="scheduled">Programadas</button>
+    <button class="tab" data-filter="paused">Pausadas</button>
+    <button class="tab" data-filter="expired">Vencidas</button>
+    <button class="tab" data-filter="draft">Borradores</button>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="search-box">
+      <input id="searchInput" placeholder="Buscar por nombre, código o producto..." oninput="renderTable()"/>
+    </div>
+    <div class="filter-group">
+      <select class="select" id="filterRamo" onchange="renderTable()" style="width:auto">
+        <option value="">Todos los ramos</option>
+        <option>Automotor</option>
+        <option>Vida</option>
+        <option>Salud</option>
+        <option>SOAT</option>
+        <option>Hogar</option>
+      </select>
+      <select class="select" id="filterType" onchange="renderTable()" style="width:auto">
+        <option value="">Tipo de descuento</option>
+        <option value="percent">Porcentaje</option>
+        <option value="fixed">Monto fijo</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Campaña</th>
+          <th>Ramo / Productos</th>
+          <th>Descuento</th>
+          <th>Vigencia</th>
+          <th>Uso</th>
+          <th>Estado</th>
+          <th class="text-right">Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ============== WIZARD MODAL ============== -->
+<div class="modal-backdrop" id="wizardModal">
+  <div class="modal" style="max-width:920px">
+    <div class="modal-header">
+      <div>
+        <h2 id="wizardTitle">Nueva Campaña Promocional</h2>
+        <p class="subtitle">Configura los detalles, productos aplicables y simulá el resultado.</p>
+      </div>
+      <button class="close-btn" onclick="closeWizard()">✕</button>
+    </div>
+    <div class="modal-body">
+      <!-- Steps -->
+      <div class="wizard-steps" id="wizardSteps">
+        <div class="wstep active" data-step="1"><div class="wstep-circle">1</div><div class="wstep-label">Información</div></div>
+        <div class="wstep"><div class="wstep-line"></div></div>
+        <div class="wstep" data-step="2"><div class="wstep-circle">2</div><div class="wstep-label">Productos</div></div>
+        <div class="wstep"><div class="wstep-line"></div></div>
+        <div class="wstep" data-step="3"><div class="wstep-circle">3</div><div class="wstep-label">Descuento</div></div>
+        <div class="wstep"><div class="wstep-line"></div></div>
+        <div class="wstep" data-step="4"><div class="wstep-circle">4</div><div class="wstep-label">Reglas</div></div>
+        <div class="wstep"><div class="wstep-line"></div></div>
+        <div class="wstep" data-step="5"><div class="wstep-circle">5</div><div class="wstep-label">Vista previa</div></div>
+      </div>
+
+      <!-- STEP 1: Info básica -->
+      <div class="step-content" data-step="1">
+        <div class="form-section">
+          <div class="section-title">📋 Información de la campaña</div>
+          <div class="form-grid">
+            <div class="form-full">
+              <label class="label label-required">Nombre de la campaña</label>
+              <input class="input" id="f_name" placeholder="Ej: Promo Navidad 2025"/>
+            </div>
+            <div>
+              <label class="label label-required">Código promocional</label>
+              <input class="input" id="f_code" placeholder="Ej: NAVIDAD25" style="text-transform:uppercase"/>
+            </div>
+            <div>
+              <label class="label">Tipo de campaña</label>
+              <select class="select" id="f_kind">
+                <option value="seasonal">🎄 Estacional / Temporada</option>
+                <option value="launch">🚀 Lanzamiento de producto</option>
+                <option value="loyalty">⭐ Fidelización</option>
+                <option value="acquisition">🎯 Captación nuevos clientes</option>
+                <option value="retention">🔄 Retención / Renovación</option>
+                <option value="partner">🤝 Convenio / Alianza</option>
+              </select>
+            </div>
+            <div class="form-full">
+              <label class="label">Descripción</label>
+              <textarea class="textarea" id="f_desc" placeholder="Detalle interno y mensaje promocional para el cliente."></textarea>
+            </div>
+            <div>
+              <label class="label">Color del banner</label>
+              <input type="color" class="input" id="f_color" value="#0F766E" style="height:40px;padding:4px"/>
+            </div>
+            <div>
+              <label class="label">Prioridad</label>
+              <select class="select" id="f_priority">
+                <option value="1">1 - Más alta</option>
+                <option value="2">2 - Alta</option>
+                <option value="3" selected>3 - Normal</option>
+                <option value="4">4 - Baja</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2: Productos -->
+      <div class="step-content hidden" data-step="2">
+        <div class="form-section">
+          <div class="section-title">🏷️ Ramo aplicable</div>
+          <div class="picker-grid" id="ramoPicker">
+            <button class="picker-card" data-ramo="Automotor"><span class="picker-icon">🚗</span>Automotor</button>
+            <button class="picker-card" data-ramo="Vida"><span class="picker-icon">❤️</span>Vida</button>
+            <button class="picker-card" data-ramo="Salud"><span class="picker-icon">🏥</span>Salud</button>
+            <button class="picker-card" data-ramo="SOAT"><span class="picker-icon">🛡️</span>SOAT</button>
+            <button class="picker-card" data-ramo="Hogar"><span class="picker-icon">🏠</span>Hogar</button>
+            <button class="picker-card" data-ramo="Accidentes"><span class="picker-icon">🚑</span>Accidentes Pers.</button>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="section-title">📦 Productos / Planes incluidos</div>
+          <div class="form-grid">
+            <div class="form-full">
+              <label class="label">Agregar producto</label>
+              <select class="select" id="productSelect" onchange="addProduct()">
+                <option value="">Seleccionar producto...</option>
+              </select>
+              <p class="text-muted" style="font-size:12px;margin-top:4px">Si no seleccionas ninguno, la promo aplicará a todos los productos del ramo.</p>
+              <div class="product-list mt-2" id="productList">
+                <span class="text-muted" style="font-size:13px">Aún no se agregaron productos.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3: Descuento -->
+      <div class="step-content hidden" data-step="3">
+        <div class="form-section">
+          <div class="section-title">💰 Tipo de descuento</div>
+          <div class="picker-grid" style="grid-template-columns:repeat(2,1fr)">
+            <button class="picker-card selected" data-disc="percent" onclick="setDiscType('percent')">
+              <span class="picker-icon">%</span>Porcentaje sobre prima
+            </button>
+            <button class="picker-card" data-disc="fixed" onclick="setDiscType('fixed')">
+              <span class="picker-icon">Bs</span>Monto fijo
+            </button>
+          </div>
+          <div class="form-grid mt-4">
+            <div>
+              <label class="label label-required">Valor del descuento</label>
+              <input class="input" id="f_discValue" type="number" min="0" step="0.01" value="15" oninput="updatePreview()"/>
+            </div>
+            <div>
+              <label class="label">Aplica sobre</label>
+              <select class="select" id="f_applyOn">
+                <option value="prima">Prima neta</option>
+                <option value="total">Prima total (con impuestos)</option>
+                <option value="cuota">Valor de cuota</option>
+              </select>
+            </div>
+            <div>
+              <label class="label">Descuento máximo (Bs)</label>
+              <input class="input" id="f_maxDisc" type="number" placeholder="Sin límite" min="0"/>
+            </div>
+            <div>
+              <label class="label">Prima mínima asegurable (Bs)</label>
+              <input class="input" id="f_minPrima" type="number" placeholder="Sin mínimo" min="0"/>
+            </div>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="section-title">🎁 Beneficios adicionales</div>
+          <div class="toggle-row">
+            <div class="toggle-info"><strong>Cuotas sin recargo</strong><span>Elimina recargo financiero hasta N cuotas</span></div>
+            <label class="switch"><input type="checkbox" id="f_noSurcharge"/><span class="slider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info"><strong>Cobertura adicional gratuita</strong><span>Suma asistencia o cobertura sin costo</span></div>
+            <label class="switch"><input type="checkbox" id="f_freeCov"/><span class="slider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info"><strong>Devolución de prima</strong><span>Cashback al final de la vigencia si no hay siniestros</span></div>
+            <label class="switch"><input type="checkbox" id="f_cashback"/><span class="slider"></span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4: Reglas -->
+      <div class="step-content hidden" data-step="4">
+        <div class="form-section">
+          <div class="section-title">📅 Vigencia</div>
+          <div class="form-grid">
+            <div>
+              <label class="label label-required">Fecha desde</label>
+              <input class="input" type="date" id="f_from"/>
+            </div>
+            <div>
+              <label class="label label-required">Fecha hasta</label>
+              <input class="input" type="date" id="f_to"/>
+            </div>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="section-title">🎯 Restricciones de uso</div>
+          <div class="form-grid">
+            <div>
+              <label class="label">Cantidad máxima de certificados</label>
+              <input class="input" type="number" id="f_maxCerts" placeholder="Ilimitado" min="1"/>
+            </div>
+            <div>
+              <label class="label">Por cliente (CI/NIT)</label>
+              <input class="input" type="number" id="f_maxPerClient" value="1" min="1"/>
+            </div>
+            <div>
+              <label class="label">Canal de venta</label>
+              <select class="select" id="f_channel">
+                <option value="all">Todos los canales</option>
+                <option value="agencia">Solo agencia / sucursal</option>
+                <option value="online">Solo online / web</option>
+                <option value="broker">Solo brokers</option>
+                <option value="bancassurance">Bancaseguros</option>
+              </select>
+            </div>
+            <div>
+              <label class="label">Tipo de cliente</label>
+              <select class="select" id="f_clientType">
+                <option value="all">Todos</option>
+                <option value="new">Solo nuevos clientes</option>
+                <option value="renewal">Solo renovaciones</option>
+                <option value="vip">Solo VIP / Premium</option>
+              </select>
+            </div>
+            <div>
+              <label class="label">Edad mínima asegurado</label>
+              <input class="input" type="number" id="f_ageMin" min="0"/>
+            </div>
+            <div>
+              <label class="label">Edad máxima asegurado</label>
+              <input class="input" type="number" id="f_ageMax" min="0"/>
+            </div>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="section-title">⚙️ Comportamiento</div>
+          <div class="toggle-row">
+            <div class="toggle-info"><strong>Aplicación automática</strong><span>Se aplica al emitir certificado sin requerir código</span></div>
+            <label class="switch"><input type="checkbox" id="f_auto" checked/><span class="slider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info"><strong>Acumulable con otras promos</strong><span>Permite combinar con otras campañas activas</span></div>
+            <label class="switch"><input type="checkbox" id="f_stack"/><span class="slider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info"><strong>Requiere aprobación</strong><span>Campaña debe ser aprobada por gerencia antes de activarse</span></div>
+            <label class="switch"><input type="checkbox" id="f_approval"/><span class="slider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info"><strong>Mostrar en cotizador público</strong><span>Visible en simulador web para potenciales clientes</span></div>
+            <label class="switch"><input type="checkbox" id="f_public" checked/><span class="slider"></span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 5: Preview -->
+      <div class="step-content hidden" data-step="5">
+        <div class="alert alert-info">
+          ℹ️ Esta es una simulación de cómo se verá el descuento aplicado al certificado emitido.
+        </div>
+        <div class="preview-box">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+            <div style="width:42px;height:42px;border-radius:10px;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff">🎁</div>
+            <div>
+              <h3 id="prevName" style="margin:0">Promo Navidad 2025</h3>
+              <p class="text-muted" style="font-size:12px">Código: <strong id="prevCode">NAVIDAD25</strong> · Vigencia: <span id="prevDates">—</span></p>
+            </div>
+          </div>
+          <div class="preview-cert">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+              <strong>Certificado N° AUTO-2025-001234</strong>
+              <span class="badge badge-gold">PROMO APLICADA</span>
+            </div>
+            <div class="preview-row"><span class="lbl">Producto</span><span class="val">Automotor — Plan Total</span></div>
+            <div class="preview-row"><span class="lbl">Suma asegurada</span><span class="val">Bs 85.000,00</span></div>
+            <div class="preview-row"><span class="lbl">Prima base</span><span class="val">Bs 4.250,00</span></div>
+            <div class="preview-row" style="color:var(--gold-dark)"><span class="lbl">🎁 Descuento campaña <span id="prevDiscLbl">(15%)</span></span><span class="val" id="prevDiscAmt">- Bs 637,50</span></div>
+            <div class="preview-row"><span class="lbl">Prima neta</span><span class="val"><span class="price-old">Bs 4.250,00</span><span class="price-new" id="prevFinal">Bs 3.612,50</span></span></div>
+            <div class="preview-row"><span class="lbl">Cuotas mensuales (12)</span><span class="val" id="prevCuota">Bs 301,04 c/u</span></div>
+          </div>
+          <div class="mini-stats">
+            <div class="mini-stat"><div class="v" id="prevSavings">Bs 637,50</div><div class="l">Ahorro cliente</div></div>
+            <div class="mini-stat"><div class="v" id="prevPercent">15%</div><div class="l">Descuento</div></div>
+            <div class="mini-stat"><div class="v">Auto</div><div class="l">Aplicación</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeWizard()">Cancelar</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-outline" id="btnPrev" onclick="prevStep()" disabled>← Anterior</button>
+        <button class="btn btn-outline" onclick="saveDraft()">Guardar borrador</button>
+        <button class="btn btn-primary" id="btnNext" onclick="nextStep()">Siguiente →</button>
+        <button class="btn btn-gold hidden" id="btnPublish" onclick="publishCampaign()">🚀 Publicar campaña</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============== DETAIL MODAL ============== -->
+<div class="modal-backdrop" id="detailModal">
+  <div class="modal" style="max-width:720px">
+    <div class="modal-header">
+      <div>
+        <h2 id="detailTitle">Detalle de Campaña</h2>
+        <p class="subtitle" id="detailSub">—</p>
+      </div>
+      <button class="close-btn" onclick="closeDetail()">✕</button>
+    </div>
+    <div class="modal-body" id="detailBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeDetail()">Cerrar</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-outline" onclick="duplicateCurrent()">📋 Duplicar</button>
+        <button class="btn btn-primary" onclick="editCurrent()">✏️ Editar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // -------- DATA --------
+  const PRODUCTS_BY_RAMO = {
+    "Automotor": ["Auto Total","Auto Estándar","Auto Básico","Auto Joven","Pick-up Comercial"],
+    "Vida": ["Vida Premium","Vida Familiar","Vida Crédito","Renta Educativa"],
+    "Salud": ["Salud Integral","Salud Familiar","Salud Senior"],
+    "SOAT": ["SOAT Particular","SOAT Público","SOAT Motorizado"],
+    "Hogar": ["Hogar Total","Hogar Esencial"],
+    "Accidentes": ["Accidentes Personales","AP Estudiantil","AP Deportivo"]
+  };
+
+  let campaigns = [
+    {id:1, name:"Promo Navidad 2025", code:"NAVIDAD25", kind:"seasonal", ramo:"Automotor", products:["Auto Total","Auto Estándar"], discType:"percent", discValue:15, from:"2025-12-01", to:"2025-12-31", status:"active", uses:142, maxUses:500, channel:"all", auto:true, color:"#dc2626", desc:"Promoción navideña con 15% de descuento en autos."},
+    {id:2, name:"Black Friday Vida", code:"BLACKVIDA", kind:"seasonal", ramo:"Vida", products:["Vida Premium"], discType:"percent", discValue:25, from:"2025-11-25", to:"2025-11-30", status:"scheduled", uses:0, maxUses:200, channel:"online", auto:true, color:"#000000", desc:"Descuento exclusivo Black Friday."},
+    {id:3, name:"Verano SOAT", code:"VERANO24", kind:"seasonal", ramo:"SOAT", products:[], discType:"fixed", discValue:50, from:"2025-01-01", to:"2025-03-31", status:"expired", uses:891, maxUses:1000, channel:"all", auto:true, color:"#f59e0b", desc:"Bs 50 de descuento en SOAT."},
+    {id:4, name:"Cliente Nuevo Salud", code:"BIENVENIDO", kind:"acquisition", ramo:"Salud", products:["Salud Integral","Salud Familiar"], discType:"percent", discValue:20, from:"2025-01-01", to:"2025-12-31", status:"active", uses:67, maxUses:null, channel:"all", auto:false, color:"#16a34a", desc:"Bienvenida a nuevos clientes de salud."},
+    {id:5, name:"Renovación VIP", code:"VIP2025", kind:"loyalty", ramo:"Automotor", products:["Auto Total"], discType:"percent", discValue:10, from:"2025-06-01", to:"2025-12-31", status:"paused", uses:34, maxUses:null, channel:"agencia", auto:true, color:"#7c3aed", desc:"Beneficio exclusivo VIP renovaciones."},
+    {id:6, name:"Convenio Banco XYZ", code:"BANCOXYZ", kind:"partner", ramo:"Hogar", products:[], discType:"percent", discValue:18, from:"2025-04-01", to:"2026-03-31", status:"active", uses:253, maxUses:null, channel:"bancassurance", auto:true, color:"#0F766E", desc:"Convenio bancaseguros."},
+    {id:7, name:"Lanzamiento Auto Joven", code:"JOVEN2025", kind:"launch", ramo:"Automotor", products:["Auto Joven"], discType:"percent", discValue:12, from:"2026-01-15", to:"2026-04-15", status:"draft", uses:0, maxUses:null, channel:"all", auto:true, color:"#0ea5e9", desc:"Lanzamiento producto Auto Joven."}
+  ];
+
+  let currentStep = 1;
+  let editingId = null;
+  let selectedProducts = [];
+  let selectedRamo = "";
+  let discType = "percent";
+
+  const STATUS_BADGE = {
+    active:{cls:"badge-active",label:"Activa"},
+    scheduled:{cls:"badge-scheduled",label:"Programada"},
+    paused:{cls:"badge-paused",label:"Pausada"},
+    expired:{cls:"badge-expired",label:"Vencida"},
+    draft:{cls:"badge-draft",label:"Borrador"}
+  };
+  const KIND_LABEL = {seasonal:"🎄 Estacional",launch:"🚀 Lanzamiento",loyalty:"⭐ Fidelización",acquisition:"🎯 Captación",retention:"🔄 Retención",partner:"🤝 Convenio"};
+
+  // -------- TABLE --------
+  let activeFilter = "all";
+  document.querySelectorAll('#tabs .tab').forEach(t=>{
+    t.addEventListener('click',()=>{
+      document.querySelectorAll('#tabs .tab').forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+      activeFilter = t.dataset.filter;
+      renderTable();
+    });
+  });
+
+  function fmt(n){return new Intl.NumberFormat('es-BO',{minimumFractionDigits:2,maximumFractionDigits:2}).format(n);}
+  function fmtDate(d){if(!d) return '—'; const [y,m,day]=d.split('-'); return `${day}/${m}/${y}`;}
+
+  function renderTable(){
+    const q = (document.getElementById('searchInput').value||'').toLowerCase();
+    const ramo = document.getElementById('filterRamo').value;
+    const type = document.getElementById('filterType').value;
+    const tbody = document.getElementById('tbody');
+    let list = campaigns.filter(c=>{
+      if(activeFilter!=='all' && c.status!==activeFilter) return false;
+      if(ramo && c.ramo!==ramo) return false;
+      if(type && c.discType!==type) return false;
+      if(q && !(c.name.toLowerCase().includes(q)||c.code.toLowerCase().includes(q)||c.products.some(p=>p.toLowerCase().includes(q)))) return false;
+      return true;
+    });
+
+    if(!list.length){
+      tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><span class="icon">🎯</span><strong>No hay campañas</strong><p style="font-size:13px;margin-top:4px">Crea una nueva campaña promocional para comenzar.</p></div></td></tr>`;
+      updateKPIs();
+      return;
+    }
+    tbody.innerHTML = list.map(c=>{
+      const st = STATUS_BADGE[c.status];
+      const disc = c.discType==='percent' ? `${c.discValue}%` : `Bs ${fmt(c.discValue)}`;
+      const usePct = c.maxUses ? Math.round(c.uses/c.maxUses*100) : null;
+      const useTxt = c.maxUses ? `${c.uses}/${c.maxUses} (${usePct}%)` : `${c.uses} certificados`;
+      const products = c.products.length ? c.products.slice(0,2).join(', ') + (c.products.length>2?` +${c.products.length-2}`:'') : 'Todos los productos';
+      return `<tr>
+        <td>
+          <div class="promo-row">
+            <div class="promo-icon" style="background:${c.color}22;color:${c.color}">${(KIND_LABEL[c.kind]||'🎯').slice(0,2)}</div>
+            <div>
+              <div class="promo-name">${c.name}</div>
+              <div class="promo-code">${c.code} · ${KIND_LABEL[c.kind]||''}</div>
+            </div>
+          </div>
+        </td>
+        <td><div style="font-weight:500">${c.ramo}</div><div class="text-muted" style="font-size:12px">${products}</div></td>
+        <td><span class="discount-chip ${c.discType==='fixed'?'gold':''}">${c.discType==='percent'?'%':'Bs'} ${disc}</span></td>
+        <td class="nowrap"><div style="font-size:13px">${fmtDate(c.from)}</div><div class="text-muted" style="font-size:12px">→ ${fmtDate(c.to)}</div></td>
+        <td><div style="font-size:13px">${useTxt}</div></td>
+        <td><span class="badge ${st.cls}"><span class="badge-dot"></span>${st.label}</span></td>
+        <td>
+          <div class="row-actions">
+            <button class="btn btn-ghost btn-sm" title="Ver detalle" onclick="openDetail(${c.id})">👁️</button>
+            <button class="btn btn-ghost btn-sm" title="Editar" onclick="editCampaign(${c.id})">✏️</button>
+            <button class="btn btn-ghost btn-sm" title="${c.status==='active'?'Pausar':'Activar'}" onclick="toggleStatus(${c.id})">${c.status==='active'?'⏸️':'▶️'}</button>
+            <button class="btn btn-ghost btn-sm" title="Duplicar" onclick="duplicate(${c.id})">📋</button>
+            <button class="btn btn-ghost btn-sm" title="Eliminar" onclick="removeCampaign(${c.id})">🗑️</button>
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+    updateKPIs();
+  }
+
+  function updateKPIs(){
+    const active = campaigns.filter(c=>c.status==='active');
+    const avg = active.length ? (active.filter(c=>c.discType==='percent').reduce((s,c)=>s+c.discValue,0)/Math.max(active.filter(c=>c.discType==='percent').length,1)) : 0;
+    document.getElementById('kpiActive').textContent = active.length;
+    document.getElementById('kpiActive').nextElementSibling.textContent = `de ${campaigns.length} totales`;
+    document.getElementById('kpiDiscount').textContent = avg.toFixed(1)+'%';
+    document.getElementById('kpiCerts').textContent = active.reduce((s,c)=>s+c.uses,0);
+  }
+
+  // -------- WIZARD --------
+  function openWizard(){
+    editingId = null;
+    document.getElementById('wizardTitle').textContent = 'Nueva Campaña Promocional';
+    resetForm();
+    currentStep = 1;
+    showStep();
+    document.getElementById('wizardModal').classList.add('open');
+  }
+  function closeWizard(){document.getElementById('wizardModal').classList.remove('open');}
+  function resetForm(){
+    selectedProducts=[]; selectedRamo=""; discType="percent";
+    ['f_name','f_code','f_desc','f_discValue','f_maxDisc','f_minPrima','f_maxCerts','f_from','f_to','f_ageMin','f_ageMax'].forEach(id=>{const el=document.getElementById(id); if(el) el.value='';});
+    document.getElementById('f_discValue').value=15;
+    document.getElementById('f_maxPerClient').value=1;
+    document.getElementById('f_color').value='#0F766E';
+    document.getElementById('f_kind').value='seasonal';
+    document.getElementById('f_priority').value='3';
+    document.getElementById('f_applyOn').value='prima';
+    document.getElementById('f_channel').value='all';
+    document.getElementById('f_clientType').value='all';
+    ['f_noSurcharge','f_freeCov','f_cashback','f_stack','f_approval'].forEach(id=>document.getElementById(id).checked=false);
+    document.getElementById('f_auto').checked=true;
+    document.getElementById('f_public').checked=true;
+    document.querySelectorAll('#ramoPicker .picker-card').forEach(b=>b.classList.remove('selected'));
+    document.querySelectorAll('[data-disc]').forEach(b=>b.classList.toggle('selected',b.dataset.disc==='percent'));
+    refreshProductList();
+  }
+  function showStep(){
+    document.querySelectorAll('.step-content').forEach(s=>s.classList.toggle('hidden', +s.dataset.step!==currentStep));
+    document.querySelectorAll('#wizardSteps .wstep[data-step]').forEach(s=>{
+      const n = +s.dataset.step;
+      s.classList.toggle('active', n===currentStep);
+      s.classList.toggle('completed', n<currentStep);
+    });
+    document.getElementById('btnPrev').disabled = currentStep===1;
+    const isLast = currentStep===5;
+    document.getElementById('btnNext').classList.toggle('hidden', isLast);
+    document.getElementById('btnPublish').classList.toggle('hidden', !isLast);
+    if(isLast) updatePreview();
+  }
+  function nextStep(){if(currentStep<5){currentStep++;showStep();}}
+  function prevStep(){if(currentStep>1){currentStep--;showStep();}}
+
+  // Ramo picker
+  document.querySelectorAll('#ramoPicker .picker-card').forEach(b=>{
+    b.addEventListener('click',()=>{
+      document.querySelectorAll('#ramoPicker .picker-card').forEach(x=>x.classList.remove('selected'));
+      b.classList.add('selected');
+      selectedRamo = b.dataset.ramo;
+      selectedProducts = [];
+      const sel = document.getElementById('productSelect');
+      sel.innerHTML = '<option value="">Seleccionar producto...</option>' + (PRODUCTS_BY_RAMO[selectedRamo]||[]).map(p=>`<option>${p}</option>`).join('');
+      refreshProductList();
+    });
+  });
+
+  function addProduct(){
+    const sel = document.getElementById('productSelect');
+    if(sel.value && !selectedProducts.includes(sel.value)){selectedProducts.push(sel.value); refreshProductList();}
+    sel.value='';
+  }
+  function removeProduct(p){selectedProducts = selectedProducts.filter(x=>x!==p); refreshProductList();}
+  function refreshProductList(){
+    const list = document.getElementById('productList');
+    if(!selectedProducts.length){
+      list.innerHTML = `<span class="text-muted" style="font-size:13px">${selectedRamo?'Aplicará a todos los productos del ramo '+selectedRamo:'Seleccione un ramo primero'}</span>`;
+      return;
+    }
+    list.innerHTML = selectedProducts.map(p=>`<span class="product-tag">${p}<button class="remove" onclick="removeProduct('${p}')">✕</button></span>`).join('');
+  }
+
+  function setDiscType(t){
+    discType = t;
+    document.querySelectorAll('[data-disc]').forEach(b=>b.classList.toggle('selected', b.dataset.disc===t));
+    updatePreview();
+  }
+
+  function updatePreview(){
+    const v = parseFloat(document.getElementById('f_discValue').value)||0;
+    const base = 4250;
+    const disc = discType==='percent' ? base*v/100 : Math.min(v,base);
+    const final = Math.max(base-disc,0);
+    document.getElementById('prevName').textContent = document.getElementById('f_name').value || 'Nueva Campaña';
+    document.getElementById('prevCode').textContent = (document.getElementById('f_code').value||'PROMO').toUpperCase();
+    const f = document.getElementById('f_from').value, t = document.getElementById('f_to').value;
+    document.getElementById('prevDates').textContent = (f&&t)?`${fmtDate(f)} → ${fmtDate(t)}`:'—';
+    document.getElementById('prevDiscLbl').textContent = discType==='percent'?`(${v}%)`:`(Bs ${fmt(v)} fijo)`;
+    document.getElementById('prevDiscAmt').textContent = `- Bs ${fmt(disc)}`;
+    document.getElementById('prevFinal').textContent = `Bs ${fmt(final)}`;
+    document.getElementById('prevCuota').textContent = `Bs ${fmt(final/12)} c/u`;
+    document.getElementById('prevSavings').textContent = `Bs ${fmt(disc)}`;
+    document.getElementById('prevPercent').textContent = discType==='percent'?`${v}%`:`Bs ${fmt(v)}`;
+  }
+  ['f_name','f_code','f_from','f_to','f_discValue'].forEach(id=>document.addEventListener('input',e=>{if(e.target.id===id) updatePreview();}));
+
+  function readForm(){
+    return {
+      name: document.getElementById('f_name').value.trim(),
+      code: document.getElementById('f_code').value.trim().toUpperCase(),
+      kind: document.getElementById('f_kind').value,
+      desc: document.getElementById('f_desc').value.trim(),
+      color: document.getElementById('f_color').value,
+      ramo: selectedRamo,
+      products: [...selectedProducts],
+      discType, discValue: parseFloat(document.getElementById('f_discValue').value)||0,
+      maxDisc: parseFloat(document.getElementById('f_maxDisc').value)||null,
+      minPrima: parseFloat(document.getElementById('f_minPrima').value)||null,
+      from: document.getElementById('f_from').value,
+      to: document.getElementById('f_to').value,
+      maxUses: parseInt(document.getElementById('f_maxCerts').value)||null,
+      maxPerClient: parseInt(document.getElementById('f_maxPerClient').value)||1,
+      channel: document.getElementById('f_channel').value,
+      clientType: document.getElementById('f_clientType').value,
+      auto: document.getElementById('f_auto').checked,
+      stack: document.getElementById('f_stack').checked,
+      publicShow: document.getElementById('f_public').checked
+    };
+  }
+
+  function publishCampaign(){
+    const d = readForm();
+    if(!d.name||!d.code||!d.from||!d.to||!d.ramo){alert('Completa nombre, código, ramo y vigencia.');return;}
+    const today = new Date().toISOString().slice(0,10);
+    const status = d.from > today ? 'scheduled' : (d.to < today ? 'expired' : 'active');
+    if(editingId){
+      campaigns = campaigns.map(c=>c.id===editingId?{...c,...d,status,uses:c.uses}:c);
+    } else {
+      campaigns.unshift({id:Date.now(), uses:0, status, ...d});
+    }
+    closeWizard(); renderTable();
+  }
+  function saveDraft(){
+    const d = readForm();
+    if(!d.name){alert('Escribe al menos un nombre para guardar el borrador.');return;}
+    if(editingId){
+      campaigns = campaigns.map(c=>c.id===editingId?{...c,...d,status:'draft'}:c);
+    } else {
+      campaigns.unshift({id:Date.now(), uses:0, status:'draft', ramo:d.ramo||'Automotor', ...d});
+    }
+    closeWizard(); renderTable();
+  }
+
+  // Actions
+  function editCampaign(id){
+    const c = campaigns.find(x=>x.id===id); if(!c) return;
+    editingId = id;
+    document.getElementById('wizardTitle').textContent = 'Editar Campaña';
+    resetForm();
+    document.getElementById('f_name').value=c.name;
+    document.getElementById('f_code').value=c.code;
+    document.getElementById('f_kind').value=c.kind;
+    document.getElementById('f_desc').value=c.desc||'';
+    document.getElementById('f_color').value=c.color||'#0F766E';
+    document.getElementById('f_discValue').value=c.discValue;
+    document.getElementById('f_from').value=c.from;
+    document.getElementById('f_to').value=c.to;
+    if(c.maxUses) document.getElementById('f_maxCerts').value=c.maxUses;
+    document.getElementById('f_channel').value=c.channel||'all';
+    document.getElementById('f_auto').checked=c.auto;
+    selectedRamo=c.ramo;
+    document.querySelectorAll('#ramoPicker .picker-card').forEach(b=>b.classList.toggle('selected', b.dataset.ramo===c.ramo));
+    const sel = document.getElementById('productSelect');
+    sel.innerHTML = '<option value="">Seleccionar producto...</option>' + (PRODUCTS_BY_RAMO[c.ramo]||[]).map(p=>`<option>${p}</option>`).join('');
+    selectedProducts=[...c.products];
+    refreshProductList();
+    setDiscType(c.discType);
+    currentStep=1; showStep();
+    document.getElementById('wizardModal').classList.add('open');
+  }
+  function duplicate(id){
+    const c = campaigns.find(x=>x.id===id); if(!c) return;
+    campaigns.unshift({...c, id:Date.now(), name:c.name+' (copia)', code:c.code+'_COPY', status:'draft', uses:0});
+    renderTable();
+  }
+  function toggleStatus(id){
+    campaigns = campaigns.map(c=>{
+      if(c.id!==id) return c;
+      const next = c.status==='active'?'paused':'active';
+      return {...c, status: next};
+    });
+    renderTable();
+  }
+  function removeCampaign(id){
+    if(!confirm('¿Eliminar esta campaña?')) return;
+    campaigns = campaigns.filter(c=>c.id!==id);
+    renderTable();
+  }
+
+  // Detail
+  let detailId = null;
+  function openDetail(id){
+    const c = campaigns.find(x=>x.id===id); if(!c) return;
+    detailId = id;
+    const st = STATUS_BADGE[c.status];
+    const disc = c.discType==='percent'?`${c.discValue}%`:`Bs ${fmt(c.discValue)}`;
+    document.getElementById('detailTitle').textContent = c.name;
+    document.getElementById('detailSub').innerHTML = `<span class="badge ${st.cls}">${st.label}</span> · Código <strong>${c.code}</strong> · ${KIND_LABEL[c.kind]||''}`;
+    document.getElementById('detailBody').innerHTML = `
+      ${c.desc?`<div class="alert alert-info">📝 ${c.desc}</div>`:''}
+      <div class="form-section">
+        <div class="section-title">📦 Aplicación</div>
+        <div class="form-grid">
+          <div><div class="label">Ramo</div><div><strong>${c.ramo}</strong></div></div>
+          <div><div class="label">Canal</div><div><strong>${c.channel}</strong></div></div>
+          <div class="form-full"><div class="label">Productos</div><div>${c.products.length?c.products.map(p=>`<span class="product-tag" style="margin:2px">${p}</span>`).join(''):'<em class="text-muted">Todos los productos del ramo</em>'}</div></div>
+        </div>
+      </div>
+      <div class="form-section">
+        <div class="section-title">💰 Descuento y vigencia</div>
+        <div class="mini-stats" style="grid-template-columns:repeat(4,1fr)">
+          <div class="mini-stat"><div class="v">${disc}</div><div class="l">Descuento</div></div>
+          <div class="mini-stat"><div class="v">${c.uses}</div><div class="l">Usos</div></div>
+          <div class="mini-stat"><div class="v">${c.maxUses||'∞'}</div><div class="l">Máximo</div></div>
+          <div class="mini-stat"><div class="v">${c.auto?'Sí':'No'}</div><div class="l">Automática</div></div>
+        </div>
+        <div class="form-grid mt-3">
+          <div><div class="label">Vigencia</div><div><strong>${fmtDate(c.from)} → ${fmtDate(c.to)}</strong></div></div>
+          <div><div class="label">Aplicación</div><div><strong>${c.auto?'Automática al emitir':'Requiere código manual'}</strong></div></div>
+        </div>
+      </div>
+      <div class="form-section">
+        <div class="section-title">📊 Impacto estimado</div>
+        <div class="preview-cert">
+          <div class="preview-row"><span class="lbl">Prima base ejemplo</span><span class="val">Bs 4.250,00</span></div>
+          <div class="preview-row" style="color:var(--gold-dark)"><span class="lbl">Descuento aplicado</span><span class="val">- Bs ${fmt(c.discType==='percent'?4250*c.discValue/100:c.discValue)}</span></div>
+          <div class="preview-row"><span class="lbl">Prima final</span><span class="val price-new">Bs ${fmt(Math.max(4250-(c.discType==='percent'?4250*c.discValue/100:c.discValue),0))}</span></div>
+        </div>
+      </div>
+    `;
+    document.getElementById('detailModal').classList.add('open');
+  }
+  function closeDetail(){document.getElementById('detailModal').classList.remove('open');}
+  function editCurrent(){if(detailId){closeDetail(); editCampaign(detailId);}}
+  function duplicateCurrent(){if(detailId){duplicate(detailId); closeDetail();}}
+
+  function exportCSV(){
+    const rows = [['Nombre','Código','Tipo','Ramo','Productos','Descuento','Desde','Hasta','Estado','Usos']];
+    campaigns.forEach(c=>rows.push([c.name,c.code,KIND_LABEL[c.kind]||c.kind,c.ramo,c.products.join('|')||'Todos',c.discType==='percent'?c.discValue+'%':'Bs '+c.discValue,c.from,c.to,STATUS_BADGE[c.status].label,c.uses]));
+    const csv = rows.map(r=>r.map(x=>`"${String(x).replace(/"/g,'""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
+    const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='campanas.csv'; a.click();
+  }
+
+  // Close modals on backdrop click
+  document.querySelectorAll('.modal-backdrop').forEach(m=>m.addEventListener('click',e=>{if(e.target===m) m.classList.remove('open');}));
+
+  renderTable();
+</script>
+</body>
+</html>

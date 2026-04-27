@@ -47,6 +47,7 @@
                     <span class="pill red">⚖️ Conciliaciones</span>
                 </div>
             </div>
+
             <div class="hero-steps">
                 <div class="hs-step"><span class="hs-num">1</span><span class="hs-label">Compañía</span></div>
                 <div class="hs-arrow">↓</div>
@@ -91,10 +92,117 @@
 
     <div class="search-status" id="searchStatus"></div>
 
+    <!-- ═══════════ ACCORDION GROUP 1: Diagrama de flujo ═══════════ -->
     <div class="flow-divider">
         <div class="flow-divider-line"></div>
         <div class="flow-divider-label">
-            <span class="fdl-tag">Flujo por Compañía</span>
+            <span class="fdl-tag">Diagrama de flujo General</span>
+            <span class="fdl-title">Muestra las partes mas importantes del sistema</span>
+            <span class="fdl-sub">A partir de este diagrama se obtendran nuevos subdiagramas al momento del desarrollo.</span>
+        </div>
+        <div class="flow-divider-line"></div>
+    </div>
+
+    <div class="acc-group">
+        <button class="acc-group-btn" data-target="body-flujo-diagrama">
+            <div class="acc-gbtn-icon">🏢</div>
+            <div class="acc-gbtn-text">
+                <div class="acc-gbtn-title">Flujo General</div>
+                <div class="acc-gbtn-sub"></div>
+            </div>
+            <span class="acc-gbtn-count">Diagrama</span>
+            <span class="acc-gbtn-arrow">▼</span>
+        </button>
+        <div class="acc-group-body" id="body-flujo-diagrama">
+            <div class="acc-group-inner">
+                <div class="acc-group-inner-pad">
+                    <div class="diagram-card">
+
+                        <div class="mermaid">
+                            <iframe src="frames/diagrama_flujo.html" style="width:100%; height:1100px; border:none;"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════ Diagrama de infraestructura ═══════════ -->
+    <div class="flow-divider">
+        <div class="flow-divider-line"></div>
+        <div class="flow-divider-label">
+            <span class="fdl-tag">Diagrama de infraestructura</span>
+            <span class="fdl-title">Muestra los servidores y la interconexion entre ellos</span>
+            <span class="fdl-sub">A partir de este diagrama se desarrollara las conexiones entre sevidores.</span>
+        </div>
+        <div class="flow-divider-line"></div>
+    </div>
+
+    <div class="acc-group">
+        <button class="acc-group-btn" data-target="body-infraestructura">
+            <div class="acc-gbtn-icon">🖥</div>
+            <div class="acc-gbtn-text">
+                <div class="acc-gbtn-title">Infraestructura</div>
+                <div class="acc-gbtn-sub"></div>
+            </div>
+            <span class="acc-gbtn-count">Diagrama</span>
+            <span class="acc-gbtn-arrow">▼</span>
+        </button>
+        <div class="acc-group-body" id="body-infraestructura">
+            <div class="acc-group-inner">
+                <div class="acc-group-inner-pad">
+                    <div class="diagram-card">
+
+                        <div class="mermaid">
+                            <img src="img/infraestructura.png" alt="Diagrama de Infraestructura" style="width:100%; height:auto;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ═══════════ Emision de certificados ═══════════ -->
+    <div class="flow-divider">
+        <div class="flow-divider-line"></div>
+        <div class="flow-divider-label">
+            <span class="fdl-tag">Emision de certificados</span>
+            <span class="fdl-title">Ejemplo basico de la emision de certificados</span>
+            <span class="fdl-sub">Asi es como se vera aproximadamente la emision de certificados de una compania.</span>
+        </div>
+        <div class="flow-divider-line"></div>
+    </div>
+
+    <div class="acc-group">
+        <button class="acc-group-btn" data-target="body-emsion-certificados">
+            <div class="acc-gbtn-icon">📄</div>
+            <div class="acc-gbtn-text">
+                <div class="acc-gbtn-title">Emision de certificados</div>
+                <div class="acc-gbtn-sub"></div>
+            </div>
+            <span class="acc-gbtn-count">Emitir</span>
+            <span class="acc-gbtn-arrow">▼</span>
+        </button>
+        <div class="acc-group-body" id="body-emsion-certificados">
+            <div class="acc-group-inner">
+                <div class="acc-group-inner-pad">
+                    <div class="diagram-card">
+
+                        <div class="mermaid">
+                            <iframe src="frames/emision-automotor.html" style="width:100%; height:1100px; border:none;"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════ ACCORDION GROUP 2: Ajustes por Compania ═══════════ -->
+    <div class="flow-divider">
+        <div class="flow-divider-line"></div>
+        <div class="flow-divider-label">
+            <span class="fdl-tag">Configuraciones por Compañía</span>
             <span class="fdl-title">Todo comienza creando una Compañía</span>
             <span class="fdl-sub">El alta de una compañía aseguradora es el paso uno y obligatorio.</span>
         </div>
@@ -102,16 +210,16 @@
     </div>
 
     <div class="acc-group">
-        <button class="acc-group-btn open" data-target="body-flujo">
+        <button class="acc-group-btn" data-target="body-flujo">
             <div class="acc-gbtn-icon">🏢</div>
             <div class="acc-gbtn-text">
-                <div class="acc-gbtn-title">Flujo por Compañía</div>
+                <div class="acc-gbtn-title">Ajustes por Compañía</div>
                 <div class="acc-gbtn-sub">7 pasos del ciclo operativo completo</div>
             </div>
             <span class="acc-gbtn-count">7 pasos</span>
             <span class="acc-gbtn-arrow">▼</span>
         </button>
-        <div class="acc-group-body open" id="body-flujo">
+        <div class="acc-group-body" id="body-flujo">
             <div class="acc-group-inner"><div class="acc-group-inner-pad">
 
                 <div class="acc-item" id="step-companias">
@@ -634,6 +742,27 @@
                                 <span class="callout-icon">⚠️</span>
                                 <div>El flujo siempre indicará al asegurado <strong>cuándo interactúa con IA</strong> y cuándo se transfiere a un asesor humano, evitando frustración en situaciones de alta vulnerabilidad emocional.</div>
                             </div>
+                        </div></div>
+                    </div>
+                </div>
+
+                <div class="acc-item" id="step-campanas">
+                    <button class="acc-item-btn" data-target="item-campanas">
+                        <div class="acc-item-icon i-red">⚡</div>
+                        <div class="acc-item-text">
+                            <div class="acc-item-title">Gestión de Campanas</div>
+                            <div class="acc-item-sub">Cada compañía gestiona sus campanas </div>
+                        </div>
+                        <div class="acc-item-tags"><span class="itag itag-red">Gestion</span></div>
+                        <span class="acc-item-arrow">▼</span>
+                    </button>
+                    <div class="acc-item-body" id="item-campanas">
+                        <div class="acc-item-inner"><div class="acc-item-inner-pad">
+                            <p class="item-desc">Se gestionan diferentes campanas con diferentes sus propios descuentos y vencimientos.</p>
+                            <div>
+                                <iframe src="frames/gestion-campanas.html" style="width:100%; height:1500px; border:none;"></iframe>
+                            </div>
+                            
                         </div></div>
                     </div>
                 </div>
@@ -1336,10 +1465,8 @@
                 </div>
 
             </div></div>
-        </div>
     </div>
-
-</div><!-- /.page -->
+</div>
 
 <script>
 /* ── Accordion toggle ── */

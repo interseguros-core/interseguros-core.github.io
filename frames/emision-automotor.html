@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emisión de Certificado - Automotor</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.0/jspdf.plugin.autotable.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green-900:#0d3b2e;--green-700:#15724f;--green-600:#1a8a5f;--green-500:#22a36f;
+  --green-50:#e6f5ee;--green-100:#cdebdc;
+  --gold-600:#b8860b;--gold-500:#d4a017;--gold-400:#e6b833;--gold-100:#fdf3d4;
+  --ink:#102a23;--muted:#6b7a73;--line:#e3ece7;--bg:#f4f8f6;--white:#fff;
+  --danger:#c0392b;--info:#1c6dd0;
+  --shadow:0 4px 18px rgba(13,59,46,.08);
+  --radius:12px;
+}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;min-height:100vh}
+.app{max-width:1400px;margin:0 auto;padding:16px}
+.header{background:linear-gradient(135deg,var(--green-900),var(--green-700));color:#fff;padding:20px 24px;border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.header h1{font-size:22px;display:flex;align-items:center;gap:10px}
+.header .badge{background:var(--gold-500);color:var(--green-900);padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700}
+.header .meta{font-size:13px;opacity:.9;display:flex;gap:14px;flex-wrap:wrap}
+
+/* Stepper */
+.stepper{background:#fff;border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);margin-bottom:16px;display:flex;gap:6px;overflow-x:auto}
+.step{flex:1;min-width:130px;display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;border:1px solid transparent;transition:.2s;font-size:13px}
+.step:hover{background:var(--green-50)}
+.step.active{background:var(--green-700);color:#fff}
+.step.done{background:var(--green-50);color:var(--green-700);border-color:var(--green-100)}
+.step .num{width:26px;height:26px;border-radius:50%;background:#e3ece7;color:var(--ink);display:grid;place-items:center;font-weight:700;font-size:12px;flex-shrink:0}
+.step.active .num{background:var(--gold-500);color:var(--green-900)}
+.step.done .num{background:var(--green-600);color:#fff}
+
+/* Card */
+.card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:16px;overflow:hidden}
+.card-header{background:linear-gradient(90deg,var(--green-700),var(--green-600));color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.card-header h2{font-size:16px;display:flex;align-items:center;gap:8px}
+.card-body{padding:20px}
+.subcard{border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:14px;background:#fbfdfc}
+.subcard h3{font-size:14px;color:var(--green-700);margin-bottom:10px;display:flex;align-items:center;gap:6px;border-bottom:1px dashed var(--green-100);padding-bottom:6px}
+
+/* Form grid */
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+.g6{grid-template-columns:repeat(6,1fr)}
+@media(max-width:900px){.g3,.g4,.g6{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.g2,.g3,.g4,.g6{grid-template-columns:1fr}}
+.col-2{grid-column:span 2}.col-3{grid-column:span 3}.col-4{grid-column:span 4}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:12px;font-weight:600;color:var(--ink)}
+.field label.req::after{content:" *";color:var(--danger)}
+.field input,.field select,.field textarea{padding:9px 11px;border:1px solid var(--line);border-radius:8px;font-size:13px;font-family:inherit;background:#fff;transition:.15s;width:100%}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--green-600);box-shadow:0 0 0 3px rgba(26,138,95,.15)}
+.field input[readonly]{background:var(--green-50);color:var(--green-900);font-weight:600}
+.field .hint{font-size:11px;color:var(--muted)}
+.input-group{display:flex;gap:6px}
+.input-group input{flex:1}
+
+/* Buttons */
+.btn{padding:9px 16px;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:.15s;font-family:inherit}
+.btn-primary{background:var(--green-700);color:#fff}
+.btn-primary:hover{background:var(--green-900)}
+.btn-gold{background:var(--gold-500);color:var(--green-900)}
+.btn-gold:hover{background:var(--gold-400)}
+.btn-ghost{background:#fff;color:var(--green-700);border:1px solid var(--green-100)}
+.btn-ghost:hover{background:var(--green-50)}
+.btn-sm{padding:5px 10px;font-size:12px}
+.btn-danger{background:#fff;color:var(--danger);border:1px solid #f5cfca}
+
+/* Footer nav */
+.foot{display:flex;justify-content:space-between;padding:14px 20px;border-top:1px solid var(--line);background:#fbfdfc;flex-wrap:wrap;gap:10px}
+
+/* Step content visibility */
+.step-content{display:none}
+.step-content.active{display:block}
+
+/* Tables */
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}
+th{background:var(--green-700);color:#fff;text-align:left;padding:9px;font-weight:600;font-size:12px}
+td{padding:8px 9px;border-bottom:1px solid var(--line)}
+tr:nth-child(even) td{background:#fafdfb}
+tfoot td{background:var(--gold-100);font-weight:700;color:var(--green-900)}
+
+/* Chips & badges */
+.chip{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:14px;font-size:11px;font-weight:600;background:var(--green-50);color:var(--green-700)}
+.chip.gold{background:var(--gold-100);color:var(--gold-600)}
+.chip.danger{background:#fde4e1;color:var(--danger)}
+
+/* Toast */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--green-700);color:#fff;padding:14px 18px;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.2);z-index:1000;transform:translateY(100px);opacity:0;transition:.3s;max-width:340px;font-size:13px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.danger{background:var(--danger)}
+.toast.gold{background:var(--gold-500);color:var(--green-900)}
+
+/* Summary */
+.summary-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px dashed var(--line);font-size:13px}
+.summary-row:last-child{border-bottom:none}
+.summary-row .lbl{color:var(--muted)}
+.summary-row .val{font-weight:600;color:var(--ink)}
+
+/* Photo upload */
+.photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:8px}
+.photo-slot{aspect-ratio:1;border:2px dashed var(--green-100);border-radius:10px;display:grid;place-items:center;cursor:pointer;background:#fbfdfc;transition:.2s;text-align:center;padding:8px;font-size:11px;color:var(--muted);position:relative;overflow:hidden}
+.photo-slot:hover{border-color:var(--green-600);background:var(--green-50)}
+.photo-slot.has-img{border-style:solid;border-color:var(--green-600)}
+.photo-slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.photo-slot .lbl-tag{position:absolute;bottom:0;left:0;right:0;background:rgba(13,59,46,.75);color:#fff;font-size:10px;padding:3px;text-align:center}
+
+/* Bonus info banner */
+.banner{background:linear-gradient(90deg,var(--gold-100),#fff);border-left:4px solid var(--gold-500);padding:10px 14px;border-radius:6px;font-size:12px;color:var(--green-900);margin-bottom:10px;display:flex;gap:8px;align-items:flex-start}
+
+/* Cobertura toggles */
+.cob-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;margin-top:10px}
+.cob-item{border:1px solid var(--line);border-radius:8px;padding:9px 11px;background:#fff;display:flex;justify-content:space-between;align-items:center;gap:8px;cursor:pointer;transition:.15s;font-size:12px}
+.cob-item:hover{border-color:var(--green-600)}
+.cob-item.on{background:var(--green-50);border-color:var(--green-600)}
+.cob-item .name{font-weight:600;color:var(--ink)}
+.cob-item .sa{font-size:11px;color:var(--muted)}
+.cob-item input[type=checkbox]{accent-color:var(--green-600);width:16px;height:16px}
+</style>
+</head>
+<body>
+<div class="app">
+
+<div class="header">
+  <div>
+    <h1>🚗 Emisión de Certificado — Ramo Automotor <span class="badge">v1.0</span></h1>
+    <div class="meta">
+      <span>📋 Solicitud Nº: <strong id="solNum">AUT-2025-0001</strong></span>
+      <span>👤 Emisor: <strong>Carlos Mendoza</strong></span>
+      <span>🏢 Sucursal: <strong>La Paz Central</strong></span>
+    </div>
+  </div>
+  <button class="btn btn-ghost" onclick="resetWizard()">↻ Nueva Solicitud</button>
+</div>
+
+<!-- Stepper -->
+<div class="stepper" id="stepper"></div>
+
+<!-- STEP 1: Tomador -->
+<div class="step-content active" data-step="1">
+  <div class="card">
+    <div class="card-header"><h2>👤 Paso 1 — Datos del Tomador</h2><span class="chip gold">Persona que paga la póliza</span></div>
+    <div class="card-body">
+      <div class="grid g4">
+        <div class="field"><label>Tipo de Persona</label>
+          <select id="tomTipoPersona"><option>Natural</option><option>Jurídica</option></select></div>
+        <div class="field"><label class="req">Tipo Documento</label>
+          <select id="tomTipoDoc"><option>CI</option><option>NIT</option><option>Pasaporte</option><option>RUN</option></select></div>
+        <div class="field col-2"><label class="req">Número de Documento</label>
+          <div class="input-group"><input id="tomDoc" placeholder="Ej: 1234567 LP">
+          <button class="btn btn-primary btn-sm" onclick="buscarTomador()">🔍 Obtener</button></div></div>
+        <div class="field col-2"><label class="req">Nombre / Razón Social</label><input id="tomNombre" placeholder="Nombres completos"></div>
+        <div class="field col-2"><label>Apellidos</label><input id="tomApellidos" placeholder="Paterno Materno"></div>
+        <div class="field"><label>Fecha Nacimiento</label><input type="date" id="tomFechaNac"></div>
+        <div class="field"><label>Estado Civil</label>
+          <select id="tomEstadoCivil"><option>Soltero(a)</option><option>Casado(a)</option><option>Divorciado(a)</option><option>Viudo(a)</option></select></div>
+        <div class="field"><label>Género</label>
+          <select id="tomGenero"><option>Masculino</option><option>Femenino</option></select></div>
+        <div class="field"><label>Nacionalidad</label><input id="tomNac" value="Boliviana"></div>
+        <div class="field col-2"><label class="req">Dirección</label><input id="tomDir" placeholder="Av./Calle, Nº, Zona"></div>
+        <div class="field"><label>Ciudad</label>
+          <select id="tomCiudad"><option>La Paz</option><option>Cochabamba</option><option>Santa Cruz</option><option>Oruro</option><option>Potosí</option><option>Sucre</option><option>Tarija</option><option>Beni</option><option>Pando</option></select></div>
+        <div class="field"><label>Teléfono</label><input id="tomTel" placeholder="+591 7..."></div>
+        <div class="field col-2"><label>Correo Electrónico</label><input type="email" id="tomEmail" placeholder="correo@dominio.com"></div>
+        <div class="field"><label>Profesión / Actividad</label><input id="tomProf" placeholder="Ej: Ingeniero"></div>
+      </div>
+    </div>
+    <div class="foot">
+      <span></span>
+      <button class="btn btn-primary" onclick="next(1)">Siguiente ➜</button>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 2: Asegurado -->
+<div class="step-content" data-step="2">
+  <div class="card">
+    <div class="card-header"><h2>🛡️ Paso 2 — Datos del Asegurado</h2>
+      <label style="color:#fff;font-size:13px;display:flex;gap:6px;align-items:center;cursor:pointer">
+        <input type="checkbox" id="aseIgual" onchange="copiarTomador()"> Igual al Tomador
+      </label></div>
+    <div class="card-body">
+      <div class="grid g4">
+        <div class="field"><label class="req">Tipo Documento</label>
+          <select id="aseTipoDoc"><option>CI</option><option>NIT</option><option>Pasaporte</option></select></div>
+        <div class="field"><label class="req">Nº Documento</label><input id="aseDoc"></div>
+        <div class="field col-2"><label class="req">Nombres y Apellidos</label><input id="aseNombre"></div>
+        <div class="field"><label>Fecha Nacimiento</label><input type="date" id="aseFechaNac"></div>
+        <div class="field"><label>Edad</label><input id="aseEdad" readonly></div>
+        <div class="field"><label>Género</label>
+          <select id="aseGenero"><option>Masculino</option><option>Femenino</option></select></div>
+        <div class="field"><label>Categoría Licencia</label>
+          <select id="aseLic"><option>A</option><option>B</option><option>C</option><option>P (Profesional)</option></select></div>
+        <div class="field col-2"><label>Dirección</label><input id="aseDir"></div>
+        <div class="field"><label>Teléfono</label><input id="aseTel"></div>
+        <div class="field"><label>Email</label><input type="email" id="aseEmail"></div>
+      </div>
+    </div>
+    <div class="foot">
+      <button class="btn btn-ghost" onclick="prev(2)">⟵ Atrás</button>
+      <button class="btn btn-primary" onclick="next(2)">Siguiente ➜</button>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 3: Producto y Vehículo (basado en formulario) -->
+<div class="step-content" data-step="3">
+  <div class="card">
+    <div class="card-header"><h2>🚙 Paso 3 — Producto y Datos del Vehículo</h2><span class="chip">Materia Asegurada</span></div>
+    <div class="card-body">
+
+      <div class="subcard">
+        <h3>📦 Producto y Modalidad</h3>
+        <div class="grid g4">
+          <div class="field col-2"><label class="req">Producto</label>
+            <select id="prdProducto" onchange="cargarPlanes()">
+              <option>BANECO LIVIANO 2024 - MONEDA BS</option>
+              <option>BANECO LIVIANO 2024 - MONEDA USD</option>
+              <option>BANECO PESADO 2024 - MONEDA BS</option>
+              <option>SOAT 2025</option>
+              <option>RC EXTRACONTRACTUAL PREMIUM</option>
+              <option>FULL COBERTURA PLUS</option>
+            </select></div>
+          <div class="field"><label>Grupo</label>
+            <select id="prdGrupo"><option>LIVIANOS</option><option>PESADOS</option><option>MOTOCICLETAS</option><option>MAQUINARIA</option></select></div>
+          <div class="field"><label>Modalidad / Grupo</label>
+            <select id="prdModalidad"><option>CLIENTE</option><option>FLOTA</option><option>CONVENIO</option><option>CORPORATIVO</option></select></div>
+          <div class="field"><label class="req">Estado del Vehículo</label>
+            <select id="vehEstado"><option>NUEVO</option><option>USADO</option><option>0KM</option></select></div>
+          <div class="field"><label>Póliza Anterior</label>
+            <div class="input-group"><input id="vehPolAnt" value="0"><button class="btn btn-ghost btn-sm">›</button></div></div>
+          <div class="field"><label class="req">Valor Vehículo (Bs.)</label>
+            <input type="number" id="vehValor" value="350000" oninput="calcPrima()"></div>
+          <div class="field"><label>RC Extracontractual</label>
+            <select id="vehRC"><option>NINGUNO</option><option>USD 10.000</option><option>USD 25.000</option><option>USD 50.000</option><option>USD 100.000</option></select></div>
+        </div>
+      </div>
+
+      <div class="subcard">
+        <h3>🚗 Identificación del Vehículo</h3>
+        <div class="grid g4">
+          <div class="field"><label class="req">Tipo de Vehículo</label>
+            <select id="vehTipo"><option>AUTOMOVIL</option><option>VAGONETA</option><option>CAMIONETA</option><option>JEEP</option><option>MINIBUS</option><option>BUS</option><option>CAMION</option><option>MOTOCICLETA</option></select></div>
+          <div class="field"><label class="req">Uso</label>
+            <select id="vehUso"><option>PRIVADO</option><option>PARTICULAR</option><option>PUBLICO</option><option>COMERCIAL</option><option>OFICIAL</option></select></div>
+          <div class="field"><label class="req">Placa</label><input id="vehPlaca" placeholder="4545SDD" style="text-transform:uppercase"></div>
+          <div class="field"><label>Servicio</label>
+            <select id="vehServicio"><option>-- Seleccionar --</option><option>Particular</option><option>Taxi</option><option>Transporte de carga</option><option>Transporte de pasajeros</option></select></div>
+          <div class="field"><label>Marca</label>
+            <select id="vehMarca"><option>-- Seleccionar --</option><option>Toyota</option><option>Nissan</option><option>Hyundai</option><option>Kia</option><option>Suzuki</option><option>Chevrolet</option><option>Ford</option><option>Volkswagen</option><option>Mitsubishi</option><option>Honda</option></select></div>
+          <div class="field"><label>Modelo</label><input id="vehModelo" placeholder="Ej: Corolla"></div>
+          <div class="field"><label class="req">Año</label><input type="number" id="vehAnio" value="2025" min="1980" max="2030"></div>
+          <div class="field"><label class="req">Asientos</label><input type="number" id="vehAsientos" value="5" min="1" max="60"></div>
+          <div class="field"><label>Cilindrada (cc)</label><input type="number" id="vehCC" placeholder="1600"></div>
+          <div class="field"><label>Color</label>
+            <select id="vehColor"><option>-- Seleccionar --</option><option>Blanco</option><option>Negro</option><option>Gris</option><option>Plata</option><option>Rojo</option><option>Azul</option><option>Verde</option><option>Amarillo</option></select></div>
+          <div class="field"><label>Propiedad</label>
+            <select id="vehProp"><option>PRIVADA</option><option>PUBLICA</option><option>EMPRESARIAL</option></select></div>
+          <div class="field"><label class="req">Chasis (VIN)</label><input id="vehChasis" placeholder="654A6D54ASDASD55" maxlength="17" style="text-transform:uppercase"></div>
+          <div class="field"><label>Motor</label><input id="vehMotor" placeholder="Nº de motor"></div>
+          <div class="field"><label>Tracción</label>
+            <select id="vehTrac"><option>-- Seleccionar --</option><option>4x2</option><option>4x4</option><option>AWD</option></select></div>
+          <div class="field"><label>Combustible</label>
+            <select id="vehComb"><option>Gasolina</option><option>Diésel</option><option>GNV</option><option>Híbrido</option><option>Eléctrico</option></select></div>
+          <div class="field"><label>Transmisión</label>
+            <select id="vehTrans"><option>Mecánica</option><option>Automática</option><option>CVT</option></select></div>
+        </div>
+      </div>
+
+      <div class="subcard">
+        <h3>🌎 Circulación y Cobranza</h3>
+        <div class="grid g4">
+          <div class="field"><label>Región de Uso</label>
+            <select id="vehRegion"><option>-- Seleccionar --</option><option>Nacional</option><option>Departamental</option><option>Pacto Andino</option><option>Mercosur</option></select></div>
+          <div class="field"><label>Plaza de Circulación</label>
+            <select id="vehPlaza"><option>-- Seleccionar --</option><option>La Paz</option><option>El Alto</option><option>Cochabamba</option><option>Santa Cruz</option><option>Oruro</option></select></div>
+          <div class="field"><label>Transporte de</label>
+            <select id="vehTransp"><option>-- Seleccionar --</option><option>Personas</option><option>Carga liviana</option><option>Carga pesada</option><option>Mixto</option></select></div>
+          <div class="field col-2"><label>Cuenta a Debitar</label>
+            <select id="vehCuenta"><option>-- Seleccionar --</option><option>Cta. Cte. Banco BNB - 1234567</option><option>Cta. Ahorro BCP - 9876543</option><option>Cta. Cte. Banco Sol - 5555444</option><option>Tarjeta de Crédito Visa **** 1234</option></select></div>
+          <div class="field"><label>Forma de Pago</label>
+            <select id="vehFormaPago"><option>Débito Automático</option><option>Transferencia</option><option>Efectivo</option><option>Tarjeta</option></select></div>
+        </div>
+      </div>
+
+      <div class="subcard">
+        <h3>📅 Vigencia</h3>
+        <div class="grid g4">
+          <div class="field"><label class="req">Fecha Emisión</label><input type="date" id="vigEmision"></div>
+          <div class="field"><label class="req">Vigencia Desde</label><input type="date" id="vigDesde" onchange="calcVigHasta()"></div>
+          <div class="field"><label>Periodo</label>
+            <select id="vigPeriodo" onchange="calcVigHasta()"><option value="12">Anual (12 meses)</option><option value="6">Semestral</option><option value="3">Trimestral</option><option value="1">Mensual</option></select></div>
+          <div class="field"><label>Vigencia Hasta</label><input type="date" id="vigHasta" readonly></div>
+        </div>
+      </div>
+
+    </div>
+    <div class="foot">
+      <button class="btn btn-ghost" onclick="prev(3)">⟵ Atrás</button>
+      <button class="btn btn-primary" onclick="next(3)">Siguiente ➜</button>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 4: Coberturas -->
+<div class="step-content" data-step="4">
+  <div class="card">
+    <div class="card-header"><h2>🛡️ Paso 4 — Coberturas y Sumas Aseguradas</h2><span class="chip gold" id="cobTotal">Prima neta: Bs. 0</span></div>
+    <div class="card-body">
+      <div class="banner">⚠️ Las sumas aseguradas se calculan sobre el valor del vehículo declarado. Marque las coberturas adicionales según el plan elegido.</div>
+      <div class="cob-list" id="cobList"></div>
+
+      <div class="subcard" style="margin-top:14px">
+        <h3>💰 Resumen de Prima</h3>
+        <div class="grid g4">
+          <div class="field"><label>Prima Neta</label><input id="primaNeta" readonly value="Bs. 0.00"></div>
+          <div class="field"><label>Derecho Emisión</label><input id="derEmision" readonly value="Bs. 25.00"></div>
+          <div class="field"><label>IVA (13%)</label><input id="iva" readonly value="Bs. 0.00"></div>
+          <div class="field"><label>Prima Total</label><input id="primaTotal" readonly value="Bs. 0.00" style="font-weight:700;color:var(--green-700)"></div>
+        </div>
+      </div>
+    </div>
+    <div class="foot">
+      <button class="btn btn-ghost" onclick="prev(4)">⟵ Atrás</button>
+      <button class="btn btn-primary" onclick="next(4)">Siguiente ➜</button>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 5: Beneficiario -->
+<div class="step-content" data-step="5">
+  <div class="card">
+    <div class="card-header"><h2>👥 Paso 5 — Beneficiarios (en caso de pérdida total)</h2></div>
+    <div class="card-body">
+      <div class="banner">💡 Por defecto el beneficiario es el Tomador. Puede agregar adicionales (acreedor prendario, banco financiador, etc.).</div>
+      <button class="btn btn-gold btn-sm" onclick="addBenef()">＋ Agregar Beneficiario</button>
+      <table id="benefTable">
+        <thead><tr><th>Tipo</th><th>Documento</th><th>Nombre / Entidad</th><th>Parentesco/Vínculo</th><th>%</th><th></th></tr></thead>
+        <tbody></tbody>
+        <tfoot><tr><td colspan="4">Total</td><td id="benefTotal">0%</td><td></td></tr></tfoot>
+      </table>
+    </div>
+    <div class="foot">
+      <button class="btn btn-ghost" onclick="prev(5)">⟵ Atrás</button>
+      <button class="btn btn-primary" onclick="next(5)">Siguiente ➜</button>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 6: Plan de Pagos -->
+<div class="step-content" data-step="6">
+  <div class="card">
+    <div class="card-header"><h2>💳 Paso 6 — Plan de Pagos</h2></div>
+    <div class="card-body">
+      <div class="grid g4">
+        <div class="field"><label>Frecuencia</label>
+          <select id="payFreq" onchange="genPlan()"><option value="1">Contado</option><option value="12" selected>Mensual</option><option value="4">Trimestral</option><option value="2">Semestral</option></select></div>
+        <div class="field"><label>Cuota Inicial (%)</label><input type="number" id="payInicial" value="0" oninput="genPlan()"></div>
+        <div class="field"><label>Día de Pago</label><input type="number" id="payDia" value="5" min="1" max="28" oninput="genPlan()"></div>
+        <div class="field"><label>Recargo Financiero (%)</label><input type="number" id="payRec" value="0" oninput="genPlan()"></div>
+      </div>
+      <table id="planTable">
+        <thead><tr><th>Cuota</th><th>Vencimiento</th><th>Capital</th><th>Recargo</th><th>Total Cuota</th><th>Saldo</th></tr></thead>
+        <tbody></tbody>
+        <tfoot><tr><td colspan="4">Total</td><td id="planTotal">Bs. 0.00</td><td></td></tr></tfoot>
+      </table>
+    </div>
+    <div class="foot">
+      <button class="btn btn-ghost" onclick="prev(6)">⟵ Atrás</button>
+      <button class="btn btn-primary" onclick="next(6)">Siguiente ➜</button>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 7: Inspección y Fotos -->
+<div class="step-content" data-step="7">
+  <div class="card">
+    <div class="card-header"><h2>📸 Paso 7 — Inspección Vehicular</h2><span class="chip">Requisito previo a emisión</span></div>
+    <div class="card-body">
+      <div class="banner">🔍 Suba fotos del vehículo según las posiciones requeridas. Mín. 6 fotos para vehículos usados.</div>
+      <div class="photos" id="photosGrid"></div>
+      <div class="grid g3" style="margin-top:14px">
+        <div class="field"><label>Inspector Asignado</label><input value="Juan Pérez (Insp-021)" readonly></div>
+        <div class="field"><label>Fecha Inspección</label><input type="date" id="inspFecha"></div>
+        <div class="field"><label>Resultado</label>
+          <select id="inspResult"><option>APTO</option><option>APTO CON OBSERVACIONES</option><option>NO APTO</option></select></div>
+        <div class="field col-3"><label>Observaciones</label><textarea id="inspObs" rows="2" placeholder="Detalles del estado del vehículo, golpes previos, kilometraje, etc."></textarea></div>
+      </div>
+    </div>
+    <div class="foot">
+      <button class="btn btn-ghost" onclick="prev(7)">⟵ Atrás</button>
+      <button class="btn btn-primary" onclick="next(7)">Siguiente ➜</button>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 8: Revisión y Emisión -->
+<div class="step-content" data-step="8">
+  <div class="card">
+    <div class="card-header"><h2>✅ Paso 8 — Revisión y Emisión</h2><span class="chip gold">Confirmar para emitir</span></div>
+    <div class="card-body">
+      <div class="grid g2">
+        <div class="subcard"><h3>👤 Tomador</h3><div id="sumTomador"></div></div>
+        <div class="subcard"><h3>🛡️ Asegurado</h3><div id="sumAse"></div></div>
+        <div class="subcard"><h3>🚗 Vehículo</h3><div id="sumVeh"></div></div>
+        <div class="subcard"><h3>📅 Vigencia & Producto</h3><div id="sumVig"></div></div>
+        <div class="subcard"><h3>🛡️ Coberturas</h3><div id="sumCob"></div></div>
+        <div class="subcard"><h3>💰 Prima & Pagos</h3><div id="sumPay"></div></div>
+      </div>
+      <div class="banner" style="margin-top:14px;background:linear-gradient(90deg,#cdebdc,#fff);border-color:var(--green-600)">
+        <label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer">
+          <input type="checkbox" id="confirma">
+          <span>Confirmo que los datos del tomador, asegurado, vehículo (placa, chasis, motor) y coberturas son correctos. Autorizo la emisión del certificado y la generación del plan de pagos según lo declarado.</span>
+        </label>
+      </div>
+    </div>
+    <div class="foot">
+      <button class="btn btn-ghost" onclick="prev(8)">⟵ Atrás</button>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-gold" onclick="emitir('certificado')">📄 Emitir Certificado</button>
+        <button class="btn btn-gold" onclick="emitir('plan')">💳 Plan de Pagos</button>
+        <button class="btn btn-gold" onclick="emitir('inspeccion')">🔍 Acta Inspección</button>
+        <button class="btn btn-primary" onclick="emitir('todos')">📦 Emitir Todo</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const STEPS = [
+  {n:1,name:'Tomador',icon:'👤'},
+  {n:2,name:'Asegurado',icon:'🛡️'},
+  {n:3,name:'Vehículo',icon:'🚗'},
+  {n:4,name:'Coberturas',icon:'🛡️'},
+  {n:5,name:'Beneficiarios',icon:'👥'},
+  {n:6,name:'Plan Pagos',icon:'💳'},
+  {n:7,name:'Inspección',icon:'📸'},
+  {n:8,name:'Emisión',icon:'✅'}
+];
+let current = 1;
+
+const COBERTURAS = [
+  {id:'dt',  name:'Daños Totales',          tasa:0.022, on:true,  base:'valor'},
+  {id:'dp',  name:'Daños Parciales',        tasa:0.018, on:true,  base:'valor'},
+  {id:'rh',  name:'Robo y Hurto',           tasa:0.012, on:true,  base:'valor'},
+  {id:'rce', name:'RC Extracontractual',    tasa:0.004, on:true,  base:'fijo', monto:50000},
+  {id:'apo', name:'Acc. Personales Ocupantes',tasa:0.002,on:true,base:'fijo', monto:30000},
+  {id:'gm',  name:'Gastos Médicos',         tasa:0.001, on:true,  base:'fijo', monto:10000},
+  {id:'as',  name:'Asistencia en Carretera',tasa:0.0008,on:true,  base:'fijo', monto:0},
+  {id:'cr',  name:'Auto de Reemplazo',      tasa:0.0015,on:false, base:'fijo', monto:0},
+  {id:'cv',  name:'Cristales',              tasa:0.0012,on:true,  base:'valor'},
+  {id:'lln', name:'Llantas y Neumáticos',   tasa:0.0008,on:false, base:'valor'},
+  {id:'aud', name:'Audio y Accesorios',     tasa:0.0010,on:false, base:'valor'},
+  {id:'ev',  name:'Eventos de la Naturaleza',tasa:0.0015,on:true, base:'valor'}
+];
+
+const PHOTOS = ['Frontal','Posterior','Lateral Izq.','Lateral Der.','Tablero/Km','VIN/Chasis','Motor','Llanta de aux.'];
+let beneficiarios = [];
+
+// init
+function initStepper(){
+  const s = document.getElementById('stepper');
+  s.innerHTML = STEPS.map(st=>`<div class="step ${st.n===1?'active':''}" data-step="${st.n}" onclick="goto(${st.n})"><span class="num">${st.n}</span>${st.icon} ${st.name}</div>`).join('');
+}
+function updateStepper(){
+  document.querySelectorAll('.step').forEach(e=>{
+    const n = +e.dataset.step;
+    e.classList.toggle('active', n===current);
+    e.classList.toggle('done', n<current);
+  });
+  document.querySelectorAll('.step-content').forEach(c=>{
+    c.classList.toggle('active', +c.dataset.step===current);
+  });
+  if(current===4) renderCoberturas();
+  if(current===5 && beneficiarios.length===0) addBenef(true);
+  if(current===6) genPlan();
+  if(current===7) renderPhotos();
+  if(current===8) buildSummary();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function goto(n){current=n;updateStepper();}
+function next(n){current=n+1;updateStepper();}
+function prev(n){current=n-1;updateStepper();}
+
+function buscarTomador(){
+  const d=document.getElementById('tomDoc').value;
+  if(!d){toast('Ingrese un documento','danger');return;}
+  document.getElementById('tomNombre').value='María Elena';
+  document.getElementById('tomApellidos').value='Quispe Mamani';
+  document.getElementById('tomFechaNac').value='1985-03-15';
+  document.getElementById('tomDir').value='Av. Arce Nº 2345, Zona Sopocachi';
+  document.getElementById('tomTel').value='+591 71234567';
+  document.getElementById('tomEmail').value='maria.quispe@correo.bo';
+  document.getElementById('tomProf').value='Ingeniera Civil';
+  toast('✅ Tomador encontrado en padrón');
+}
+
+function copiarTomador(){
+  if(!document.getElementById('aseIgual').checked) return;
+  document.getElementById('aseTipoDoc').value=document.getElementById('tomTipoDoc').value;
+  document.getElementById('aseDoc').value=document.getElementById('tomDoc').value;
+  document.getElementById('aseNombre').value=document.getElementById('tomNombre').value+' '+document.getElementById('tomApellidos').value;
+  document.getElementById('aseFechaNac').value=document.getElementById('tomFechaNac').value;
+  document.getElementById('aseGenero').value=document.getElementById('tomGenero').value;
+  document.getElementById('aseDir').value=document.getElementById('tomDir').value;
+  document.getElementById('aseTel').value=document.getElementById('tomTel').value;
+  document.getElementById('aseEmail').value=document.getElementById('tomEmail').value;
+  calcEdad();
+}
+function calcEdad(){
+  const f=document.getElementById('aseFechaNac').value;
+  if(!f) return;
+  const a=Math.floor((Date.now()-new Date(f).getTime())/(365.25*24*3600*1000));
+  document.getElementById('aseEdad').value=a+' años';
+}
+document.addEventListener('change',e=>{if(e.target.id==='aseFechaNac')calcEdad();});
+
+function calcVigHasta(){
+  const d=document.getElementById('vigDesde').value;
+  const m=+document.getElementById('vigPeriodo').value;
+  if(!d) return;
+  const dt=new Date(d);dt.setMonth(dt.getMonth()+m);dt.setDate(dt.getDate()-1);
+  document.getElementById('vigHasta').value=dt.toISOString().slice(0,10);
+}
+
+function renderCoberturas(){
+  const html = COBERTURAS.map(c=>`
+    <label class="cob-item ${c.on?'on':''}" data-id="${c.id}">
+      <div><div class="name">${c.name}</div>
+      <div class="sa">${c.base==='valor'?'Sobre valor vehículo':'SA: Bs. '+(c.monto||'Servicio').toLocaleString()}</div></div>
+      <input type="checkbox" ${c.on?'checked':''} onchange="toggleCob('${c.id}',this)">
+    </label>`).join('');
+  document.getElementById('cobList').innerHTML=html;
+  calcPrima();
+}
+function toggleCob(id,el){
+  const c=COBERTURAS.find(x=>x.id===id);c.on=el.checked;
+  el.closest('.cob-item').classList.toggle('on',c.on);
+  calcPrima();
+}
+function calcPrima(){
+  const v=+document.getElementById('vehValor').value||0;
+  let neta=0;
+  COBERTURAS.forEach(c=>{if(c.on){neta+=c.base==='valor'?v*c.tasa:(c.monto||500)*c.tasa+200;}});
+  const der=25, iva=(neta+der)*0.13, total=neta+der+iva;
+  document.getElementById('primaNeta').value='Bs. '+neta.toFixed(2);
+  document.getElementById('iva').value='Bs. '+iva.toFixed(2);
+  document.getElementById('primaTotal').value='Bs. '+total.toFixed(2);
+  document.getElementById('cobTotal').textContent='Prima total: Bs. '+total.toFixed(2);
+  genPlan();
+}
+
+function addBenef(def){
+  beneficiarios.push({tipo:'Persona',doc:def?document.getElementById('tomDoc').value:'',nombre:def?(document.getElementById('tomNombre').value+' '+document.getElementById('tomApellidos').value):'',vinc:def?'Tomador':'',pct:def?100:0});
+  renderBenef();
+}
+function renderBenef(){
+  const tb=document.querySelector('#benefTable tbody');
+  tb.innerHTML=beneficiarios.map((b,i)=>`<tr>
+    <td><select onchange="beneficiarios[${i}].tipo=this.value"><option ${b.tipo==='Persona'?'selected':''}>Persona</option><option ${b.tipo==='Entidad'?'selected':''}>Entidad/Banco</option></select></td>
+    <td><input value="${b.doc}" onchange="beneficiarios[${i}].doc=this.value"></td>
+    <td><input value="${b.nombre}" onchange="beneficiarios[${i}].nombre=this.value"></td>
+    <td><input value="${b.vinc}" onchange="beneficiarios[${i}].vinc=this.value" placeholder="Cónyuge / Hijo / Banco"></td>
+    <td><input type="number" value="${b.pct}" min="0" max="100" onchange="beneficiarios[${i}].pct=+this.value;renderBenef()" style="width:70px"></td>
+    <td><button class="btn btn-danger btn-sm" onclick="beneficiarios.splice(${i},1);renderBenef()">✕</button></td>
+  </tr>`).join('');
+  const tot=beneficiarios.reduce((s,b)=>s+ +b.pct,0);
+  document.getElementById('benefTotal').textContent=tot+'%';
+  document.getElementById('benefTotal').style.color=tot===100?'var(--green-700)':'var(--danger)';
+}
+
+function genPlan(){
+  const total=parseFloat(document.getElementById('primaTotal').value.replace(/[^\d.]/g,''))||0;
+  const n=+document.getElementById('payFreq').value;
+  const ini=+document.getElementById('payInicial').value/100;
+  const dia=+document.getElementById('payDia').value;
+  const rec=+document.getElementById('payRec').value/100;
+  const desde=document.getElementById('vigDesde').value||new Date().toISOString().slice(0,10);
+  const inicial=total*ini;
+  const restante=total-inicial;
+  const cuota=restante/n;
+  const tb=document.querySelector('#planTable tbody');tb.innerHTML='';
+  let saldo=total, sum=0;
+  if(inicial>0){
+    sum+=inicial;saldo-=inicial;
+    tb.innerHTML+=`<tr><td>Inicial</td><td>${desde}</td><td>Bs. ${inicial.toFixed(2)}</td><td>Bs. 0.00</td><td>Bs. ${inicial.toFixed(2)}</td><td>Bs. ${saldo.toFixed(2)}</td></tr>`;
+  }
+  for(let i=1;i<=n;i++){
+    const dt=new Date(desde);dt.setMonth(dt.getMonth()+(12/n)*i);dt.setDate(dia);
+    const r=cuota*rec;const tot=cuota+r;sum+=tot;saldo-=cuota;
+    tb.innerHTML+=`<tr><td>${i}/${n}</td><td>${dt.toISOString().slice(0,10)}</td><td>Bs. ${cuota.toFixed(2)}</td><td>Bs. ${r.toFixed(2)}</td><td>Bs. ${tot.toFixed(2)}</td><td>Bs. ${Math.max(0,saldo).toFixed(2)}</td></tr>`;
+  }
+  document.getElementById('planTotal').textContent='Bs. '+sum.toFixed(2);
+}
+
+function renderPhotos(){
+  const g=document.getElementById('photosGrid');
+  g.innerHTML=PHOTOS.map((p,i)=>`<label class="photo-slot" id="ps${i}">
+    <input type="file" accept="image/*" capture="environment" hidden onchange="loadPhoto(${i},this)">
+    <div>📷<br>${p}</div><div class="lbl-tag">${p}</div></label>`).join('');
+}
+function loadPhoto(i,inp){
+  const f=inp.files[0];if(!f)return;
+  const r=new FileReader();r.onload=e=>{
+    const s=document.getElementById('ps'+i);
+    s.classList.add('has-img');
+    const img=document.createElement('img');img.src=e.target.result;
+    s.insertBefore(img,s.firstChild);
+  };r.readAsDataURL(f);
+}
+
+function buildSummary(){
+  const v=id=>document.getElementById(id).value||'—';
+  const row=(l,x)=>`<div class="summary-row"><span class="lbl">${l}</span><span class="val">${x}</span></div>`;
+  document.getElementById('sumTomador').innerHTML=row('Documento',v('tomTipoDoc')+' '+v('tomDoc'))+row('Nombre',v('tomNombre')+' '+v('tomApellidos'))+row('Teléfono',v('tomTel'))+row('Email',v('tomEmail'));
+  document.getElementById('sumAse').innerHTML=row('Documento',v('aseTipoDoc')+' '+v('aseDoc'))+row('Nombre',v('aseNombre'))+row('Edad',v('aseEdad'))+row('Licencia',v('aseLic'));
+  document.getElementById('sumVeh').innerHTML=row('Tipo/Marca',v('vehTipo')+' / '+v('vehMarca')+' '+v('vehModelo'))+row('Año',v('vehAnio'))+row('Placa',v('vehPlaca'))+row('Chasis',v('vehChasis'))+row('Valor','Bs. '+v('vehValor'))+row('Color',v('vehColor'));
+  document.getElementById('sumVig').innerHTML=row('Producto',v('prdProducto'))+row('Vigencia',v('vigDesde')+' al '+v('vigHasta'))+row('Modalidad',v('prdModalidad'))+row('Sucursal','La Paz Central');
+  document.getElementById('sumCob').innerHTML=COBERTURAS.filter(c=>c.on).map(c=>row(c.name,'✓ Activa')).join('');
+  document.getElementById('sumPay').innerHTML=row('Prima Neta',v('primaNeta'))+row('IVA',v('iva'))+row('Prima Total',v('primaTotal'))+row('Frecuencia',document.getElementById('payFreq').selectedOptions[0].text);
+}
+
+// === PDF GEN ===
+function pdfBase(doc,title){
+  doc.setFillColor(13,59,46);doc.rect(0,0,210,28,'F');
+  doc.setFillColor(212,160,23);doc.rect(0,28,210,2,'F');
+  doc.setTextColor(255,255,255);doc.setFontSize(16);doc.setFont('helvetica','bold');
+  doc.text('SEGUROS BOLIVIA S.A.',14,13);
+  doc.setFontSize(9);doc.setFont('helvetica','normal');doc.text('NIT: 1020304050 | La Paz - Bolivia | www.segurosbolivia.bo',14,20);
+  doc.setFillColor(212,160,23);doc.rect(14,34,182,8,'F');
+  doc.setTextColor(13,59,46);doc.setFontSize(11);doc.setFont('helvetica','bold');
+  doc.text(title,105,40,{align:'center'});
+  doc.setTextColor(40,40,40);
+}
+
+function pdfCertificado(){
+  const {jsPDF}=window.jspdf;const doc=new jsPDF();
+  pdfBase(doc,'CERTIFICADO DE SEGURO — RAMO AUTOMOTOR');
+  const v=id=>document.getElementById(id).value||'—';
+  doc.setFontSize(9);
+  doc.text(`Nº Certificado: ${document.getElementById('solNum').textContent}`,14,50);
+  doc.text(`Fecha emisión: ${v('vigEmision')||new Date().toISOString().slice(0,10)}`,140,50);
+
+  doc.autoTable({startY:55,theme:'grid',headStyles:{fillColor:[21,114,79],textColor:255},styles:{fontSize:8},
+    head:[['DATOS DEL TOMADOR']],body:[[`${v('tomTipoDoc')} ${v('tomDoc')} — ${v('tomNombre')} ${v('tomApellidos')}\nDirección: ${v('tomDir')}, ${v('tomCiudad')}\nTel: ${v('tomTel')}  |  Email: ${v('tomEmail')}`]]});
+
+  doc.autoTable({theme:'grid',headStyles:{fillColor:[21,114,79],textColor:255},styles:{fontSize:8},
+    head:[['DATOS DEL ASEGURADO']],body:[[`${v('aseTipoDoc')} ${v('aseDoc')} — ${v('aseNombre')}\nEdad: ${v('aseEdad')}  |  Licencia: ${v('aseLic')}  |  Tel: ${v('aseTel')}`]]});
+
+  doc.autoTable({theme:'grid',headStyles:{fillColor:[21,114,79],textColor:255},styles:{fontSize:8},
+    head:[['MATERIA ASEGURADA — VEHÍCULO']],
+    body:[[`Producto: ${v('prdProducto')}\nTipo: ${v('vehTipo')}  |  Marca: ${v('vehMarca')}  |  Modelo: ${v('vehModelo')}  |  Año: ${v('vehAnio')}\nPlaca: ${v('vehPlaca')}  |  Chasis: ${v('vehChasis')}  |  Motor: ${v('vehMotor')}\nColor: ${v('vehColor')}  |  Asientos: ${v('vehAsientos')}  |  Cilindrada: ${v('vehCC')}cc  |  Combustible: ${v('vehComb')}\nUso: ${v('vehUso')}  |  Estado: ${v('vehEstado')}  |  Valor declarado: Bs. ${v('vehValor')}`]]});
+
+  doc.autoTable({theme:'grid',headStyles:{fillColor:[21,114,79],textColor:255},styles:{fontSize:8},
+    head:[['Cobertura','Suma Asegurada (Bs.)','Prima (Bs.)']],
+    body:COBERTURAS.filter(c=>c.on).map(c=>{
+      const val=+document.getElementById('vehValor').value||0;
+      const sa=c.base==='valor'?val:(c.monto||0);
+      const pr=c.base==='valor'?val*c.tasa:(c.monto||500)*c.tasa+200;
+      return [c.name,sa.toLocaleString(),pr.toFixed(2)];
+    })});
+
+  doc.autoTable({theme:'grid',headStyles:{fillColor:[212,160,23],textColor:[13,59,46]},styles:{fontSize:8,fontStyle:'bold'},
+    head:[['Vigencia desde','Vigencia hasta','Prima Neta','IVA','Prima Total']],
+    body:[[v('vigDesde'),v('vigHasta'),v('primaNeta'),v('iva'),v('primaTotal')]]});
+
+  const y=doc.lastAutoTable.finalY+15;
+  doc.setFontSize(8);doc.text('_________________________',30,y);doc.text('_________________________',130,y);
+  doc.text('Firma del Tomador',38,y+5);doc.text('Sello y Firma Aseguradora',136,y+5);
+  doc.save('Certificado-Auto-'+v('vehPlaca')+'.pdf');
+}
+
+function pdfPlan(){
+  const {jsPDF}=window.jspdf;const doc=new jsPDF();
+  pdfBase(doc,'PLAN DE PAGOS — CERTIFICADO AUTOMOTOR');
+  const v=id=>document.getElementById(id).value||'—';
+  doc.setFontSize(9);
+  doc.text(`Tomador: ${v('tomNombre')} ${v('tomApellidos')} (${v('tomDoc')})`,14,50);
+  doc.text(`Vehículo: ${v('vehMarca')} ${v('vehModelo')} ${v('vehAnio')}  |  Placa: ${v('vehPlaca')}`,14,56);
+  doc.text(`Cuenta a debitar: ${v('vehCuenta')}`,14,62);
+  const rows=[...document.querySelectorAll('#planTable tbody tr')].map(tr=>[...tr.children].map(td=>td.textContent));
+  doc.autoTable({startY:68,head:[['Cuota','Vencimiento','Capital','Recargo','Total','Saldo']],body:rows,
+    headStyles:{fillColor:[21,114,79],textColor:255},styles:{fontSize:8},
+    foot:[['','','','TOTAL',document.getElementById('planTotal').textContent,'']],footStyles:{fillColor:[212,160,23],textColor:[13,59,46]}});
+  doc.save('PlanPagos-Auto-'+v('vehPlaca')+'.pdf');
+}
+
+function pdfInspeccion(){
+  const {jsPDF}=window.jspdf;const doc=new jsPDF();
+  pdfBase(doc,'ACTA DE INSPECCIÓN VEHICULAR');
+  const v=id=>document.getElementById(id).value||'—';
+  doc.setFontSize(9);
+  doc.text(`Vehículo: ${v('vehMarca')} ${v('vehModelo')} ${v('vehAnio')}  |  Placa: ${v('vehPlaca')}`,14,50);
+  doc.text(`Chasis: ${v('vehChasis')}  |  Motor: ${v('vehMotor')}  |  Color: ${v('vehColor')}`,14,56);
+  doc.autoTable({startY:62,head:[['Inspector','Fecha','Resultado']],
+    body:[['Juan Pérez (Insp-021)',v('inspFecha'),v('inspResult')]],
+    headStyles:{fillColor:[21,114,79],textColor:255},styles:{fontSize:8}});
+  doc.autoTable({head:[['Observaciones']],body:[[v('inspObs')||'Sin observaciones.']],
+    headStyles:{fillColor:[21,114,79],textColor:255},styles:{fontSize:8}});
+  doc.autoTable({head:[['Posición de fotografía','Estado']],
+    body:PHOTOS.map(p=>[p,'Capturada ✓']),
+    headStyles:{fillColor:[212,160,23],textColor:[13,59,46]},styles:{fontSize:8}});
+  doc.save('Inspeccion-Auto-'+v('vehPlaca')+'.pdf');
+}
+
+function emitir(t){
+  if(!document.getElementById('confirma').checked){toast('⚠️ Debe confirmar los datos antes de emitir','danger');return;}
+  if(t==='certificado'||t==='todos')pdfCertificado();
+  if(t==='plan'||t==='todos')pdfPlan();
+  if(t==='inspeccion'||t==='todos')pdfInspeccion();
+  toast('✅ Documento(s) generado(s) correctamente','gold');
+}
+
+function toast(m,c){
+  const t=document.getElementById('toast');t.textContent=m;t.className='toast '+(c||'')+' show';
+  setTimeout(()=>t.className='toast '+(c||''),3000);
+}
+function resetWizard(){if(confirm('¿Iniciar nueva solicitud?'))location.reload();}
+function cargarPlanes(){toast('Plan cargado: '+document.getElementById('prdProducto').value);}
+
+// boot
+initStepper();
+document.getElementById('vigEmision').value=new Date().toISOString().slice(0,10);
+document.getElementById('vigDesde').value=new Date().toISOString().slice(0,10);
+calcVigHasta();
+calcPrima();
+</script>
+</body>
+</html>
