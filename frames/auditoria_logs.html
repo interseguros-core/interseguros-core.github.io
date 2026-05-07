@@ -282,73 +282,6 @@
   </div>
 </section>
 
-<!-- Hash chain + Cert tracking -->
-<section class="grid">
-  <div class="card col-6">
-    <h3><span class="ttl">⛓️ Cadena de Bloques de Auditoría</span><span class="pill gold">SHA-256</span></h3>
-    <p style="font-size:11.5px;color:var(--muted);margin:0 0 12px">Cada bloque encadena el hash del anterior. Ningún usuario, ni administrador, puede modificar o eliminar registros sin romper la cadena.</p>
-    <div>
-      <div class="block">
-        <div class="block-h"><span class="id">Block #847,213</span><span class="lock">🔒 Sellado · 14:32:18</span></div>
-        <div class="hash">prev: <b>a3f9c2e1…b21c</b><br>data: 482 eventos (cot, emi, cob, mod)<br>hash: <b>9d4f7a8c0e2b3f1d…7c4e</b></div>
-      </div>
-      <div class="block">
-        <div class="block-h"><span class="id">Block #847,212</span><span class="lock">🔒 Sellado · 14:32:00</span></div>
-        <div class="hash">prev: <b>7e1d4c9a…f02a</b><br>data: 511 eventos<br>hash: <b>a3f9c2e1d4b7…b21c</b></div>
-      </div>
-      <div class="block">
-        <div class="block-h"><span class="id">Block #847,211</span><span class="lock">🔒 Sellado · 14:31:42</span></div>
-        <div class="hash">prev: <b>5c8b3a1e…d99f</b><br>data: 467 eventos<br>hash: <b>7e1d4c9a8b6f…f02a</b></div>
-      </div>
-    </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
-      <button class="btn btn-sm" style="background:var(--green-700);color:#fff">🔍 Verificar integridad</button>
-      <button class="btn btn-sm" style="border:1px solid var(--border)">📥 Merkle root</button>
-    </div>
-  </div>
-
-  <div class="card col-6">
-    <h3><span class="ttl">📜 Trazabilidad por Certificado</span><span class="pill info">Tiempo real</span></h3>
-    <div class="cert">
-      <div class="cert-h">
-        <div><div class="name">Juan Mamani Quispe</div><div class="num">POL-2024-007215 · Auto · Toyota Hilux</div></div>
-        <span class="pill live">Activa</span>
-      </div>
-      <div class="cert-stats">
-        <div class="cs eye"><div class="v">47</div><div class="l">👁️ Consultas</div></div>
-        <div class="cs print"><div class="v">3</div><div class="l">🖨️ Impresiones</div></div>
-        <div class="cs qr"><div class="v">12</div><div class="l">📲 Escaneos</div></div>
-        <div class="cs dl"><div class="v">5</div><div class="l">⬇️ Descargas</div></div>
-      </div>
-      <div class="cert-foot"><span>Web: 28 · Portal: 12 · App: 7</span><span>Última: hace 4 min · La Paz</span></div>
-    </div>
-    <div class="cert">
-      <div class="cert-h">
-        <div><div class="name">Lucía Vargas R.</div><div class="num">POL-2024-006892 · Hogar</div></div>
-        <span class="pill warn">Vigilancia</span>
-      </div>
-      <div class="cert-stats">
-        <div class="cs eye"><div class="v">18</div><div class="l">👁️ Consultas</div></div>
-        <div class="cs print"><div class="v">1</div><div class="l">🖨️ Impresiones</div></div>
-        <div class="cs qr"><div class="v">9</div><div class="l">📲 Escaneos</div></div>
-        <div class="cs dl"><div class="v">2</div><div class="l">⬇️ Descargas</div></div>
-      </div>
-      <div class="cert-foot warn"><span>⚠️ 3 escaneos desde IPs distintas en 5 min</span><span>Geo: BO, AR, CL</span></div>
-    </div>
-    <div class="cert">
-      <div class="cert-h">
-        <div><div class="name">Ricardo Peña</div><div class="num">POL-2024-008012 · Salud</div></div>
-        <span class="pill live">Activa</span>
-      </div>
-      <div class="cert-stats">
-        <div class="cs eye"><div class="v">22</div><div class="l">👁️ Consultas</div></div>
-        <div class="cs print"><div class="v">2</div><div class="l">🖨️ Impresiones</div></div>
-        <div class="cs qr"><div class="v">4</div><div class="l">📲 Escaneos</div></div>
-        <div class="cs dl"><div class="v">3</div><div class="l">⬇️ Descargas</div></div>
-      </div>
-    </div>
-  </div>
-</section>
 
 <!-- Geo + Alerts + Heatmap -->
 <section class="grid">
@@ -455,22 +388,6 @@
     </table>
   </div>
 
-  <div class="card ai-box col-6">
-    <h3><span class="ttl">🤖 Co-piloto Forense IA</span><span class="pill purple">NLP · GPT</span></h3>
-    <div class="ai-msg u">¿Quién modificó comisiones del producto Auto la semana pasada?</div>
-    <div class="ai-msg">Se detectaron <b>3 modificaciones</b> en comisiones del producto Auto entre 12-18 oct:<br>• <b>L. Flores</b> · 14 oct 14:26 · 12% → 14% (req. aprob.)<br>• <b>R. Gutiérrez</b> · 16 oct 09:15 · 14% → 13.5%<br>• <b>L. Flores</b> · 18 oct 11:42 · 13.5% → 15% (✅ aprobada)<br><br>¿Quieres ver los logs completos o exportar el reporte?</div>
-    <div class="ai-input">
-      <input placeholder="Pregunta en lenguaje natural sobre los logs…" />
-      <button>▶</button>
-    </div>
-    <div class="chips">
-      <span class="chip">🔍 Accesos a póliza X</span>
-      <span class="chip">📊 Top 10 acciones de hoy</span>
-      <span class="chip">⚠️ Anomalías 24h</span>
-      <span class="chip">👥 Sesiones simultáneas</span>
-      <span class="chip">📤 Exportar trazabilidad</span>
-    </div>
-  </div>
 </section>
 
 <script>

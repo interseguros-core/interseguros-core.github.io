@@ -234,7 +234,7 @@ body{background:var(--bg);color:var(--text);font-size:13px;line-height:1.45}
             <div class="field-label">Audio/Text Input</div>
             <div class="audio-input" style="margin-top:4px">
               <div class="audio-icon">🎤</div>
-              <div class="audio-text">WhatsApp / Voz<small>Transcripción IA activa</small></div>
+              <div class="audio-text">WhatsApp<small>Análisis IA activa</small></div>
               <div class="recording"></div>
             </div>
           </div>
@@ -251,7 +251,7 @@ body{background:var(--bg);color:var(--text);font-size:13px;line-height:1.45}
         <div class="col2">
           <div>
             <div class="field-label">Ubicación</div>
-            <div class="field-value">Surco, Lima</div>
+            <div class="field-value">Avenida Beni, Santa Cruz - Bolivia</div>
           </div>
           <div>
             <div class="field-label">Tipo de Evento</div>
@@ -259,52 +259,15 @@ body{background:var(--bg);color:var(--text);font-size:13px;line-height:1.45}
           </div>
         </div>
 
-        <div class="toggle-row"><span class="lbl">⚡ Fast-Track <span class="badge badge-warn" style="margin-left:4px">PRIORITARIO</span></span><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
         <div class="toggle-row"><span class="lbl">🚨 Alertas Críticas</span><label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
       </div>
     </div>
 
-    <!-- 2. Fraude IA -->
-    <div class="card">
-      <div class="card-header">
-        <div class="step-num">2</div>
-        <div class="card-title">Análisis de Fraude con IA</div>
-        <span class="card-menu">⋯</span>
-      </div>
-      <div class="card-body">
-        <div class="col2">
-          <div>
-            <div class="field-label" style="margin-bottom:4px">Visión Computacional</div>
-            <div class="photo-evidence"><span class="label">FOTO</span><span class="damage-tag">Daño detectado</span></div>
-          </div>
-          <div>
-            <div class="field-label" style="margin-bottom:4px">Fraud Scoring</div>
-            <div class="gauge">
-              <div class="gauge-circle"><div class="gauge-num">25<small>/100</small></div></div>
-              <div class="gauge-label">LOW RISK</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="photo-evidence video"><span class="label">VIDEO</span></div>
-
-        <div>
-          <div class="field-label" style="margin-bottom:4px">Validaciones Cruzadas</div>
-          <div style="display:flex;flex-direction:column;gap:4px">
-            <div class="toggle-row" style="padding:5px 8px"><span class="lbl">🌤️ Clima en zona/hora</span><span class="badge badge-success">OK</span></div>
-            <div class="toggle-row" style="padding:5px 8px"><span class="lbl">📜 Historial cliente</span><span class="badge badge-success">OK</span></div>
-            <div class="toggle-row" style="padding:5px 8px"><span class="lbl">🔍 Metadatos imagen</span><span class="badge badge-warn">Revisar</span></div>
-          </div>
-        </div>
-
-        <div class="risk-meter"><span style="font-size:11px;font-weight:600">Nivel Riesgo</span><div class="risk-bar"><div class="risk-fill"></div></div><span class="risk-text">BAJO</span></div>
-      </div>
-    </div>
-
+   
     <!-- 3. Portal Cliente -->
     <div class="card">
       <div class="card-header">
-        <div class="step-num">3</div>
+        <div class="step-num">2</div>
         <div class="card-title">Portal de Seguimiento Cliente</div>
         <span class="card-menu">⋯</span>
       </div>
@@ -325,60 +288,30 @@ body{background:var(--bg);color:var(--text);font-size:13px;line-height:1.45}
         </div>
         <div style="font-size:10.5px;color:var(--muted);font-style:italic">Auto-notificaciones por WhatsApp + Email a cada paso</div>
 
-        <div class="ai-card">
-          <div class="ai-title">🤖 Interacción con IA</div>
-          <div class="ai-content">Borradores y Human-in-the-Loop · Asesor asignado: <strong>Carlos M.</strong></div>
-        </div>
+      
 
-        <div class="toggle-row"><span class="lbl">📱 Notificaciones Push</span><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
-      </div>
-    </div>
-
-    <!-- 4. Resolución y Co-piloto IA -->
-    <div class="card">
-      <div class="card-header">
-        <div class="step-num">4</div>
-        <div class="card-title">Resolución y Co-piloto IA</div>
-        <span class="card-menu">⋯</span>
-      </div>
-      <div class="card-body">
-        <div class="toggle-row" style="background:linear-gradient(90deg,#f0fdf4,#fff)"><span class="lbl">⚡ Liquidación Exprés <span class="badge badge-success" style="margin-left:4px">FAST-TRACK</span></span><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
-        <div style="font-size:11px;color:var(--muted);margin-top:-4px">Aprobación automática · Límite: <strong>S/ 100,000</strong></div>
-
-        <div class="divider-label">Resumen Ejecutivo</div>
-        <div style="font-size:11.5px;color:var(--text);background:#f8faf9;padding:8px;border-radius:6px;line-height:1.5">
-          Analista humano (revisión final por analista senior). IA generó propuesta de liquidación basada en 124 casos similares.
-        </div>
-
-        <div class="divider-label">Borradores de cartas</div>
-        <div class="col2">
-          <div class="toggle-row" style="padding:6px 8px"><span class="lbl" style="font-size:11px">✅ Aceptación</span><button class="btn btn-sm">Ver</button></div>
-          <div class="toggle-row" style="padding:6px 8px"><span class="lbl" style="font-size:11px">❌ Rechazo</span><button class="btn btn-sm btn-outline">Generar</button></div>
-        </div>
-        <div style="font-size:10.5px;color:var(--muted);font-style:italic">IA pre-genera ambos · revisión humana antes de envío</div>
-
-        <div class="toggle-row" style="background:linear-gradient(90deg,#ede9fe,#fff)"><span class="lbl">🤖 IA Co-pilot Estatus <span class="badge badge-purple" style="margin-left:4px">ACTIVO</span></span><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+        <div class="toggle-row"><span class="lbl">📱 Notificaciones </span><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
       </div>
     </div>
 
     <!-- 5. Gestión de Compañías -->
     <div class="card">
       <div class="card-header">
-        <div class="step-num">5</div>
+        <div class="step-num">3</div>
         <div class="card-title">Gestión de Compañías y Proveedores</div>
         <span class="card-menu">⋯</span>
       </div>
       <div class="card-body">
         <div class="col2">
           <div>
-            <div class="field-label" style="margin-bottom:4px">Aseguradora Pacífico</div>
+            <div class="field-label" style="margin-bottom:4px">Aseguradora Alianza</div>
             <div class="workflow">
               <div class="wf-row"><span class="name">Auto</span><span class="arrow-r">→</span><span class="chip act">Taller A</span></div>
               <div class="wf-row"><span class="name">Médico</span><span class="arrow-r">→</span><span class="chip act">Clínica X</span></div>
             </div>
           </div>
           <div>
-            <div class="field-label" style="margin-bottom:4px">Aseguradora El Sol</div>
+            <div class="field-label" style="margin-bottom:4px">Aseguradora Nacional</div>
             <div class="workflow">
               <div class="wf-row"><span class="name">Auto</span><span class="arrow-r">→</span><span class="chip act">Taller B</span></div>
               <div class="wf-row"><span class="name">Recup.</span><span class="arrow-r">→</span><span class="chip">Pendiente</span></div>
@@ -388,9 +321,9 @@ body{background:var(--bg);color:var(--text);font-size:13px;line-height:1.45}
 
         <div class="divider-label">Estados Workflow</div>
         <table class="mini-table">
-          <tr><td><span class="badge badge-success">Validado</span></td><td>Pacífico · Auto</td><td style="text-align:right">12 casos</td></tr>
-          <tr><td><span class="badge badge-warn">Pendiente</span></td><td>El Sol · Médico</td><td style="text-align:right">5 casos</td></tr>
-          <tr><td><span class="badge badge-danger">Rechazado</span></td><td>Mapfre · Recup.</td><td style="text-align:right">2 casos</td></tr>
+          <tr><td><span class="badge badge-success">Validado</span></td><td style="text-align:right">12 casos</td></tr>
+          <tr><td><span class="badge badge-warn">Pendiente</span></td><td style="text-align:right">5 casos</td></tr>
+          <tr><td><span class="badge badge-danger">Rechazado</span></td><td style="text-align:right">2 casos</td></tr>
         </table>
 
         <button class="btn btn-outline" style="width:100%">+ Configurar nuevo workflow</button>
@@ -400,14 +333,13 @@ body{background:var(--bg);color:var(--text);font-size:13px;line-height:1.45}
     <!-- 6. Documentación y Evidencia -->
     <div class="card">
       <div class="card-header">
-        <div class="step-num">6</div>
+        <div class="step-num">4</div>
         <div class="card-title">Documentación y Evidencia</div>
         <span class="card-menu">⋯</span>
       </div>
       <div class="card-body">
         <div class="row">
           <div class="field-label">Visor Integrado</div>
-          <button class="btn btn-sm">📥 IA Solicitar</button>
         </div>
 
         <div class="file-list">
@@ -432,72 +364,6 @@ body{background:var(--bg);color:var(--text);font-size:13px;line-height:1.45}
             <div style="font-size:9.5px;color:var(--muted);text-transform:uppercase">Almacén</div>
           </div>
         </div>
-      </div>
-    </div>
-
-    <!-- 7. Asistencia Geolocalizada -->
-    <div class="card">
-      <div class="card-header">
-        <div class="step-num">7</div>
-        <div class="card-title">Asistencia Geolocalizada</div>
-        <span class="card-menu">⋯</span>
-      </div>
-      <div class="card-body">
-        <div class="row">
-          <span style="font-size:11.5px;font-weight:600">Asignar Asistencia</span>
-          <select class="select" style="width:auto;padding:4px 8px;font-size:11px"><option>Auto-despacho IA</option><option>Manual</option></select>
-        </div>
-
-        <div class="map-big">
-          <div class="map-asset" style="top:18%;left:15%">🚑 Ambulancia</div>
-          <div class="map-asset" style="top:25%;right:12%">🚛 Grúa</div>
-          <div class="map-asset" style="bottom:22%;left:42%;background:var(--danger);border-color:var(--danger);color:#fff">📍 Siniestro</div>
-          <div class="map-route" style="top:35%;left:25%;width:30%;transform:rotate(15deg)"></div>
-          <div class="map-route" style="top:42%;right:18%;width:28%;transform:rotate(-25deg)"></div>
-        </div>
-
-        <div class="col2">
-          <div class="toggle-row" style="padding:6px 8px"><span class="lbl">📡 Tracking en Vivo</span><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
-          <div class="toggle-row" style="padding:6px 8px"><span class="lbl">⏱️ ETA: 8 min</span><span class="badge badge-success">EN RUTA</span></div>
-        </div>
-
-        <button class="btn" style="width:100%">📍 Despachar asistencia</button>
-      </div>
-    </div>
-
-    <!-- 8. Historial y Auditoría -->
-    <div class="card">
-      <div class="card-header">
-        <div class="step-num">8</div>
-        <div class="card-title">Historial y Auditoría Trail</div>
-        <span class="card-menu">⋯</span>
-      </div>
-      <div class="card-body">
-        <div class="field-label">Log de todas las acciones (incluye IA y humano)</div>
-
-        <div style="border:1px solid var(--border);border-radius:6px;padding:6px 10px;background:#fafbfa;max-height:180px;overflow-y:auto">
-          <div class="track-row"><span class="track-time">13:15:38</span><span class="track-action"><span class="ai-tag">IA</span>Asistió en triaje</span><span class="track-id">USR000129030</span></div>
-          <div class="track-row"><span class="track-time">13:15:37</span><span class="track-action"><span class="h-tag">H</span>Humano validó decisión</span><span class="track-id">USR000120020</span></div>
-          <div class="track-row"><span class="track-time">13:15:35</span><span class="track-action"><span class="ai-tag">IA</span>Generó borrador carta</span><span class="track-id">USR000120030</span></div>
-          <div class="track-row"><span class="track-time">13:15:30</span><span class="track-action"><span class="h-tag">H</span>Humano aprobó pago</span><span class="track-id">USR000120020</span></div>
-          <div class="track-row"><span class="track-time">13:15:32</span><span class="track-action"><span class="ai-tag">IA</span>Análisis de fraude OK</span><span class="track-id">USR000120030</span></div>
-          <div class="track-row"><span class="track-time">13:15:28</span><span class="track-action"><span class="h-tag">H</span>Carga de documentos</span><span class="track-id">USR000120020</span></div>
-          <div class="track-row"><span class="track-time">13:15:25</span><span class="track-action"><span class="ai-tag">IA</span>Asignó asistencia</span><span class="track-id">USR000120030</span></div>
-        </div>
-
-        <div class="divider-label">Transparencia IA vs Asesor</div>
-        <div style="display:flex;gap:6px">
-          <div style="flex:1;background:#ede9fe;padding:8px;border-radius:6px;text-align:center">
-            <div style="font-size:18px;font-weight:700;color:#5b21b6">68%</div>
-            <div style="font-size:9.5px;color:#5b21b6;font-weight:600;text-transform:uppercase">Acciones IA</div>
-          </div>
-          <div style="flex:1;background:#dbeafe;padding:8px;border-radius:6px;text-align:center">
-            <div style="font-size:18px;font-weight:700;color:#1e40af">32%</div>
-            <div style="font-size:9.5px;color:#1e40af;font-weight:600;text-transform:uppercase">Asesor</div>
-          </div>
-        </div>
-
-        <button class="btn btn-outline" style="width:100%">📊 Ver auditoría completa</button>
       </div>
     </div>
 

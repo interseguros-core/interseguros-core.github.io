@@ -163,41 +163,6 @@
     </div>
 
 
-    <!-- ═══════════ Emision de certificados ═══════════ -->
-    <div class="flow-divider">
-        <div class="flow-divider-line"></div>
-        <div class="flow-divider-label">
-            <span class="fdl-tag">Emision de certificados</span>
-            <span class="fdl-title">Ejemplo basico de la emision de certificados</span>
-            <span class="fdl-sub">Asi es como se vera aproximadamente la emision de certificados de una compania.</span>
-        </div>
-        <div class="flow-divider-line"></div>
-    </div>
-
-    <div class="acc-group">
-        <button class="acc-group-btn" data-target="body-emsion-certificados">
-            <div class="acc-gbtn-icon">📄</div>
-            <div class="acc-gbtn-text">
-                <div class="acc-gbtn-title">Emision de certificados</div>
-                <div class="acc-gbtn-sub"></div>
-            </div>
-            <span class="acc-gbtn-count">Emitir</span>
-            <span class="acc-gbtn-arrow">▼</span>
-        </button>
-        <div class="acc-group-body" id="body-emsion-certificados">
-            <div class="acc-group-inner">
-                <div class="acc-group-inner-pad">
-                    <div class="diagram-card">
-
-                        <div class="mermaid">
-                            <iframe src="frames/emision-automotor.html" style="width:100%; height:1100px; border:none;"></iframe>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- ═══════════ ACCORDION GROUP 2: Ajustes por Compania ═══════════ -->
     <div class="flow-divider">
         <div class="flow-divider-line"></div>
@@ -332,7 +297,6 @@
                                     <div class="cs-header"><span class="cs-badge">🟡 PROSPECTOS</span></div>
                                     <p>Contactos <strong>sin certificado vigente</strong>. Objetivo de recuperación y marketing.</p>
                                     <ul>
-                                        <li>Scoring IA de probabilidad de conversión.</li>
                                         <li>Detección automática de pólizas vencidas sin renovación.</li>
                                         <li>Campañas de reactivación personalizadas por canal preferido.</li>
                                         <li>Registro de motivo de no conversión (análisis de churn).</li>
@@ -438,7 +402,7 @@
                             <div class="step-num-badge">04</div>
                             <p class="item-desc">El Motor de Operaciones Interseguros emite certificados individuales o masivos a partir de los productos vigentes. Para compañías con <strong>integración API</strong>, el certificado se registra en su sistema y retorna el número oficial. Para compañías sin sistema, Interseguros emite y numera de forma propia.</p>
                             <div>
-                                <iframe src="frames/certificados.html" style="width:100%; height:4000px; border:none;"></iframe>
+                                <iframe src="frames/emision-automotor.html" style="width:100%; height:1100px; border:none;"></iframe>
                             </div>
                             <div class="sub-grid">
                                 <div class="sub-card">
@@ -519,43 +483,18 @@
                             <div class="step-num-badge">05</div>
                             <p class="item-desc">Al emitir el certificado, el sistema genera automáticamente el <strong>Plan de pagos</strong> del asegurado. El plan de pagos define cuotas, fechas de vencimiento y moneda, y es el punto de partida para todo el flujo de cobranza posterior (Segun el tipo de producto).</p>
                             <div>
-                                <iframe src="frames/planpagos.html" style="width:100%; height:3000px; border:none;"></iframe>
+                                <iframe src="frames/planpagos.html" style="width:100%; height:2000px; border:none;"></iframe>
                             </div>
                             <div class="sub-grid">
                                 <div class="sub-card">
-                                    <h4><span class="num">1</span> Motor de Fraccionamiento</h4>
+                                    <h4>Motor de Fraccionamiento</h4>
                                     <ul>
                                         <li>Contado, mensual, trimestral o planes especiales configurables.</li>
                                         <li>Recargos y gastos administrativos calculados automáticamente.</li>
                                         <li>Multimoneda BOB/USD con tipo de cambio del día aplicado.</li>
                                     </ul>
                                 </div>
-                                <div class="sub-card">
-                                    <h4><span class="num">2</span> Cuenta Corriente 360</h4>
-                                    <ul>
-                                        <li>Prima total, pagada, pendiente y próximo vencimiento en una vista.</li>
-                                        <li>Recibos provisionales como comprobante legal antes de la factura.</li>
-                                        <li>Reglas de aplicación de pagos parciales configurables por compañía.</li>
-                                    </ul>
-                                </div>
-                                <div class="sub-card">
-                                    <h4><span class="num">3</span> Workflow de Mora</h4>
-                                    <ul>
-                                        <li>Día 1–5: notificación amistosa automática por WhatsApp/Email.</li>
-                                        <li>Día 15: alerta al ejecutivo comercial para intervención personal.</li>
-                                        <li>Día 30: aviso de posible suspensión de cobertura enviado al cliente.</li>
-                                        <li>Registro de promesas de pago: pausa de alertas hasta la fecha acordada.</li>
-                                    </ul>
-                                </div>
-                                <div class="sub-card">
-                                    <h4><span class="num">4</span> Anulación por Falta de Pago</h4>
-                                    <ul>
-                                        <li>Monitor de políticas de suspensión configuradas por compañía.</li>
-                                        <li>El cliente tiene 30 días para pagar con cobertura activa desde la emisión (Configurable de acuerdo a compania).</li>
-                                        <li>Débito automático: se reintenta todos los días hasta que haya saldo disponible.</li>
-                                        <li>Si pasan 60 días sin cobro exitoso en débito automático: anulación automática del certificado.</li>
-                                    </ul>
-                                </div>
+                                
                             </div>
                             <div class="integration-compare">
                                 <div class="ic-header">Reglas de Negocio para Débito Automático</div>
@@ -599,7 +538,7 @@
                             <div class="step-num-badge">06</div>
                             <p class="item-desc">La cobranza fluye directamente desde el asegurado a la cuenta bancaria de la aseguradora. <strong>El broker no toca el dinero</strong>: Interseguros solo orquesta el proceso.</p>
                             <div>
-                                <iframe src="frames/cobranzas.html" style="width:100%; height:2000px; border:none;"></iframe>
+                                <iframe src="frames/cobranzas.html" style="width:100%; height:1000px; border:none;"></iframe>
                             </div>
                             <div class="callout warning">
                                 <span class="callout-icon">🏦</span>
@@ -672,14 +611,6 @@
                                         <li>Detalle póliza por póliza para envío a la aseguradora.</li>
                                     </ul>
                                 </div>
-                                <div class="sub-card">
-                                    <h4><span class="num">8</span> Seguridad PCI-DSS</h4>
-                                    <ul>
-                                        <li>Interseguros nunca almacena datos de tarjetas ni CVV.</li>
-                                        <li>Tokens gestionados por entidades certificadas PCI.</li>
-                                        <li>Audit Trail inalterable de toda transacción y modificación.</li>
-                                    </ul>
-                                </div>
                             </div>
                         </div></div>
                     </div>
@@ -700,7 +631,7 @@
                             <div class="step-num-badge">07</div>
                             <p class="item-desc">Cada compañía gestiona sus propios siniestros con diferentes seguimientos y estados configurables. Los asegurados pueden <strong>consultar el estado en tiempo real</strong>, subir documentación y recibir notificaciones automáticas. La IA asiste en modo <em>Human-in-the-Loop</em>.</p>
                             <div>
-                                <iframe src="frames/siniestros.html" style="width:100%; height:2300px; border:none;"></iframe>
+                                <iframe src="frames/siniestros.html" style="width:100%; height:1200px; border:none;"></iframe>
                             </div>
                             <div class="sub-grid">
                                 <div class="sub-card">
@@ -708,33 +639,16 @@
                                     <ul>
                                         <li>Captura por audio o texto desde WhatsApp.</li>
                                         <li>Extracción automática: fecha, ubicación y tipo de evento.</li>
-                                        <li>Fast-track para siniestros menores · Alerta alta para graves.</li>
-                                        <li>Geolocalización de asistencias: ambulancia, grúa, etc.</li>
                                     </ul>
                                 </div>
+                               
                                 <div class="sub-card">
-                                    <h4><span class="num">2</span> Análisis de Fraude con IA</h4>
-                                    <ul>
-                                        <li>Visión computacional: evaluación de daños en fotos y videos.</li>
-                                        <li>Scoring de fraude: clima, historial, metadatos de imágenes.</li>
-                                        <li>Nivel de riesgo asignado antes de autorizar cualquier pago.</li>
-                                    </ul>
-                                </div>
-                                <div class="sub-card">
-                                    <h4><span class="num">3</span> Portal de Seguimiento para el Cliente</h4>
+                                    <h4><span class="num">2</span> Portal de Seguimiento para el Cliente</h4>
                                     <ul>
                                         <li>Estado del siniestro visible 24/7 desde el portal del asegurado.</li>
                                         <li>Notificaciones automáticas en cada cambio de estado.</li>
                                         <li>Carga de documentos faltantes directamente desde el portal.</li>
                                         <li>La IA solicita documentos automáticamente si hay faltantes.</li>
-                                    </ul>
-                                </div>
-                                <div class="sub-card">
-                                    <h4><span class="num">4</span> Resolución y Copiloto IA</h4>
-                                    <ul>
-                                        <li>Liquidación exprés para micro-siniestros dentro del límite (Fast-Track).</li>
-                                        <li>Resumen ejecutivo para el analista humano en casos complejos.</li>
-                                        <li>Borradores de cartas de aceptación / rechazo generados por IA.</li>
                                     </ul>
                                 </div>
                             </div>
@@ -810,7 +724,7 @@
                         <div class="acc-item-inner"><div class="acc-item-inner-pad">
                             <p class="item-desc">La IA de WhatsApp está directamente conectada al Motor de Operaciones Interseguros. Conoce los seguros del cliente, ofrece productos relevantes según las compañías disponibles, gestiona siniestros y contesta preguntas frecuentes — todo en tiempo real, 24/7.</p>
                             <div>
-                                <iframe src="frames/atencion_omnicanal.html" style="width:100%; height:3700px; border:none;"></iframe>
+                                <iframe src="frames/atencion_omnicanal.html" style="width:100%; height:2000px; border:none;"></iframe>
                             </div>
                             <div class="sub-grid">
                                 <div class="sub-card">
@@ -819,7 +733,6 @@
                                         <li>Al escribir el cliente, la IA ya sabe qué seguros tiene contratados.</li>
                                         <li>Ofrece los productos que el cliente necesita según su perfil y cartera actual.</li>
                                         <li>Compara las mejores opciones disponibles según las diferentes compañías.</li>
-                                        <li>Cotización y compra completa por WhatsApp: la IA emite el certificado y lo envía en el mismo chat.</li>
                                         <li>Selección configurable: el operador decide qué productos ofrece la IA y cuáles no.</li>
                                     </ul>
                                 </div>
@@ -841,34 +754,7 @@
                                         <li>Puede coordinar ambulancia, grúa u otros servicios de asistencia de forma automática.</li>
                                     </ul>
                                 </div>
-                                <div class="sub-card">
-                                    <h4><span class="num">4</span> Audio, Llamadas y Reconocimiento IA</h4>
-                                    <ul>
-                                        <li>El cliente puede enviar notas de voz: la IA transcribe y entiende el contexto completo.</li>
-                                        <li>Soporte para llamadas: la IA atiende y registra datos importantes automáticamente.</li>
-                                        <li>Evaluación de urgencia por tono, palabras clave y contenido del mensaje.</li>
-                                        <li>Si la gravedad es alta, la IA transfiere inmediatamente con contexto completo al asesor humano.</li>
-                                    </ul>
-                                </div>
-                                <div class="sub-card">
-                                    <h4><span class="num">5</span> Gestión de Anexos y Endosos por Chat</h4>
-                                    <ul>
-                                        <li>El cliente puede solicitar modificar su valor asegurado directamente por chat con la IA.</li>
-                                        <li>Agregar anexos, cambiar beneficiarios o actualizar datos personales vía WhatsApp.</li>
-                                        <li>La IA valida los cambios contra las reglas BRE del producto antes de confirmar.</li>
-                                        <li>Registro en el sistema y notificación automática a la compañía aseguradora.</li>
-                                    </ul>
-                                </div>
-                                <div class="sub-card">
-                                    <h4><span class="num">6</span> OTP, Horarios y Control de Acceso</h4>
-                                    <ul>
-                                        <li>Envío de código OTP para verificar la identidad del cliente en operaciones sensibles.</li>
-                                        <li>Confirmación OTP garantiza que sea el cliente original antes de emitir o modificar pólizas.</li>
-                                        <li>Horario de oficina: las solicitudes son atendidas por un asesor humano.</li>
-                                        <li>Fuera de horario: la IA toma el control con capacidades completas de gestión.</li>
-                                        <li>Horarios configurables por compañía, sucursal y tipo de atención (comercial vs. siniestros).</li>
-                                    </ul>
-                                </div>
+                                
                             </div>
                             <div class="callout info">
                                 <span class="callout-icon">💡</span>
@@ -893,7 +779,7 @@
                         <div class="acc-item-inner"><div class="acc-item-inner-pad">
                             <p class="item-desc">Cada cotizador es diferente: maneja parámetros propios según el ramo (capital, edad, sexo, maternidad, antecedentes). El creador parametrizable permite configurar cada uno sin tocar código, y la IA genera cuadros comparativos automáticos.</p>
                             <div>
-                                <iframe src="frames/cotizadores_comparativos.html" style="width:100%; height:5000px; border:none;"></iframe>
+                                <iframe src="frames/cotizadores_comparativos.html" style="width:100%; height:3600px; border:none;"></iframe>
                             </div>
                             <div class="sub-grid">
                                 <div class="sub-card">
@@ -919,7 +805,6 @@
                                     <ul>
                                         <li>Generación automática de cuadros comparativos según la normativa boliviana de seguros.</li>
                                         <li>Comparación simultánea entre múltiples compañías para el mismo riesgo.</li>
-                                        <li>Formatos regulatorios cumpliendo los requisitos de la APS (Autoridad de Fiscalización).</li>
                                         <li>Descarga del comparativo en PDF listo para presentar al cliente o a la compañía.</li>
                                     </ul>
                                 </div>
@@ -952,7 +837,7 @@
                         <div class="acc-item-inner"><div class="acc-item-inner-pad">
                             <p class="item-desc">Elimina el papel del proceso. El cliente acepta la póliza con un click en un enlace enviado por WhatsApp o email. El sistema registra fecha y hora exacta, y cada certificado puede ser validado legalmente mediante un código QR único.</p>
                             <div>
-                                <iframe src="frames/firma_digital.html" style="width:100%; height:5100px; border:none;"></iframe>
+                                <iframe src="frames/firma_digital.html" style="width:100%; height:2100px; border:none;"></iframe>
                             </div>
                             <div class="sub-grid">
                                 <div class="sub-card">
@@ -973,15 +858,7 @@
                                         <li>Sirve como validación legal del documento ante terceros (talleres, hospitales, etc.).</li>
                                     </ul>
                                 </div>
-                                <div class="sub-card">
-                                    <h4><span class="num">3</span> IA Detecta Aceptación de la Compañía</h4>
-                                    <ul>
-                                        <li>La IA monitorea la bandeja de correo y detecta el email de aceptación de la compañía.</li>
-                                        <li>Al detectarlo, acepta el certificado automáticamente sin intervención manual.</li>
-                                        <li>Alternativa: se incluye un link en el correo para que la compañía acepte con un click.</li>
-                                        <li>Registro de fecha y hora de aceptación de la compañía para trazabilidad legal completa.</li>
-                                    </ul>
-                                </div>
+                               
                                 <div class="sub-card">
                                     <h4><span class="num">4</span> Talonarios de Numeración</h4>
                                     <ul>
@@ -1041,7 +918,6 @@
                                     <ul>
                                         <li>Control de vigencia de los documentos UIF del cliente según normativa boliviana.</li>
                                         <li>Solicitud automática de actualización cuando el documento UIF expira.</li>
-                                        <li>Clientes del banco: migración de datos KYC existentes para evitar re-registro.</li>
                                         <li>Clientes externos: formulario UIF completo obligatorio en el proceso de onboarding.</li>
                                     </ul>
                                 </div>
@@ -1099,7 +975,7 @@
                     <div class="acc-item-body" id="item-comisiones">
                         <div class="acc-item-inner"><div class="acc-item-inner-pad">
                             <div>
-                                <iframe src="frames/gestion_comisiones.html" style="width:100%; height:3200px; border:none;"></iframe>
+                                <iframe src="frames/gestion_comisiones.html" style="width:100%; height:2000px; border:none;"></iframe>
                             </div>
                             <div class="sub-grid">
                                 <div class="sub-card">
@@ -1108,7 +984,6 @@
                                         <li>Matrices configurables por compañía y ramo (% sobre prima neta o bruta, deduciendo impuestos).</li>
                                         <li>Split de comisiones entre ejecutivos (ej. 50/50 entre vendedor y gerente).</li>
                                         <li>Parametrización de comisiones e incentivos por niveles, (Ejecutivos, supervisores y gerentes).</li>
-                                        <li>Estornos (clawbacks) proporcionales calculados automáticamente al anular una póliza.</li>
                                     </ul>
                                 </div>
                                 <div class="sub-card">
@@ -1165,7 +1040,7 @@
                         <div class="acc-item-inner"><div class="acc-item-inner-pad">
                             <p class="item-desc">Machear certificados generados en el sistema versus lo efectivamente cobrado por la compañía o banco. El análisis póliza por póliza permite identificar brechas de ingresos y calcular comisiones reales — no solo devengadas.</p>
                             <div>
-                                <iframe src="frames/conciliaciones.html" style="width:100%; height:3200px; border:none;"></iframe>
+                                <iframe src="frames/conciliaciones.html" style="width:100%; height:2500px; border:none;"></iframe>
                             </div>
                             <div class="sub-grid">
                                 <div class="sub-card">
@@ -1223,7 +1098,7 @@
                     <button class="acc-item-btn" data-target="item-reporteria">
                         <div class="acc-item-icon i-purple">📊</div>
                         <div class="acc-item-text">
-                            <div class="acc-item-title">Reportería Avanzada y Analítica Predictiva</div>
+                            <div class="acc-item-title">Reportería Avanzada</div>
                             <div class="acc-item-sub">Data Warehouse · KPIs del sector · Cross-selling automático · Forecasting</div>
                         </div>
                         <div class="acc-item-tags"><span class="itag itag-purple">Operaciones</span></div>
@@ -1233,40 +1108,17 @@
                         <div class="acc-item-inner">
                             <div class="acc-item-inner-pad">
                                 <div>
-                                    <iframe src="frames/reporteria_analitica.html" style="width:100%; height:3400px; border:none;"></iframe>
+                                    <iframe src="frames/reporteria_analitica.html" style="width:100%; height:2600px; border:none;"></iframe>
                                 </div>
                                 <div class="sub-grid">
                                     <div class="sub-card">
-                                        <h4><span class="num">1</span> Arquitectura de Datos</h4>
+                                        <h4>Sistema Integrado de Reportería Inteligente</h4>
+                                        
                                         <ul>
-                                            <li>Data Warehouse separado de la base transaccional.</li>
-                                            <li>ETL con datos centralizados de todas las compañías operativas.</li>
-                                            <li>Self-Service BI: constructor drag-and-drop de reportes.</li>
-                                        </ul>
-                                    </div>
-                                    <div class="sub-card">
-                                        <h4><span class="num">2</span> KPIs del Sector</h4>
-                                        <ul>
-                                            <li>Churn Rate: pólizas vencidas que renovaron vs. las que no.</li>
-                                            <li>Loss Ratio: primas cobradas vs. siniestros pagados.</li>
-                                            <li>Indice de siniestralidad por Ramo por Compania y por Cliente.</li>
-                                            <li>Hit Rate: cotizaciones convertidas en emisiones efectivas.</li>
-                                        </ul>
-                                    </div>
-                                    <div class="sub-card">
-                                        <h4><span class="num">3</span> Cross-Selling IA</h4>
-                                        <ul>
-                                            <li>Matrices automáticas: clientes con Vehículo + Salud pero sin Hogar.</li>
-                                            <li>Campañas comerciales disparadas desde la detección del hueco.</li>
-                                            <li>Ranking de consultas fallidas para detectar necesidades no cubiertas.</li>
-                                        </ul>
-                                    </div>
-                                    <div class="sub-card">
-                                        <h4><span class="num">4</span> Forecasting y Alertas</h4>
-                                        <ul>
-                                            <li>Proyección de cumplimiento de cuota mensual por quincena.</li>
-                                            <li>Alerta automática si producción cae más de un 20% en una sucursal.</li>
-                                            <li>Distribución programada de reportes gerenciales (ej. lunes 8 a.m.).</li>
+                                            <li>Publicación automática de reportes Power BI embebidos en el sistema.</li>
+                                            <li>Actualización en tiempo real de indicadores y dashboards corporativos.</li>
+                                            <li>Gestión centralizada de permisos y accesos por usuario o área.</li>
+                                            <li>Experiencia Self-Service BI para análisis dinámicos y toma de decisiones.</li>
                                         </ul>
                                     </div>
                                 </div>
@@ -1290,7 +1142,7 @@
                         <div class="acc-item-inner">
                             <div class="acc-item-inner-pad">
                                 <div>
-                                    <iframe src="frames/trazabilidad_comercial.html" style="width:100%; height:3800px; border:none;"></iframe>
+                                    <iframe src="frames/trazabilidad_comercial.html" style="width:100%; height:2500px; border:none;"></iframe>
                                 </div>
                                 <div class="sub-grid">
                                 <div class="sub-card">
@@ -1316,15 +1168,7 @@
                                         <li>Reportes de vencimientos mejorados con métricas de riesgo.</li>
                                     </ul>
                                 </div>
-                                <div class="sub-card">
-                                    <h4><span class="num">4</span> Lead Scoring y Análisis</h4>
-                                    <ul>
-                                        <li>Asignación Round-Robin o por especialidad de los leads digitales.</li>
-                                        <li>Semáforo de prioridad por monto de prima y fecha de decisión.</li>
-                                        <li>Captura obligatoria de "Motivo de Pérdida" al cerrar como perdido.</li>
-                                        <li>Win Rate y ciclo de venta promedio por ramo y ejecutivo.</li>
-                                    </ul>
-                                </div>
+                               
                             </div>
                         </div></div>
                     </div>
@@ -1373,7 +1217,7 @@
                         <div class="acc-item-inner">                            
                             <div class="acc-item-inner-pad">
                                 <div>
-                                    <iframe src="frames/integraciones.html" style="width:100%; height:4500px; border:none;"></iframe>
+                                    <iframe src="frames/integraciones.html" style="width:100%; height:2000px; border:none;"></iframe>
                                 </div>
                             <p class="item-desc">El Motor de Operaciones Interseguros es el hub central de integración. Se conecta con todos los sistemas regulatorios, bancarios y contables del ecosistema boliviano, y ofrece middleware para que compañías externas se integren fácilmente a sus sistemas actuales.</p>
                             <div class="sub-grid">
@@ -1383,18 +1227,9 @@
                                         <li>Integración bidireccional con Cloud Broker, el sistema contable de Interseguros.</li>
                                         <li>Disparos contables automáticos por cada evento: emisión, cobro, anulación y devolución.</li>
                                         <li>Asientos contables generados en tiempo real sin intervención manual.</li>
-                                        <li>Reconciliación contable diaria con balance entre el Motor de Operaciones Interseguros y el sistema contable.</li>
                                     </ul>
                                 </div>
-                                <div class="sub-card">
-                                    <h4><span class="num">2</span> Sistema AXON — Normativa Bolivia</h4>
-                                    <ul>
-                                        <li>Integración con AXON según normativa de la APS (Autoridad de Fiscalización) de Bolivia.</li>
-                                        <li>Reporte automático de operaciones en los plazos regulatorios establecidos.</li>
-                                        <li>Envío de datos UIF (Unidad de Investigaciones Financieras) de forma automática.</li>
-                                        <li>Alertas de cumplimiento para operaciones que requieren reporte obligatorio.</li>
-                                    </ul>
-                                </div>
+                                
                                 <div class="sub-card">
                                     <h4><span class="num">3</span> SIAT — Facturación Electrónica</h4>
                                     <ul>
@@ -1437,7 +1272,7 @@
                         <div class="acc-item-inner">
                             <div class="acc-item-inner-pad">
                             <div>
-                                <iframe src="frames/auditoria_logs.html" style="width:100%; height:4500px; border:none;"></iframe>
+                                <iframe src="frames/auditoria_logs.html" style="width:100%; height:3000px; border:none;"></iframe>
                             </div>
                             <div class="sub-grid">
                                 <div class="sub-card">

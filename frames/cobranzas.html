@@ -173,8 +173,7 @@ td{padding:6px 4px;border-bottom:1px solid #F1F4F1}
         </div>
         <div class="row"><span class="l">📱 WhatsApp Business</span><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
         <div class="row"><span class="l">📧 Email automatizado</span><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
-        <div class="row"><span class="l">📞 IVR predictivo</span><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
-        <div class="row"><span class="l">🏠 Visita en terreno</span><label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
+        <div class="row"><span class="l">📞 Llamadas de Cobranza</span><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
       </div>
 
       <!-- 4. Promesas de pago -->
@@ -192,128 +191,6 @@ td{padding:6px 4px;border-bottom:1px solid #F1F4F1}
         <div class="row" style="margin-top:6px"><span class="l">Cumplimiento mes</span><b style="color:var(--ok)">68%</b></div>
       </div>
 
-      <!-- 5. Negociación / acuerdos -->
-      <div class="card">
-        <span class="menu">⋯</span>
-        <h3><span class="num">5</span> Acuerdos y Refinanciación</h3>
-        <p class="desc">Planes de pago especiales con descuento</p>
-        <table>
-          <thead><tr><th>Tipo</th><th>Cuotas</th><th>Dscto.</th></tr></thead>
-          <tbody>
-            <tr><td>Quita mora</td><td>1</td><td><span class="tag green">15%</span></td></tr>
-            <tr><td>Refinanciamiento</td><td>3</td><td><span class="tag green">8%</span></td></tr>
-            <tr><td>Refinanciamiento</td><td>6</td><td><span class="tag amber">5%</span></td></tr>
-            <tr><td>Plan extendido</td><td>12</td><td><span class="tag gray">0%</span></td></tr>
-          </tbody>
-        </table>
-        <button class="btn outline sm" style="margin-top:8px;width:100%">Simular acuerdo</button>
-      </div>
-
-      <!-- 6. Score de cobrabilidad -->
-      <div class="card">
-        <span class="menu">⋯</span>
-        <h3><span class="num">6</span> Score de Cobrabilidad</h3>
-        <p class="desc">Modelo predictivo IA por cliente</p>
-        <div class="row"><span class="l">🟢 Alta probabilidad</span><b>1.842</b></div>
-        <div class="row"><span class="l">🟡 Media</span><b>987</b></div>
-        <div class="row"><span class="l">🔴 Baja</span><b>412</b></div>
-        <div class="row"><span class="l">⚫ Incobrable</span><b>87</b></div>
-        <div class="row"><span class="l">Modelo IA</span><span class="tag blue">v3.2 · 91% precisión</span></div>
-        <button class="btn outline sm" style="margin-top:6px;width:100%">Reentrenar modelo</button>
-      </div>
-
-      <!-- 7. Casos críticos -->
-      <div class="card">
-        <span class="menu">⋯</span>
-        <h3><span class="num">7</span> Cola de Casos Críticos</h3>
-        <p class="desc">Pólizas próximas a cancelación</p>
-        <table>
-          <thead><tr><th>Póliza</th><th>Días</th><th>Monto</th><th>Acción</th></tr></thead>
-          <tbody>
-            <tr><td>POL-8421</td><td><span class="tag red">85</span></td><td>4.200</td><td><span class="linkish">Gestionar</span></td></tr>
-            <tr><td>POL-7732</td><td><span class="tag red">78</span></td><td>2.890</td><td><span class="linkish">Gestionar</span></td></tr>
-            <tr><td>POL-9104</td><td><span class="tag amber">62</span></td><td>1.540</td><td><span class="linkish">Gestionar</span></td></tr>
-            <tr><td>POL-6655</td><td><span class="tag amber">58</span></td><td>3.720</td><td><span class="linkish">Gestionar</span></td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- 8. Cobranza judicial -->
-      <div class="card">
-        <span class="menu">⋯</span>
-        <h3><span class="num">8</span> Cobranza Judicial</h3>
-        <p class="desc">Casos derivados a estudio jurídico</p>
-        <div class="pipeline">
-          <div class="stage done">Carta<br>notarial</div>
-          <div class="stage active">Demanda</div>
-          <div class="stage">Sentencia</div>
-          <div class="stage">Embargo</div>
-        </div>
-        <div class="row"><span class="l">Casos en juicio</span><b>34</b></div>
-        <div class="row"><span class="l">Recuperado vía legal</span><b style="color:var(--ok)">Bs 187K</b></div>
-        <div class="row"><span class="l">Estudio asignado</span><span class="tag gray">Vargas & Asoc.</span></div>
-        <button class="btn warn sm" style="margin-top:6px;width:100%">Derivar caso</button>
-      </div>
-
-      <!-- 9. Campañas -->
-      <div class="card">
-        <span class="menu">⋯</span>
-        <h3><span class="num">9</span> Campañas de Recupero</h3>
-        <p class="desc">Iniciativas masivas con incentivos</p>
-        <div class="row"><span class="l">🎯 Quita 20% +90d</span><span class="tag green">Activa</span></div>
-        <div class="row"><span class="l">📅 Refi sin intereses</span><span class="tag green">Activa</span></div>
-        <div class="row"><span class="l">🎁 Bono al día</span><span class="tag amber">Pausada</span></div>
-        <div class="row"><span class="l">Conversión campaña</span><b>23,8%</b></div>
-        <button class="btn sm" style="margin-top:6px;width:100%">+ Nueva campaña</button>
-      </div>
-
-      <!-- 10. Bandeja del gestor -->
-      <div class="card">
-        <span class="menu">⋯</span>
-        <h3><span class="num">10</span> Bandeja del Gestor</h3>
-        <p class="desc">Tareas del día priorizadas por IA</p>
-        <div class="row"><span class="l">📞 Llamadas pendientes</span><b>24</b></div>
-        <div class="row"><span class="l">💬 WhatsApp por responder</span><b>17</b></div>
-        <div class="row"><span class="l">📧 Emails sin abrir</span><b>9</b></div>
-        <div class="row"><span class="l">⏰ Promesas vencen hoy</span><b style="color:var(--warn)">11</b></div>
-        <div class="row"><span class="l">🎯 Meta diaria</span><b>78%</b></div>
-      </div>
-
-      <!-- 11. Integraciones -->
-      <div class="card">
-        <span class="menu">⋯</span>
-        <h3><span class="num">11</span> Integraciones</h3>
-        <p class="desc">Burós, bancos y canales conectados</p>
-        <div class="row"><span class="l">📊 Infocred (Buró)</span><span class="tag green">●  Conectado</span></div>
-        <div class="row"><span class="l">🏦 Banco Económico</span><span class="tag green">●  Conectado</span></div>
-        <div class="row"><span class="l">📱 WhatsApp BSP</span><span class="tag green">●  Conectado</span></div>
-        <div class="row"><span class="l">☎️ Contact Center</span><span class="tag green">●  Conectado</span></div>
-        <div class="row"><span class="l">⚖️ Estudio Jurídico</span><span class="tag amber">●  Sincronizando</span></div>
-      </div>
-
-      <!-- 12. Indicadores y reportes -->
-      <div class="card">
-        <span class="menu">⋯</span>
-        <h3><span class="num">12</span> Indicadores Operativos</h3>
-        <p class="desc">KPIs en tiempo real del proceso</p>
-        <div class="row"><span class="l">DSO (días promedio cobro)</span><b>32 d</b></div>
-        <div class="row"><span class="l">Costo por cobro</span><b>Bs 14,20</b></div>
-        <div class="row"><span class="l">% mora total cartera</span><b style="color:var(--warn)">4,8%</b></div>
-        <div class="row"><span class="l">Roll-rate 30→60</span><b>18%</b></div>
-        <div class="row"><span class="l">Productividad gestor</span><b style="color:var(--ok)">87 ctas/día</b></div>
-        <button class="btn outline sm" style="margin-top:6px;width:100%">Ver dashboard completo</button>
-      </div>
-    </div>
-
-    <div class="footbar">
-      <span class="total">Recupero proyectado mes:</span>
-      <span style="font-size:18px;color:var(--primary-dark);font-weight:700">Bs 1.487.200</span>
-      <span class="tag green">▲ 19,4% vs meta</span>
-      <div class="ml">
-        <button class="btn outline">Programar campaña</button>
-        <button class="btn">Ejecutar gestión masiva</button>
-      </div>
-    </div>
   </main>
 </div>
 

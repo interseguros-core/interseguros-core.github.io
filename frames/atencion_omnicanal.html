@@ -326,7 +326,6 @@ body{background:#f1f5f4;color:#1a2e29;font-size:13px;padding:16px}
     <div class="list-item"><span class="ic">📋</span><div class="body"><div class="t">Pólizas vigentes</div><div class="d">3 activas · próx. vencimiento 12/2025</div></div><span class="badge green">Auto</span></div>
     <div class="list-item"><span class="ic">⚠️</span><div class="body"><div class="t">Siniestros abiertos</div><div class="d">1 caso #20034 · en peritaje</div></div><span class="badge amber">Activo</span></div>
     <div class="list-item"><span class="ic">💳</span><div class="body"><div class="t">Pagos al día</div><div class="d">Próxima cuota: 03/12 · Bs. 420</div></div><span class="badge green">OK</span></div>
-    <div class="list-item"><span class="ic">📑</span><div class="body"><div class="t">Endosos pendientes</div><div class="d">Sin solicitudes activas</div></div><span class="badge blue">—</span></div>
     <div class="list-item warn"><span class="ic">🔔</span><div class="body"><div class="t">Renovación próxima</div><div class="d">Vida (El Sol) en 45 días</div></div><span class="badge amber">45d</span></div>
   </div>
   <div class="input-bar" style="margin-top:8px">🔍 Buscar en FAQ o pregúntale a la IA…</div>
@@ -415,32 +414,6 @@ body{background:#f1f5f4;color:#1a2e29;font-size:13px;padding:16px}
   <div class="mini-row"><span class="l">Tasa entrega</span><span class="v">98.7%</span></div>
 </div>
 
-<!-- 7. AI Brain - Orquestador -->
-<div class="card brain">
-  <div class="card-h"><div class="num">7</div><h3>🧠 Orquestador IA Central</h3><span class="menu" style="color:#fff">⋯</span></div>
-  <div style="font-size:11px;opacity:.85;margin-bottom:10px">Modelo: GPT-4o + Whisper + Custom RAG</div>
-  <div class="stat"><span>Modelo activo</span><span class="v">GPT-4o</span></div>
-  <div class="stat"><span>Tokens hoy</span><span class="v">2.4M</span></div>
-  <div class="stat"><span>Latencia media</span><span class="v">340ms</span></div>
-  <div class="stat"><span>Confianza media</span><span class="v">94.2%</span></div>
-  <div class="stat"><span>Idiomas</span><span class="v">ES · QU · AY · EN</span></div>
-  <div style="margin-top:auto;padding-top:10px;border-top:1px solid rgba(255,255,255,.2);font-size:10px;opacity:.85">
-    Bases: Pólizas · Siniestros · Cobranzas · BRE · Productos · Reaseguro
-  </div>
-</div>
-
-<!-- 8. Hand-off Humano -->
-<div class="card">
-  <div class="card-h"><div class="num">8</div><h3>Hand-off · IA → Asesor Humano</h3><span class="menu">⋯</span></div>
-  <div class="subtitle">Transferencia con contexto completo de la conversación</div>
-  <div class="routing">
-    <div class="route"><div class="ch">🤖</div><div class="info"><div class="t">IA Bot · Atención inicial</div><div class="d">Saludo · clasificación · intent</div></div><span class="arrow">→</span></div>
-    <div class="route"><div class="ch">📊</div><div class="info"><div class="t">Análisis sentimiento</div><div class="d">Negativo · alta prioridad detectada</div></div><span class="arrow">→</span></div>
-    <div class="route" style="border-left-color:#f59e0b"><div class="ch" style="background:#f59e0b">⚡</div><div class="info"><div class="t">Hand-off automático</div><div class="d">Resumen · contexto · histórico</div></div><span class="arrow">→</span></div>
-    <div class="route" style="border-left-color:#3b82f6"><div class="ch" style="background:#3b82f6">👤</div><div class="info"><div class="t">Asesor: Carlos M.</div><div class="d">Especialidad: Siniestros · disponible</div></div><span class="badge green">✓</span></div>
-  </div>
-  <button class="btn full" style="margin-top:8px">Ver pool de asesores (12 online)</button>
-</div>
 
 <!-- 9. Sentiment Analytics -->
 <div class="card">
@@ -461,7 +434,6 @@ body{background:#f1f5f4;color:#1a2e29;font-size:13px;padding:16px}
     <div class="mini-row"><span class="l">NPS calculado</span><span class="v" style="color:#15803d">+62</span></div>
     <div class="mini-row"><span class="l">CSAT WhatsApp</span><span class="v">4.8/5</span></div>
     <div class="mini-row"><span class="l">CSAT Llamadas</span><span class="v">4.6/5</span></div>
-    <div class="mini-row"><span class="l">CSAT Email</span><span class="v">4.5/5</span></div>
     <div class="mini-row"><span class="l">Alertas críticas</span><span class="v" style="color:#b91c1c">3 abiertas</span></div>
   </div>
   <button class="btn sec full" style="margin-top:8px">📊 Dashboard analítico</button>
@@ -482,96 +454,6 @@ body{background:#f1f5f4;color:#1a2e29;font-size:13px;padding:16px}
   <div style="margin-top:8px;padding:7px 10px;background:#fef3c7;border-radius:6px;font-size:10px;color:#a16207">
     ⚠️ <b>Alerta IA:</b> Cliente en riesgo de churn · ofrecer compensación
   </div>
-</div>
-
-<!-- 11. Endosos por chat -->
-<div class="card">
-  <div class="card-h"><div class="num">11</div><h3>Endosos & Anexos por Chat</h3><span class="menu">⋯</span></div>
-  <div class="subtitle">Cambios de póliza con validación BRE automática</div>
-  <div class="list">
-    <div class="list-item"><span class="ic">👥</span><div class="body"><div class="t">Cambio de beneficiarios</div><div class="d">Vida · 3 cambios solicitados</div></div><span class="badge blue">BRE ✓</span></div>
-    <div class="list-item"><span class="ic">💰</span><div class="body"><div class="t">Aumento valor asegurado</div><div class="d">Auto · +100k USD</div></div><span class="badge amber">Revisar</span></div>
-    <div class="list-item"><span class="ic">📝</span><div class="body"><div class="t">Datos personales</div><div class="d">Email · teléfono</div></div><span class="badge green">Auto ✓</span></div>
-    <div class="list-item"><span class="ic">🚗</span><div class="body"><div class="t">Cambio de vehículo</div><div class="d">Requiere nueva inspección</div></div><span class="badge red">Manual</span></div>
-  </div>
-  <button class="btn full" style="margin-top:8px">✓ Confirmar cambios pendientes</button>
-</div>
-
-<!-- 12. Configuración canales -->
-<div class="card">
-  <div class="card-h"><div class="num">12</div><h3>Configuración · Canales & Horarios</h3><span class="menu">⋯</span></div>
-  <div class="subtitle">Activación por compañía · sucursal · tipo de cliente</div>
-  <div class="opt-row"><span>💬 WhatsApp Business</span><div class="switch on"></div></div>
-  <div class="opt-row"><span>📧 Email IA</span><div class="switch on"></div></div>
-  <div class="opt-row"><span>📱 SMS / OTP</span><div class="switch on"></div></div>
-  <div class="opt-row"><span>📞 Llamadas IA Voice</span><div class="switch on"></div></div>
-  <div class="opt-row"><span>🤝 Hand-off automático</span><div class="switch on"></div></div>
-  <div class="opt-row"><span>🌙 Modo nocturno (solo IA)</span><div class="switch"></div></div>
-  
-  <div style="margin-top:8px;font-size:11px;font-weight:600">Horario oficina (08:00 — 20:00)</div>
-  <div class="timeline">
-    <div class="active" style="left:33%;width:33%">08:00 — 20:00</div>
-    <div class="marker" style="left:50%"></div>
-  </div>
-  <div style="font-size:10px;color:#64746f">⏰ IA toma control fuera de horario · asesor on-call para urgencias</div>
-</div>
-
-<!-- 13. Métricas por canal -->
-<div class="card">
-  <div class="card-h"><div class="num">13</div><h3>Métricas · Volumen por Canal</h3><span class="menu">⋯</span></div>
-  <div class="subtitle">Distribución hoy · resolución sin escalar</div>
-  <div class="channel-mini">
-    <div class="ch-card"><div class="ic">💬</div><div class="lbl">WhatsApp</div><div class="val">1,624</div></div>
-    <div class="ch-card"><div class="ic">📧</div><div class="lbl">Email</div><div class="val">487</div></div>
-    <div class="ch-card"><div class="ic">📱</div><div class="lbl">SMS</div><div class="val">1,847</div></div>
-    <div class="ch-card"><div class="ic">📞</div><div class="lbl">Llamadas</div><div class="val">312</div></div>
-  </div>
-  <div class="mini-row"><span class="l">Resol. sin asesor</span><span class="v">87.4%</span></div>
-  <div class="mini-row"><span class="l">Tiempo medio chat</span><span class="v">2m 14s</span></div>
-  <div class="mini-row"><span class="l">Tiempo medio email</span><span class="v">1h 8m</span></div>
-  <div class="mini-row"><span class="l">Tiempo medio call</span><span class="v">4m 32s</span></div>
-  <div class="mini-row"><span class="l">Costo / interacción IA</span><span class="v" style="color:#15803d">$0.04</span></div>
-</div>
-
-<!-- 14. Campañas Outbound -->
-<div class="card">
-  <div class="card-h"><div class="num">14</div><h3>Campañas Outbound IA</h3><span class="menu">⋯</span></div>
-  <div class="subtitle">Cross-sell · renovaciones · cobranza preventiva</div>
-  <div class="list">
-    <div class="list-item"><span class="ic">🎯</span><div class="body"><div class="t">Renovación Auto Q4</div><div class="d">2,340 clientes · WA + Email</div></div><span class="badge green">Activa</span></div>
-    <div class="list-item"><span class="ic">📞</span><div class="body"><div class="t">Voice Bot · Cobranza</div><div class="d">187 promesas captadas hoy</div></div><span class="badge blue">87% OK</span></div>
-    <div class="list-item"><span class="ic">💌</span><div class="body"><div class="t">Cross-sell Salud</div><div class="d">Segmento: clientes Vida activos</div></div><span class="badge amber">Pausada</span></div>
-    <div class="list-item"><span class="ic">🎂</span><div class="body"><div class="t">Cumpleaños · oferta</div><div class="d">Automática diaria · 47 envíos</div></div><span class="badge green">Auto</span></div>
-  </div>
-  <button class="btn full" style="margin-top:8px">+ Nueva campaña con IA</button>
-</div>
-
-<!-- 15. Compliance & Auditoría -->
-<div class="card">
-  <div class="card-h"><div class="num">15</div><h3>Compliance & Auditoría IA</h3><span class="menu">⋯</span></div>
-  <div class="subtitle">Trazabilidad regulatoria · ASFI · grabaciones</div>
-  <div class="opt-row"><span>🎙️ Grabar todas las llamadas</span><div class="switch on"></div></div>
-  <div class="opt-row"><span>💾 Guardar transcripciones 7 años</span><div class="switch on"></div></div>
-  <div class="opt-row"><span>🔒 Encriptación E2E</span><div class="switch on"></div></div>
-  <div class="opt-row"><span>👁️ Doble verificación en pagos</span><div class="switch on"></div></div>
-  <div class="mini-row"><span class="l">Llamadas grabadas hoy</span><span class="v">312</span></div>
-  <div class="mini-row"><span class="l">Conversaciones archivadas</span><span class="v">847,231</span></div>
-  <div class="mini-row"><span class="l">Reportes ASFI</span><span class="v">Auto · mensual</span></div>
-  <button class="btn sec full" style="margin-top:8px">📄 Exportar log auditoría</button>
-</div>
-
-<!-- 16. Knowledge Base IA -->
-<div class="card">
-  <div class="card-h"><div class="num">16</div><h3>Knowledge Base · Entrenamiento IA</h3><span class="menu">⋯</span></div>
-  <div class="subtitle">Documentos y entrenamiento del modelo IA</div>
-  <div class="list">
-    <div class="list-item"><span class="ic">📚</span><div class="body"><div class="t">Catálogo de productos</div><div class="d">47 docs · sincronizado</div></div><span class="badge green">v2.4</span></div>
-    <div class="list-item"><span class="ic">⚖️</span><div class="body"><div class="t">Reglas BRE</div><div class="d">312 reglas activas</div></div><span class="badge green">Live</span></div>
-    <div class="list-item"><span class="ic">📋</span><div class="body"><div class="t">Procedimientos siniestros</div><div class="d">28 flujos documentados</div></div><span class="badge blue">v1.8</span></div>
-    <div class="list-item"><span class="ic">❓</span><div class="body"><div class="t">FAQs aprobadas</div><div class="d">487 respuestas curadas</div></div><span class="badge green">Live</span></div>
-    <div class="list-item warn"><span class="ic">⚠️</span><div class="body"><div class="t">Pendientes revisión</div><div class="d">12 respuestas IA marcadas</div></div><span class="badge amber">Revisar</span></div>
-  </div>
-  <button class="btn full" style="margin-top:8px">🧠 Re-entrenar modelo</button>
 </div>
 
 </div>
