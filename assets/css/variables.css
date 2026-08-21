@@ -1,0 +1,16 @@
+:root {
+  --color-sidebar: #0b1530;
+  --color-navbar: #142142;
+  --color-background: #182746;
+  --color-surface: #1d2d50;
+  --color-surface-hover: #24375e;
+  --color-primary: #6372ff;
+  --color-secondary: #2f8bff;
+  --color-success: #20d6a2;
+  --color-danger: #ff6b6b;
+  --color-text: #f4f7ff;
+  --color-text-muted: #8f9bb8;
+  --color-border: rgba(255, 255, 255, 0.08);
+  --sidebar-width: 250px;
+  --navbar-height: 64px;
+}

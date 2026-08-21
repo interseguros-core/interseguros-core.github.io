@@ -1,0 +1,193 @@
+/* ══ SIDEBAR ══ */
+.sidebar {
+  background: var(--color-sidebar);
+  border-right: 1px solid var(--color-border);
+}
+
+.sidebar-header {
+  height: var(--navbar-height);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.sidebar-brand {
+  color: var(--color-text);
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: .3px;
+}
+
+.sidebar-close {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  color: var(--color-text-muted);
+}
+.sidebar-close svg { width: 18px; height: 18px; }
+.sidebar-close:hover { background: var(--color-surface-hover); color: var(--color-text); }
+
+.sidebar-nav {
+  flex: 1;
+  padding: 12px;
+}
+.sidebar-nav ul,
+.sidebar-submenu {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sidebar-item { margin-bottom: 2px; }
+
+.sidebar-row {
+  display: flex;
+  align-items: stretch;
+  gap: 2px;
+}
+
+.sidebar-link {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border-left: 3px solid transparent;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  font-size: .92rem;
+}
+.sidebar-link:hover { background: var(--color-surface-hover); color: var(--color-text); }
+.sidebar-link.active {
+  color: var(--color-text);
+  background: var(--color-surface-hover);
+  border-left: 3px solid var(--color-success);
+}
+.sidebar-link.active .sidebar-icon { color: var(--color-success); }
+
+.sidebar-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  display: inline-flex;
+}
+.sidebar-icon svg { width: 100%; height: 100%; }
+
+.sidebar-caret {
+  width: 36px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  color: var(--color-text-muted);
+}
+.sidebar-caret:hover { background: var(--color-surface-hover); color: var(--color-text); }
+.sidebar-caret svg { width: 14px; height: 14px; transition: transform .2s ease; }
+.sidebar-caret[aria-expanded="true"] svg { transform: rotate(180deg); }
+
+.sidebar-submenu {
+  max-height: 0;
+  overflow: hidden;
+  margin: 2px 0 2px 24px;
+  padding-left: 14px;
+  border-left: 1px solid var(--color-border);
+  transition: max-height .25s ease;
+}
+.sidebar-submenu.open { max-height: 720px; }
+.sidebar-submenu li a {
+  display: block;
+  padding: 7px 10px;
+  border-radius: 6px;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  font-size: .82rem;
+}
+.sidebar-submenu li a:hover { background: var(--color-surface-hover); color: var(--color-text); }
+
+/* ══ NAVBAR ══ */
+.navbar {
+  background: var(--color-navbar);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.navbar-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  color: var(--color-text);
+}
+.navbar-toggle:hover { background: var(--color-surface-hover); }
+.navbar-toggle svg { width: 20px; height: 20px; }
+
+.navbar-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ══ HOME PAGE ══ */
+.home-hero {
+  max-width: 640px;
+  margin: 48px auto;
+  padding: 0 24px;
+  text-align: center;
+}
+.home-logo {
+  height: 40px;
+  width: auto;
+  margin: 0 auto 24px;
+  filter: brightness(0) invert(1);
+  opacity: .92;
+}
+.home-hero h1 {
+  color: var(--color-text);
+  font-size: 1.9rem;
+  margin: 0 0 12px;
+}
+.home-hero p {
+  color: var(--color-text-muted);
+  line-height: 1.65;
+  margin: 0 0 28px;
+}
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-primary);
+  color: #fff;
+  text-decoration: none;
+  padding: 11px 22px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: .92rem;
+}
+.btn-primary:hover { background: var(--color-secondary); }
+
+/* ══ FOCUS STATES ══ */
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--color-secondary);
+  outline-offset: 2px;
+}
