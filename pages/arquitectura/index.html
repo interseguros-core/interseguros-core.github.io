@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arquitectura — Interseguros</title>
+    <link rel="stylesheet" href="/assets/css/variables.css">
+    <link rel="stylesheet" href="/assets/css/reset.css">
+    <link rel="stylesheet" href="/assets/css/layout.css">
+    <link rel="stylesheet" href="/assets/css/components.css">
+    <link rel="stylesheet" href="/assets/css/architecture.css">
+    <link rel="stylesheet" href="/assets/css/responsive.css">
+</head>
+<body>
+
+<app-sidebar></app-sidebar>
+<div class="app-shell">
+<app-navbar heading="Arquitectura"></app-navbar>
+<main class="main-content">
+    <div class="architecture-page">
+        <div class="architecture-intro">
+            <h1>Diagramas de arquitectura</h1>
+            <p>
+                Diagramas de trabajo del equipo técnico: cada uno se puede ampliar,
+                reducir y desplazar. Cuando existe, el botón de descarga entrega el
+                código fuente (Mermaid, draw.io, PlantUML...) usado para generarlo.
+            </p>
+        </div>
+        <div id="architectureList" class="architecture-list"></div>
+    </div>
+</main>
+</div>
+
+<script type="module" src="/assets/js/architecture.js"></script>
+</body>
+</html>

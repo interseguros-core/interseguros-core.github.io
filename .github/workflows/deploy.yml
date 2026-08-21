@@ -1,0 +1,59 @@
+name: Deploy static site to GitHub Pages
+
+# Manual only for now, on purpose: we don't want this to replace the live
+# public site until the migration below has been verified end to end.
+# Once confirmed, add `push: { branches: [main] }` to `on:` to automate it.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Stage publishable files only
+        # No build step exists (pure HTML/CSS/JS). We still stage an explicit
+        # allowlist into _site instead of uploading the repo root as-is, so
+        # .git/.vscode, the migration backup, and any leftover React/Vite
+        # folder from earlier experiments never end up in the artifact.
+        run: |
+          set -e
+          mkdir -p _site
+          cp index.html _site/
+          cp -r pages _site/
+          cp -r components _site/
+          cp -r assets _site/
+          cp -r frames _site/
+          cp -r img _site/
+          cp -r infraestructura _site/
+          [ -f README.md ] && cp README.md _site/ || true
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
