@@ -1,0 +1,53 @@
+.quickoff-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 28px 32px 80px;
+}
+
+.quickoff-intro {
+  margin-bottom: 28px;
+}
+.quickoff-intro h1 {
+  color: var(--color-text);
+  font-size: 1.5rem;
+  margin: 0 0 8px;
+}
+.quickoff-intro p {
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  max-width: 720px;
+  margin: 0;
+}
+
+.quickoff-video-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.quickoff-video-head {
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--color-border);
+}
+.quickoff-video-title {
+  font-size: 1.05rem;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.quickoff-video-body {
+  padding: 18px;
+}
+
+.quickoff-video-body video {
+  display: block;
+  width: 100%;
+  max-height: 640px;
+  border-radius: 8px;
+  background: #000;
+}
+
+@media (max-width: 640px) {
+  .quickoff-page { padding: 20px 16px 60px; }
+}
