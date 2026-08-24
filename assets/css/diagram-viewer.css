@@ -1,0 +1,161 @@
+/* Styles for the <diagram-viewer> component (components/diagram-viewer.js).
+   Shared across any page that embeds it: Arquitectura (inline, one per
+   diagram) and the PlantUML editor (inside its fullscreen lightbox). */
+
+diagram-viewer {
+  display: block;
+}
+
+.diagram-viewer {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.diagram-viewer-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.diagram-viewer-text { min-width: 0; }
+.diagram-viewer-title {
+  font-size: 1.05rem;
+  color: var(--color-text);
+  margin: 0 0 4px;
+}
+.diagram-viewer-desc {
+  font-size: .85rem;
+  color: var(--color-text-muted);
+  line-height: 1.55;
+  margin: 0;
+  max-width: 560px;
+}
+
+.diagram-viewer-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.dv-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text-muted);
+  width: 34px;
+  height: 34px;
+  justify-content: center;
+  text-decoration: none;
+  font-size: .78rem;
+}
+.dv-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+.dv-btn:hover { background: var(--color-surface-hover); color: var(--color-text); }
+.dv-btn:disabled { opacity: .4; cursor: default; }
+.dv-btn:disabled:hover { background: none; color: var(--color-text-muted); }
+.dv-download { width: auto; padding: 0 12px; }
+
+.dv-zoom-readout {
+  font-size: .78rem;
+  color: var(--color-text-muted);
+  min-width: 42px;
+  text-align: center;
+}
+
+.diagram-viewer-viewport {
+  position: relative;
+  height: 480px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    linear-gradient(45deg, rgba(255,255,255,.03) 25%, transparent 25%, transparent 75%, rgba(255,255,255,.03) 75%),
+    linear-gradient(45deg, rgba(255,255,255,.03) 25%, transparent 25%, transparent 75%, rgba(255,255,255,.03) 75%);
+  background-size: 24px 24px;
+  background-position: 0 0, 12px 12px;
+  cursor: grab;
+  touch-action: none;
+}
+.diagram-viewer-viewport.is-dragging { cursor: grabbing; }
+.diagram-viewer-viewport:focus-visible {
+  outline: 2px solid var(--color-secondary);
+  outline-offset: -2px;
+}
+
+.diagram-viewer-img {
+  max-width: 70%;
+  max-height: 85%;
+  transform-origin: center center;
+  user-select: none;
+  pointer-events: none;
+}
+
+@media (min-width: 1200px) {
+  .diagram-viewer-viewport { height: 640px; }
+}
+
+@media (max-width: 640px) {
+  .diagram-viewer-viewport { height: 320px; }
+  .diagram-viewer-head { flex-direction: column; }
+  .diagram-viewer-toolbar { flex-wrap: wrap; }
+}
+
+/* ══ Fullscreen popup opened from the toolbar's fullscreen button ══ */
+.diagram-viewer-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background: var(--color-background);
+  display: flex;
+  flex-direction: column;
+  padding: 56px 20px 20px;
+}
+
+.diagram-viewer-lightbox-close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text);
+}
+.diagram-viewer-lightbox-close:hover { background: var(--color-surface-hover); }
+.diagram-viewer-lightbox-close svg { width: 18px; height: 18px; }
+
+.diagram-viewer-lightbox-content {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+.diagram-viewer-lightbox-content diagram-viewer {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+.diagram-viewer-lightbox-content .diagram-viewer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.diagram-viewer-lightbox-content .diagram-viewer-viewport {
+  flex: 1;
+  height: auto;
+  min-height: 0;
+}

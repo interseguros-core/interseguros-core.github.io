@@ -1,0 +1,192 @@
+.plantuml-editor-page {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  padding: 24px;
+  align-items: start;
+}
+
+.plantuml-panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+}
+
+.plantuml-panel-head h2 {
+  margin: 0;
+  font-size: .95rem;
+  color: var(--color-text);
+}
+
+.plantuml-textarea {
+  width: 100%;
+  min-height: 360px;
+  resize: vertical;
+  background: var(--color-background);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-family: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: .85rem;
+  line-height: 1.55;
+  white-space: pre;
+  overflow: auto;
+  tab-size: 4;
+}
+.plantuml-textarea::placeholder { color: var(--color-text-muted); }
+.plantuml-textarea:focus-visible {
+  outline: 2px solid var(--color-secondary);
+  outline-offset: 2px;
+}
+
+.plantuml-file-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.plantuml-filename {
+  font-size: .8rem;
+  color: var(--color-text-muted);
+  overflow-wrap: anywhere;
+}
+
+.plantuml-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pu-btn {
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text);
+  padding: 9px 16px;
+  font-size: .85rem;
+  font-weight: 500;
+}
+.pu-btn:hover:not(:disabled) { background: var(--color-surface-hover); }
+.pu-btn:disabled { color: var(--color-text-muted); opacity: .5; cursor: default; }
+.pu-btn-primary {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+.pu-btn-primary:hover:not(:disabled) { background: var(--color-secondary); border-color: var(--color-secondary); }
+
+.plantuml-security-note {
+  margin: 0;
+  font-size: .76rem;
+  color: var(--color-text-muted);
+  line-height: 1.55;
+}
+
+.plantuml-status {
+  min-height: 1.4em;
+  font-size: .82rem;
+  line-height: 1.5;
+}
+.plantuml-status[data-level="error"] { color: var(--color-danger); }
+.plantuml-status[data-level="warning"] { color: #f5b942; }
+.plantuml-status[data-level="success"] { color: var(--color-success); }
+.plantuml-status[data-level="info"] { color: var(--color-text-muted); }
+
+.plantuml-preview {
+  flex: 1;
+  min-height: 360px;
+  border: 1px dashed var(--color-border);
+  border-radius: 8px;
+  background: var(--color-background);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+  padding: 12px;
+}
+.plantuml-preview-placeholder {
+  color: var(--color-text-muted);
+  font-size: .85rem;
+  text-align: center;
+  max-width: 320px;
+  margin: 0;
+  padding: 0 12px;
+}
+.plantuml-preview-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+.plantuml-preview.has-image { cursor: zoom-in; }
+.plantuml-preview.has-image:focus-visible {
+  outline: 2px solid var(--color-secondary);
+  outline-offset: -2px;
+}
+
+/* ══ Fullscreen lightbox — reuses <diagram-viewer> for zoom/pan ══ */
+.plantuml-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background: var(--color-background);
+  display: flex;
+  flex-direction: column;
+  padding: 56px 20px 20px;
+}
+.plantuml-lightbox[hidden] { display: none; }
+
+.plantuml-lightbox-close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text);
+}
+.plantuml-lightbox-close:hover { background: var(--color-surface-hover); }
+.plantuml-lightbox-close svg { width: 18px; height: 18px; }
+
+.plantuml-lightbox-content {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+.plantuml-lightbox-content diagram-viewer {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+.plantuml-lightbox-content .diagram-viewer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.plantuml-lightbox-content .diagram-viewer-viewport {
+  flex: 1;
+  height: auto;
+  min-height: 0;
+}
+
+@media (max-width: 900px) {
+  .plantuml-editor-page {
+    grid-template-columns: 1fr;
+  }
+  .plantuml-textarea,
+  .plantuml-preview {
+    min-height: 280px;
+  }
+}

@@ -3,10 +3,14 @@ import { architectureDiagrams } from '/assets/data/architecture-diagrams.js';
 const HOME_HREF = '/index.html';
 const DOCS_HREF = '/pages/documentacion-propuesta/index.html';
 const ARCH_HREF = '/pages/arquitectura/index.html';
+const BRANDING_HREF = '/pages/branding/index.html';
+const PLANTUML_EDITOR_HREF = '/pages/editor-plantuml/index.html';
 
 const ICON_HOME = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>`;
 const ICON_DOCS = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h6"/></svg>`;
 const ICON_ARCH = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 13 9 5 9-5"/></svg>`;
+const ICON_BRANDING = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 0 20c1.1 0 2-.9 2-2 0-.5-.2-1-.5-1.4-.3-.4-.5-.8-.5-1.4 0-1.1.9-2 2-2h2.3A4.2 4.2 0 0 0 21.5 11 9.9 9.9 0 0 0 12 2Z"/><circle cx="7.5" cy="10.5" r="1.1" fill="currentColor" stroke="none"/><circle cx="11" cy="7" r="1.1" fill="currentColor" stroke="none"/><circle cx="16" cy="8.5" r="1.1" fill="currentColor" stroke="none"/></svg>`;
+const ICON_EDITOR = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/></svg>`;
 const ICON_CARET = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>`;
 const ICON_CLOSE = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>`;
 
@@ -46,6 +50,14 @@ function isDocsPath(pathname) {
 
 function isArchitecturePath(pathname) {
   return pathname.startsWith('/pages/arquitectura/');
+}
+
+function isBrandingPath(pathname) {
+  return pathname.startsWith('/pages/branding/');
+}
+
+function isPlantUmlEditorPath(pathname) {
+  return pathname.startsWith('/pages/editor-plantuml/');
 }
 
 function isHomePath(pathname) {
@@ -90,6 +102,8 @@ class AppSidebar extends HTMLElement {
     const pathname = window.location.pathname;
     const docsActive = isDocsPath(pathname);
     const archActive = isArchitecturePath(pathname);
+    const brandingActive = isBrandingPath(pathname);
+    const editorActive = isPlantUmlEditorPath(pathname);
     const homeActive = isHomePath(pathname);
 
     const docsItem = renderExpandableItem({
@@ -121,6 +135,8 @@ class AppSidebar extends HTMLElement {
             <li class="sidebar-item">${renderNavLink(HOME_HREF, homeActive, ICON_HOME, 'Inicio')}</li>
             ${docsItem}
             ${archItem}
+            <li class="sidebar-item">${renderNavLink(BRANDING_HREF, brandingActive, ICON_BRANDING, 'Branding')}</li>
+            <li class="sidebar-item">${renderNavLink(PLANTUML_EDITOR_HREF, editorActive, ICON_EDITOR, 'Editor PlantUML')}</li>
           </ul>
         </nav>
       </div>

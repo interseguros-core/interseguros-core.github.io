@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor PlantUML — Interseguros</title>
+    <link rel="stylesheet" href="/assets/css/variables.css">
+    <link rel="stylesheet" href="/assets/css/reset.css">
+    <link rel="stylesheet" href="/assets/css/layout.css">
+    <link rel="stylesheet" href="/assets/css/components.css">
+    <link rel="stylesheet" href="/assets/css/diagram-viewer.css">
+    <link rel="stylesheet" href="/assets/css/plantuml-editor.css">
+    <link rel="stylesheet" href="/assets/css/responsive.css">
+</head>
+<body>
+
+<app-sidebar></app-sidebar>
+<div class="app-shell">
+<app-navbar heading="Editor PlantUML"></app-navbar>
+<main class="main-content">
+    <div class="plantuml-editor-page">
+
+        <div class="plantuml-panel plantuml-panel-editor">
+            <div class="plantuml-panel-head">
+                <h2>Código PlantUML</h2>
+            </div>
+
+            <textarea
+                id="plantuml-source"
+                class="plantuml-textarea"
+                spellcheck="false"
+                aria-label="Código PlantUML"
+                placeholder="@startuml&#10;actor Usuario&#10;Usuario -> Sistema : Solicitud&#10;@enduml"
+            ></textarea>
+
+            <div class="plantuml-file-row">
+                <button type="button" id="plantuml-load-btn" class="pu-btn">Cargar .puml</button>
+                <input
+                    type="file"
+                    id="plantuml-file-input"
+                    accept=".puml,text/plain"
+                    hidden
+                />
+                <span id="plantuml-filename" class="plantuml-filename">Ningún archivo cargado</span>
+            </div>
+
+            <div class="plantuml-actions">
+                <button type="button" id="plantuml-render-btn" class="pu-btn pu-btn-primary">Renderizar</button>
+            </div>
+
+            <p class="plantuml-security-note">
+                El código se envía al servidor PlantUML cuando presiona Renderizar.
+                No introduzca credenciales ni información confidencial.
+                El borrador se guarda solo en este navegador (localStorage) para
+                que no se pierda al navegar a otra página del portal.
+            </p>
+        </div>
+
+        <div class="plantuml-panel plantuml-panel-preview">
+            <div class="plantuml-panel-head">
+                <h2>Vista previa</h2>
+            </div>
+
+            <div id="plantuml-status" class="plantuml-status" role="status" aria-live="polite"></div>
+
+            <div id="plantuml-preview" class="plantuml-preview">
+                <p class="plantuml-preview-placeholder">
+                    Ingrese código PlantUML o cargue un archivo .puml y presione Renderizar.
+                </p>
+            </div>
+
+            <div class="plantuml-actions">
+                <button type="button" id="plantuml-download-puml-btn" class="pu-btn" disabled>Descargar .puml</button>
+                <button type="button" id="plantuml-download-svg-btn" class="pu-btn" disabled>Descargar SVG</button>
+                <button type="button" id="plantuml-download-png-btn" class="pu-btn" disabled>Descargar PNG</button>
+                <button type="button" id="plantuml-open-svg-btn" class="pu-btn" disabled>Abrir SVG</button>
+            </div>
+        </div>
+
+    </div>
+</main>
+</div>
+
+<div id="plantuml-lightbox" class="plantuml-lightbox" hidden>
+    <button type="button" id="plantuml-lightbox-close" class="plantuml-lightbox-close" aria-label="Cerrar vista ampliada">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <div id="plantuml-lightbox-content" class="plantuml-lightbox-content"></div>
+</div>
+
+<script type="module" src="/assets/js/plantuml-editor.js"></script>
+</body>
+</html>
