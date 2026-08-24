@@ -29,32 +29,32 @@
 export const architectureDiagrams = [
   {
     id: 'modelo-completo',
-    title: 'Insurance Broker SaaS — Multi-Tenant Domain Model V5',
+    title: 'SaaS — Multi-Tenant',
     description: 'Vista completa del modelo de dominio multi-tenant: todas las entidades y sus relaciones en un solo diagrama.',
-    svg: '/assets/img/arquitectura/diagramaCompleto.svg',
+    svg: '/assets/img/arquitectura/DiagramaCompletoClaro.svg',
   },
   {
     id: 'organization',
     title: 'Organization',
     description: 'Modelo de clases de Organization (la corredora/tenant) y su estructura interna.',
-    svg: '/assets/img/arquitectura/organization.svg',
+    svg: '/assets/img/arquitectura/organizationClaro.svg',
   },
   {
     id: 'modelo-party',
-    title: 'Identity / Customer / Executive / User',
+    title: 'Identity User',
     description: 'Diagrama de clases del modelo Party: relación entre Identity, Customer, Executive y User.',
-    svg: '/assets/img/arquitectura/customer.svg',
+    svg: '/assets/img/arquitectura/IdentityCustomerExecutiveUser.svg',
   },
   {
     id: 'branding-organizacion',
     title: 'Branding by Organization',
     description: 'Modelo de clases de la personalización de marca (branding) por cada Organization.',
-    svg: '/assets/img/arquitectura/brandingByAutorization.svg',
+    svg: '/assets/img/arquitectura/BrandingByOrganizationClaro.svg',
   },
   {
     id: 'cobertura-productos',
-    title: 'Insurance Product Coverage Model',
+    title: 'Product Coverage',
     description: 'Modelo de clases de productos de seguro y sus coberturas.',
-    svg: '/assets/img/arquitectura/productCoverage.svg',
+    svg: '/assets/img/arquitectura/productCoverageClaro.svg',
   },
 ];
