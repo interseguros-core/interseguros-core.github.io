@@ -152,8 +152,8 @@ class AppSidebar extends HTMLElement {
             ${docsItem}
             ${archItem}
             <li class="sidebar-item">${renderNavLink(BRANDING_HREF, brandingActive, ICON_BRANDING, 'Branding')}</li>
-            <li class="sidebar-item">${renderNavLink(PLANTUML_EDITOR_HREF, editorActive, ICON_EDITOR, 'Editor PlantUML')}</li>
             ${meetingsItem}
+             <li class="sidebar-item">${renderNavLink(PLANTUML_EDITOR_HREF, editorActive, ICON_EDITOR, 'Editor PlantUML')}</li>
           </ul>
         </nav>
       </div>
