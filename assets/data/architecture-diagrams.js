@@ -37,7 +37,7 @@ export const architectureDiagrams = [
     id: 'organization',
     title: 'Organization',
     description: 'Modelo de clases de Organization (la corredora/tenant) y su estructura interna.',
-    svg: '/assets/img/arquitectura/organizationClaro.svg',
+    svg: '/assets/img/arquitectura/organizationClaros.svg',
   },
   {
     id: 'modelo-party',
