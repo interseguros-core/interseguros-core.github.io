@@ -26,6 +26,10 @@
   overflow: hidden;
 }
 
+.quickoff-video-card + .quickoff-video-card {
+  margin-top: 24px;
+}
+
 .quickoff-video-head {
   padding: 16px 18px;
   border-bottom: 1px solid var(--color-border);
