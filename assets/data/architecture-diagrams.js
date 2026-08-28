@@ -57,4 +57,10 @@ export const architectureDiagrams = [
     description: 'Modelo de clases de productos de seguro y sus coberturas.',
     svg: '/assets/img/arquitectura/productCoverageClaro.svg',
   },
+  {
+    id: 'analitica',
+    title: 'Reportería y Analítica',
+    description: 'Arquitectura del módulo de reportería avanzada y analítica predictiva.',
+    svg: '/assets/img/arquitectura/analitica.png',
+  },
 ];
