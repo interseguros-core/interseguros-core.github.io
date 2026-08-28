@@ -15,19 +15,33 @@
 
 <app-sidebar></app-sidebar>
 <div class="app-shell">
-<app-navbar heading="Quick Off"></app-navbar>
+<app-navbar heading="Reuniones"></app-navbar>
 <main class="main-content">
     <div class="quickoff-page">
         <div class="quickoff-intro">
-            <h1>Quick Off</h1>
-            <p>Reunion inicial.</p>
+            <h1>Reuniones</h1>
         </div>
         <div class="quickoff-video-card" id="grabacion-1">
             <div class="quickoff-video-head">
                 <h2 class="quickoff-video-title">Grabación 1</h2>
             </div>
             <div class="quickoff-video-body">
-                <video src="http://ftp.uplabsai.com/interseguros/videos/quickoff.mp4" controls></video>
+                <button type="button" class="quickoff-poster" style="background-image: url('/assets/img/reuniones/reunion1.png')" data-video-src="http://ftp.uplabsai.com/interseguros/videos/quickoff.mp4" data-video-title="Grabación 1">
+                    <span class="quickoff-poster-play" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                    </span>
+                    <span class="quickoff-poster-label">Ver grabación</span>
+                </button>
+                <div class="quickoff-highlights">
+                    <h3>Puntos relevantes</h3>
+                    <p>La reunión de arranque alineó al equipo sobre el objetivo del proyecto y los próximos pasos.</p>
+                    <ul>
+                        <li>Presentación de objetivos y alcance general del proyecto.</li>
+                        <li>Identificación de stakeholders clave por área.</li>
+                        <li>Definición de canales de comunicación y frecuencia de seguimiento.</li>
+                        <li>Próximos pasos: levantamiento de requerimientos detallado.</li>
+                    </ul>
+                </div>
             </div>
         </div>
         <div class="quickoff-video-card" id="grabacion-2">
@@ -35,7 +49,24 @@
                 <h2 class="quickoff-video-title">Grabación 2 — 27/08/2026</h2>
             </div>
             <div class="quickoff-video-body">
-                <video src="http://ftp.uplabsai.com/interseguros/videos/2026-08-27_14-09-28.mp4" controls></video>
+                <button type="button" class="quickoff-poster" style="background-image: url('/assets/img/reuniones/reunion2.png')" data-video-src="http://ftp.uplabsai.com/interseguros/videos/2026-08-27_14-09-28.mp4" data-video-title="Grabación 2 — 27/08/2026">
+                    <span class="quickoff-poster-play" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                    </span>
+                    <span class="quickoff-poster-label">Ver grabación</span>
+                </button>
+                <div class="quickoff-highlights">
+                    <h3>Puntos relevantes</h3>
+                    <p>La reunión definió reglas operativas para digitalizar certificados y pólizas de seguros.</p>
+                    <ul>
+                        <li>El módulo debe iniciar dentro de 30 días.</li>
+                        <li>La póliza madre será el primer documento analizado.</li>
+                        <li>Se parametrizarán plantillas por aseguradora y producto.</li>
+                        <li>El alcance inicial llega hasta el plan de pago.</li>
+                        <li>Se automatizarán primas, comisiones y conciliaciones.</li>
+                        <li>Las cotizaciones usarán slips y comparaciones homogéneas.</li>
+                    </ul>
+                </div>
             </div>
         </div>
         <div class="quickoff-video-card" id="grabacion-3">
@@ -43,13 +74,73 @@
                 <h2 class="quickoff-video-title">Grabación 3 — 28/08/2026</h2>
             </div>
             <div class="quickoff-video-body">
-                <video src="http://ftp.uplabsai.com/interseguros/videos/2026-08-28_14-10-10.mp4" controls></video>
+                <button type="button" class="quickoff-poster" style="background-image: url('/assets/img/reuniones/reunion3.png')" data-video-src="http://ftp.uplabsai.com/interseguros/videos/2026-08-28_14-10-10.mp4" data-video-title="Grabación 3 — 28/08/2026">
+                    <span class="quickoff-poster-play" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                    </span>
+                    <span class="quickoff-poster-label">Ver grabación</span>
+                </button>
+                <div class="quickoff-highlights">
+                    <h3>Puntos relevantes</h3>
+                    <p>La reunión definió el alcance técnico y operativo inicial para digitalizar certificados de seguros colectivos.</p>
+                    <ul>
+                        <li>Stack: Java 25, Spring Boot 4, React, Postgres y Linux.</li>
+                        <li>Integración de usuarios y datos mediante el SFI.</li>
+                        <li>Primera etapa: certificados digitales para desgravamen y garantías.</li>
+                        <li>Cobranza bancaria y amortización contable quedan posteriores.</li>
+                        <li>Se prioriza eliminar formularios manuales y automatizar asociaciones.</li>
+                        <li>Migración de pólizas existentes sigue pendiente de validación.</li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
 </main>
 </div>
 
+<dialog class="quickoff-modal" id="quickoffVideoModal">
+    <div class="quickoff-modal-head">
+        <h3 class="quickoff-modal-title" id="quickoffVideoModalTitle"></h3>
+        <button type="button" class="quickoff-modal-close" id="quickoffVideoModalClose" aria-label="Cerrar video">✕</button>
+    </div>
+    <div class="quickoff-modal-body">
+        <video id="quickoffVideoModalPlayer" controls></video>
+    </div>
+</dialog>
+
 <script type="module" src="/assets/js/main.js"></script>
+<script type="module">
+    const modal = document.getElementById('quickoffVideoModal');
+    const modalTitle = document.getElementById('quickoffVideoModalTitle');
+    const modalPlayer = document.getElementById('quickoffVideoModalPlayer');
+    const modalClose = document.getElementById('quickoffVideoModalClose');
+
+    function closeVideoModal() {
+        modalPlayer.pause();
+        modalPlayer.removeAttribute('src');
+        modalPlayer.load();
+        modal.close();
+    }
+
+    document.querySelectorAll('.quickoff-poster').forEach((button) => {
+        button.addEventListener('click', () => {
+            modalTitle.textContent = button.dataset.videoTitle || '';
+            modalPlayer.src = button.dataset.videoSrc;
+            modal.showModal();
+            modalPlayer.play();
+        });
+    });
+
+    modalClose.addEventListener('click', closeVideoModal);
+    modal.addEventListener('cancel', (event) => {
+        event.preventDefault();
+        closeVideoModal();
+    });
+    modal.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            closeVideoModal();
+        }
+    });
+</script>
 </body>
 </html>
