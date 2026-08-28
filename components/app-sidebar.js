@@ -5,7 +5,7 @@ const DOCS_HREF = '/pages/documentacion-propuesta/index.html';
 const ARCH_HREF = '/pages/arquitectura/index.html';
 const BRANDING_HREF = '/pages/branding/index.html';
 const PLANTUML_EDITOR_HREF = '/pages/editor-plantuml/index.html';
-const QUICKOFF_HREF = '/pages/quickoff/index.html';
+const QUICKOFF_HREF = '/pages/meeting/index.html';
 
 const ICON_HOME = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>`;
 const ICON_DOCS = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h6"/></svg>`;
@@ -63,7 +63,7 @@ function isPlantUmlEditorPath(pathname) {
 }
 
 function isQuickoffPath(pathname) {
-  return pathname.startsWith('/pages/quickoff/');
+  return pathname.startsWith('/pages/meeting/');
 }
 
 function isHomePath(pathname) {
@@ -137,7 +137,11 @@ class AppSidebar extends HTMLElement {
       icon: ICON_MEETINGS,
       label: 'Reuniones',
       submenuId: 'submenu-reuniones',
-      submenuItems: [['Quickoff', QUICKOFF_HREF]],
+      submenuItems: [
+        ['Grabación 1', `${QUICKOFF_HREF}#grabacion-1`],
+        ['Grabación 2 — 27/08/2026', `${QUICKOFF_HREF}#grabacion-2`],
+        ['Grabación 3 — 28/08/2026', `${QUICKOFF_HREF}#grabacion-3`],
+      ],
     });
 
     this.innerHTML = `
