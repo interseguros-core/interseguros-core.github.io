@@ -292,6 +292,7 @@ mark.search-highlight {
 .sub-card h4 .num { background: var(--primary); color: #fff; border-radius: 4px; font-size: .72em; padding: 1px 6px; font-weight: 700; }
 .sub-card ul { margin: 0; padding-left: 17px; list-style: disc; }
 .sub-card ul li { font-size: .8em; color: var(--text); margin-bottom: 4px; line-height: 1.55; }
+.sub-card p { font-size: .8em; color: var(--text-muted); line-height: 1.6; margin: 8px 0 0; }
 .sub-card code { background: #eef5e6; border: 1px solid #c8e0a8; border-radius: 3px; padding: 1px 5px; font-size: .88em; color: var(--brand-green); }
 
 .integration-compare { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; margin-top: 18px; }

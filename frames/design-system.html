@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Interseguros — Design System</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  body { font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif; }
+</style>
+</head>
+<body class="bg-[#F6F7FA] px-10 py-8">
+
+  <div class="flex items-center gap-2.5 mb-1.5" id="dsHeader"></div>
+  <p class="text-[13px] text-[#5B6B85] mb-9">Design system — Componentes base para el ERP</p>
+
+  <ds-palette></ds-palette>
+  <ds-form-fields></ds-form-fields>
+  <ds-buttons></ds-buttons>
+  <ds-toast></ds-toast>
+  <ds-list></ds-list>
+  <ds-data-table></ds-data-table>
+
+  <script type="module">
+    import { logoSvg } from '/components/design-system/ds-logo.js';
+    document.getElementById('dsHeader').innerHTML = `
+      ${logoSvg({ width: 26, colorClass: 'text-[#7f8ea1]' })}
+      <span class="text-[16px] font-bold text-[#0B1440] tracking-tight">Interseguros</span>
+    `;
+  </script>
+  <script type="module" src="/components/design-system/ds-palette.js"></script>
+  <script type="module" src="/components/design-system/ds-form-fields.js"></script>
+  <script type="module" src="/components/design-system/ds-buttons.js"></script>
+  <script type="module" src="/components/design-system/ds-toast.js"></script>
+  <script type="module" src="/components/design-system/ds-list.js"></script>
+  <script type="module" src="/components/design-system/ds-data-table.js"></script>
+</body>
+</html>

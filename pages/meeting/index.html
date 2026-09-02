@@ -21,6 +21,30 @@
         <div class="quickoff-intro">
             <h1>Reuniones</h1>
         </div>
+        <div class="quickoff-video-card" id="grabacion-5">
+            <div class="quickoff-video-head">
+                <h2 class="quickoff-video-title">Grabación 5 — 01/09/2026</h2>
+            </div>
+            <div class="quickoff-video-body">
+                <button type="button" class="quickoff-poster" style="background-image: url('/assets/img/reuniones/reunion5.png')" data-video-src="http://ftp.uplabsai.com/interseguros/videos/2026-09-01_17-02-46.mp4" data-video-title="Grabación 5 — 01/09/2026">
+                    <span class="quickoff-poster-play" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                    </span>
+                    <span class="quickoff-poster-label">Ver grabación</span>
+                </button>
+                <div class="quickoff-highlights">
+                    <h3>Puntos relevantes</h3>
+                    <p>La reunión continuó la definición funcional y técnica del proyecto, profundizando en detalles pendientes de sesiones anteriores.</p>
+                    <ul>
+                        <li>Se revisaron los puntos pendientes de la reunión anterior.</li>
+                        <li>Se afinaron criterios sobre el modelo de datos entre producto, póliza y certificado.</li>
+                        <li>Se discutió el flujo de aprobación y validación de certificados emitidos.</li>
+                        <li>Se acordó continuar coordinando el acceso a los sistemas del banco (SFI).</li>
+                        <li>Quedaron temas por definir para una próxima sesión de seguimiento.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
         <div class="quickoff-video-card" id="grabacion-4">
             <div class="quickoff-video-head">
                 <h2 class="quickoff-video-title">Grabación 4 — 01/09/2026</h2>
@@ -33,16 +57,107 @@
                     <span class="quickoff-poster-label">Ver grabación</span>
                 </button>
                 <div class="quickoff-highlights">
-                    <h3>Puntos relevantes</h3>
-                    <p>La reunión revisó el avance del desarrollo y ajustó los próximos hitos del proyecto.</p>
+                    <h3>Propósito de la reunión</h3>
+                    <p>Alinear el entendimiento funcional sobre los seguros que maneja el banco, especialmente seguros vinculados/colectivos, y definir cómo debería arrancar el sistema de emisión digital de certificados para desgravamen y garantías.</p>
                     <ul>
-                        <li>Se validó el ambiente de desarrollo y control de versiones del equipo.</li>
-                        <li>Se definieron los criterios de aceptación para el primer entregable.</li>
-                        <li>Se acordó una demo funcional para la tercera semana de septiembre.</li>
-                        <li>Se identificaron dependencias con el equipo de infraestructura para el despliegue.</li>
-                        <li>Se estableció un canal de soporte directo para dudas técnicas durante el sprint.</li>
-                        <li>Quedó pendiente confirmar el cronograma de pruebas de integración con el SFI.</li>
+                        <li>Alcance inicial: certificados de seguros colectivos/vinculados, principalmente desgravamen y garantía.</li>
+                        <li>Se busca reemplazar los certificados y formularios preimpresos en papel por emisión digital.</li>
+                        <li>Los certificados colectivos se emiten bajo una póliza madre que define coberturas, tasas, límites y condiciones.</li>
+                        <li>Se requiere integrar datos del cliente desde el SFI / agenda del banco para emitir certificados.</li>
+                        <li>En la primera etapa no se parametrizarán coberturas ni planes de pago de forma compleja; se manejarán documentos PDF/plantillas.</li>
                     </ul>
+                    <details class="quickoff-more">
+                        <summary>Ver más</summary>
+                        <div class="quickoff-more-body">
+                            <h4>Temas</h4>
+                            <p><strong>Alcance del proyecto</strong></p>
+                            <ul>
+                                <li>Objetivo: digitalizar la emisión de certificados para seguros colectivos, principalmente desgravamen y garantías.</li>
+                                <li>Fase inicial: trabajar primero con vinculados/colectivos antes de abordar masivos e individuales.</li>
+                                <li>Fuera del alcance inicial o por validar: administración completa de planes de pago, control completo de cúmulos, parametrización detallada de cláusulas y coberturas, integración directa con core de aseguradora.</li>
+                            </ul>
+                            <p><strong>Modelo de seguros</strong></p>
+                            <ul>
+                                <li>Colectivos/vinculados: tienen póliza madre y certificados individuales asociados.</li>
+                                <li>Masivos: no funcionan necesariamente con póliza madre; se manejan como productos enlatados aprobados por la compañía.</li>
+                                <li>Individuales: son pólizas uno a uno, con posible necesidad de parametrizar más datos según el producto.</li>
+                                <li>Por validar: modelo final de datos entre producto, póliza madre, póliza individual, certificado e ítem emitido.</li>
+                            </ul>
+                            <p><strong>Flujo de emisión de certificados</strong></p>
+                            <ul>
+                                <li>El ejecutivo ingresaría al sistema.</li>
+                                <li>Buscaría o cargaría datos del cliente.</li>
+                                <li>El sistema debería traer información desde SFI o agenda del banco.</li>
+                                <li>Se seleccionaría póliza/producto correspondiente.</li>
+                                <li>Se emitiría el certificado.</li>
+                                <li>El sistema debería permitir consultar certificados emitidos, pendientes y asociados a número de operación.</li>
+                            </ul>
+                            <p><strong>Reglas de negocio</strong></p>
+                            <ul>
+                                <li>En seguros colectivos, los certificados dependen de una póliza madre.</li>
+                                <li>Desgravamen licitado y no licitado son pólizas distintas.</li>
+                                <li>Los vinculados están asociados a operaciones de crédito.</li>
+                                <li>En desgravamen puede existir revisión por cúmulo o proceso de suscripción.</li>
+                                <li>En garantías el proceso parece más simple, pero debe validarse en detalle.</li>
+                                <li>El beneficiario, tomador y asegurado pueden ser personas distintas según el tipo de seguro.</li>
+                            </ul>
+                            <p><strong>Integraciones</strong></p>
+                            <ul>
+                                <li>SFI: integración prioritaria para obtener datos del cliente y posiblemente datos necesarios para certificados.</li>
+                                <li>Agenda del banco: fuente de datos del cliente.</li>
+                                <li>Core de aseguradora: no se considera necesario al inicio, por validar.</li>
+                                <li>Sistema Nacional / Anafínico: referencia para entender el proceso actual de seguros masivos.</li>
+                                <li>Linser: actor relacionado a tarjetas de crédito, fuera del foco inicial.</li>
+                            </ul>
+                            <h4>Decisiones</h4>
+                            <ul>
+                                <li>Iniciar por desgravamen y garantías.</li>
+                                <li>No comenzar con seguros masivos como alcance principal.</li>
+                                <li>No parametrizar coberturas/cláusulas de forma compleja en la primera etapa.</li>
+                                <li>Manejar documentos PDF o plantillas como base del producto/póliza.</li>
+                                <li>Evaluar la emisión con un contador propio del sistema.</li>
+                                <li>Definir roles y permisos antes de implementar seguridad.</li>
+                            </ul>
+                            <h4>Problemas detectados</h4>
+                            <ul>
+                                <li>Confusión conceptual entre póliza madre, producto, certificado, póliza individual y póliza masiva.</li>
+                                <li>El proceso real de emisión todavía no está completamente detallado.</li>
+                                <li>Hay más de 30 pólizas actuales, lo que puede complicar el modelado.</li>
+                                <li>No está claro hasta dónde debe llegar el sistema con cúmulos y suscripción.</li>
+                                <li>La dependencia con SFI puede volverse crítica para completar datos del cliente.</li>
+                                <li>Parametrizar todo desde el inicio puede volver el sistema pesado y poco práctico.</li>
+                            </ul>
+                            <h4>Pendientes</h4>
+                            <ul>
+                                <li>Enviar ejemplos de pólizas madre actuales.</li>
+                                <li>Replantear el gráfico separando colectivos, masivos e individuales.</li>
+                                <li>Diagramar el proceso de desgravamen.</li>
+                                <li>Diagramar el proceso de garantías.</li>
+                                <li>Definir reglas para anular certificados.</li>
+                                <li>Definir si el sistema controlará cúmulos en esta fase.</li>
+                                <li>Definir perfiles de usuario y permisos.</li>
+                                <li>Confirmar si las aseguradoras tendrán acceso externo al sistema en una etapa futura.</li>
+                                <li>Confirmar próximas reuniones con anticipación.</li>
+                            </ul>
+                            <h4>Próximos pasos</h4>
+                            <ul>
+                                <li>Interseguros: compartir pólizas madre, plantillas y documentación actual.</li>
+                                <li>Uplabs: aterrizar la información recibida y preparar el modelo funcional.</li>
+                                <li>Equipo técnico: revisar integración con SFI/agenda del banco.</li>
+                                <li>Equipo funcional: mapear procesos de desgravamen y garantías.</li>
+                                <li>Todos: coordinar una siguiente reunión después de revisar la información de la reunión de las 5.</li>
+                            </ul>
+                            <h4>Por validar</h4>
+                            <ul>
+                                <li>Nombre exacto de algunos sistemas: BECOFLOW, CIBE, UPSONSO, Anafínico/Nafinity.</li>
+                                <li>Alcance exacto del control de cúmulos.</li>
+                                <li>Flujo definitivo de suscripción en desgravamen.</li>
+                                <li>Acceso futuro de compañías aseguradoras.</li>
+                                <li>Si el contador propio de certificados será suficiente sin integración con aseguradora.</li>
+                                <li>Taxonomía final: producto, póliza, certificado, póliza madre, póliza individual e ítem emitido.</li>
+                            </ul>
+                        </div>
+                    </details>
                 </div>
             </div>
         </div>
