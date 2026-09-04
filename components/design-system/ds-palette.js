@@ -35,7 +35,7 @@ class DsPalette extends HTMLElement {
             ${LOGO_VARIANTS.map((v) => `
               <div class="h-36 flex items-center justify-center gap-3 ${v.bg}">
                 ${logoSvg({ width: 30, colorClass: v.logo })}
-                <span class="text-[18px] font-bold tracking-tight ${v.word}">Interseguros</span>
+                <span class="text-[18px] font-bold tracking-tight ${v.word}">Holos IA</span>
               </div>
             `).join('')}
           </div>

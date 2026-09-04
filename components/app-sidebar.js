@@ -7,6 +7,7 @@ const BRANDING_HREF = '/pages/branding/index.html';
 const PLANTUML_EDITOR_HREF = '/pages/editor-plantuml/index.html';
 const QUICKOFF_HREF = '/pages/meeting/index.html';
 const DESIGN_SYSTEM_HREF = '/pages/design-system/index.html';
+const DOCUMENTO_SOLICITADO_HREF = '/pages/documento-solicitado/index.html';
 
 const ICON_HOME = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>`;
 const ICON_DOCS = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h6"/></svg>`;
@@ -14,6 +15,7 @@ const ICON_ARCH = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" st
 const ICON_BRANDING = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 0 20c1.1 0 2-.9 2-2 0-.5-.2-1-.5-1.4-.3-.4-.5-.8-.5-1.4 0-1.1.9-2 2-2h2.3A4.2 4.2 0 0 0 21.5 11 9.9 9.9 0 0 0 12 2Z"/><circle cx="7.5" cy="10.5" r="1.1" fill="currentColor" stroke="none"/><circle cx="11" cy="7" r="1.1" fill="currentColor" stroke="none"/><circle cx="16" cy="8.5" r="1.1" fill="currentColor" stroke="none"/></svg>`;
 const ICON_EDITOR = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/></svg>`;
 const ICON_DESIGN_SYSTEM = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><circle cx="17.5" cy="17.5" r="3.5"/></svg>`;
+const ICON_DOCUMENTO_SOLICITADO = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="m9 15 2 2 4-4"/></svg>`;
 const ICON_MEETINGS = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>`;
 const ICON_CARET = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>`;
 const ICON_CLOSE = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>`;
@@ -28,7 +30,6 @@ const ICON_CLOSE = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" s
 const DOC_SECTIONS = [
   ['Flujo general', 'body-flujo-diagrama'],
   ['Infraestructura', 'body-infraestructura'],
-  ['Organigrama', 'body-organigrama'],
   ['Compañías', 'step-companias'],
   ['Contactos y clientes', 'step-contactos'],
   ['Productos', 'step-productos'],
@@ -67,6 +68,10 @@ function isPlantUmlEditorPath(pathname) {
 
 function isDesignSystemPath(pathname) {
   return pathname.startsWith('/pages/design-system/');
+}
+
+function isDocumentoSolicitadoPath(pathname) {
+  return pathname.startsWith('/pages/documento-solicitado/');
 }
 
 function isQuickoffPath(pathname) {
@@ -119,6 +124,7 @@ class AppSidebar extends HTMLElement {
     const editorActive = isPlantUmlEditorPath(pathname);
     const quickoffActive = isQuickoffPath(pathname);
     const designSystemActive = isDesignSystemPath(pathname);
+    const documentoSolicitadoActive = isDocumentoSolicitadoPath(pathname);
     const homeActive = isHomePath(pathname);
 
     const docsItem = renderExpandableItem({
@@ -166,6 +172,7 @@ class AppSidebar extends HTMLElement {
             ${docsItem}
             ${archItem}
             <li class="sidebar-item">${renderNavLink(BRANDING_HREF, brandingActive, ICON_BRANDING, 'Branding')}</li>
+            <li class="sidebar-item">${renderNavLink(DOCUMENTO_SOLICITADO_HREF, documentoSolicitadoActive, ICON_DOCUMENTO_SOLICITADO, 'Documento Solicitado')}</li>
             <li class="sidebar-item">${renderNavLink(DESIGN_SYSTEM_HREF, designSystemActive, ICON_DESIGN_SYSTEM, 'Design System')}</li>
             ${meetingsItem}
              <li class="sidebar-item">${renderNavLink(PLANTUML_EDITOR_HREF, editorActive, ICON_EDITOR, 'Editor PlantUML')}</li>

@@ -1,3 +1,5 @@
+import { phosphorIcon } from './ds-phosphor.js';
+
 const POLICIES = [
   { id: 'PL-20481', client: 'Constructora Andina S.A.', type: 'Vehicular', status: 'Activa', prima: 'Bs 1,240.00', venc: '14 Mar 2027', selected: true },
   { id: 'PL-20482', client: 'María Fernanda Rojas', type: 'Vida', status: 'Activa', prima: 'Bs 380.00', venc: '02 Ene 2027' },
@@ -12,8 +14,57 @@ const STATUS_STYLE = {
   Vencida: 'bg-[#FBEAEA] text-[#DC2626]',
 };
 
-const ICON_EYE = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5B6B85" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"/><circle cx="12" cy="12" r="3"/></svg>';
-const ICON_EDIT = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5B6B85" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>';
+const PAGE_SIZES = [10, 20, 50, 100];
+const TOTAL_RECORDS = 75;
+
+function paginationInner({ pageSize, currentPage, openMenu }) {
+  const totalPages = Math.ceil(TOTAL_RECORDS / pageSize);
+  const page = Math.min(currentPage, totalPages);
+  const start = (page - 1) * pageSize + 1;
+  const end = Math.min(page * pageSize, TOTAL_RECORDS);
+  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+  return `
+    <span class="text-[12.5px] text-text-muted">${start}-${end} de ${TOTAL_RECORDS} registros</span>
+    <div class="flex items-center gap-2">
+
+      <div class="relative">
+        <button type="button" class="page-size-trigger inline-flex items-center gap-1.5 h-7 px-2.5 text-[12.5px] border border-border-strong rounded-control bg-white text-text-primary hover:bg-surface-subtle">
+          ${pageSize}
+          ${phosphorIcon('caret-down', { size: 'xs' })}
+        </button>
+        <div class="absolute bottom-full mb-1 left-0 w-20 bg-white border border-border-default rounded-control shadow-lg py-1 z-20 ${openMenu === 'size' ? '' : 'hidden'}">
+          ${PAGE_SIZES.map((n) => `
+            <button type="button" data-size="${n}" class="page-size-option w-full flex items-center justify-between px-3 py-1.5 text-[13px] text-text-primary hover:bg-surface-subtle">
+              ${n}
+              <span class="text-text-primary ${n === pageSize ? '' : 'invisible'}">${phosphorIcon('check', { size: 'xs' })}</span>
+            </button>
+          `).join('')}
+        </div>
+      </div>
+
+      <button type="button" class="prev-page w-7 h-7 flex items-center justify-center border border-border-strong rounded-control bg-white text-text-secondary hover:bg-surface-subtle disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white" aria-label="Página anterior" ${page === 1 ? 'disabled' : ''}>${phosphorIcon('caret-left', { size: 'xs' })}</button>
+
+      <div class="relative">
+        <button type="button" class="page-number-trigger inline-flex items-center gap-1.5 h-7 px-2.5 text-[12.5px] border border-border-strong rounded-control bg-white text-text-primary hover:bg-surface-subtle">
+          Pág. ${page}
+          ${phosphorIcon('caret-down', { size: 'xs' })}
+        </button>
+        <div class="absolute bottom-full mb-1 right-0 w-16 max-h-52 overflow-y-auto bg-white border border-border-default rounded-control shadow-lg py-1 z-20 ${openMenu === 'page' ? '' : 'hidden'}">
+          ${pageNumbers.map((n) => `
+            <button type="button" data-page="${n}" class="page-number-option w-full flex items-center justify-between px-3 py-1.5 text-[13px] text-text-primary hover:bg-surface-subtle">
+              ${n}
+              <span class="text-text-primary ${n === page ? '' : 'invisible'}">${phosphorIcon('check', { size: 'xs' })}</span>
+            </button>
+          `).join('')}
+        </div>
+      </div>
+
+      <button type="button" class="next-page w-7 h-7 flex items-center justify-center border border-border-strong rounded-control bg-white text-text-secondary hover:bg-surface-subtle disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white" aria-label="Página siguiente" ${page === totalPages ? 'disabled' : ''}>${phosphorIcon('caret-right', { size: 'xs' })}</button>
+
+    </div>
+  `;
+}
 
 function row(p) {
   return `
@@ -31,8 +82,8 @@ function row(p) {
       <td class="px-3.5 py-[11px] text-[13px] text-[#5B6B85]">${p.venc}</td>
       <td class="px-3.5 py-[11px]">
         <div class="flex items-center gap-1">
-          <button class="w-[26px] h-[26px] flex items-center justify-center rounded-[2px] hover:bg-[#F1F2F5]">${ICON_EYE}</button>
-          <button class="w-[26px] h-[26px] flex items-center justify-center rounded-[2px] hover:bg-[#F1F2F5]">${ICON_EDIT}</button>
+          <button class="w-[26px] h-[26px] flex items-center justify-center rounded-[2px] text-text-secondary hover:bg-[#F1F2F5]" aria-label="Ver póliza">${phosphorIcon('view', { size: 'sm' })}</button>
+          <button class="w-[26px] h-[26px] flex items-center justify-center rounded-[2px] text-text-secondary hover:bg-[#F1F2F5]" aria-label="Editar póliza">${phosphorIcon('edit', { size: 'sm' })}</button>
         </div>
       </td>
     </tr>
@@ -41,6 +92,7 @@ function row(p) {
 
 class DsDataTable extends HTMLElement {
   connectedCallback() {
+    this.pagination = { pageSize: 10, currentPage: 1, openMenu: null };
     const selectedCount = POLICIES.filter((p) => p.selected).length;
     this.innerHTML = `
       <section class="mb-12">
@@ -50,13 +102,13 @@ class DsDataTable extends HTMLElement {
 
           <div class="flex justify-between items-center mb-4">
             <div class="relative w-[260px]">
-              <svg class="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#94A0B8]" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#94A0B8]">${phosphorIcon('search', { size: 'sm' })}</span>
               <input placeholder="Buscar póliza o cliente..." class="w-full box-border text-[13px] border border-[#C7CEDB] rounded-[3px] outline-none pl-[30px] pr-3 py-[7px]" />
             </div>
             <div class="flex items-center gap-3">
               ${selectedCount > 0 ? `<span class="text-[12.5px] text-[#5B6B85] mr-1">${selectedCount} seleccionada${selectedCount > 1 ? 's' : ''}</span>` : ''}
-              <button class="inline-flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium rounded-[3px] bg-white text-[#16213E] border border-[#C7CEDB] hover:bg-[#F8F9FB]">Exportar</button>
-              <button class="inline-flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium rounded-[3px] bg-[#3D5FEB] text-white hover:bg-[#2C46C4]">Nueva póliza</button>
+              <button class="inline-flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium rounded-[3px] bg-white text-[#16213E] border border-[#C7CEDB] hover:bg-[#F8F9FB]">${phosphorIcon('download', { size: 'sm' })} Exportar</button>
+              <button class="inline-flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium rounded-[3px] bg-[#3D5FEB] text-white hover:bg-[#2C46C4]">${phosphorIcon('add', { size: 'sm' })} Nueva póliza</button>
             </div>
           </div>
 
@@ -80,19 +132,56 @@ class DsDataTable extends HTMLElement {
             </table>
           </div>
 
-          <div class="flex justify-between items-center mt-3.5">
-            <span class="text-[12.5px] text-[#94A0B8]">Mostrando ${POLICIES.length} de 128 pólizas</span>
-            <div class="flex items-center gap-1">
-              <button class="min-w-[30px] h-7 px-2 text-[12.5px] border border-[#C7CEDB] rounded-[3px] bg-white text-[#5B6B85]">Anterior</button>
-              <button class="min-w-[30px] h-7 px-2 text-[12.5px] border border-[#3D5FEB] rounded-[3px] bg-[#3D5FEB] text-white">1</button>
-              <button class="min-w-[30px] h-7 px-2 text-[12.5px] border border-[#C7CEDB] rounded-[3px] bg-white text-[#5B6B85]">2</button>
-              <button class="min-w-[30px] h-7 px-2 text-[12.5px] border border-[#C7CEDB] rounded-[3px] bg-white text-[#5B6B85]">3</button>
-              <button class="min-w-[30px] h-7 px-2 text-[12.5px] border border-[#C7CEDB] rounded-[3px] bg-white text-[#5B6B85]">Siguiente</button>
-            </div>
+          <div class="pagination-bar flex justify-between items-center mt-3.5">
+            ${paginationInner(this.pagination)}
           </div>
         </div>
       </section>
     `;
+    this.bindEvents();
+  }
+
+  bindEvents() {
+    const bar = this.querySelector('.pagination-bar');
+
+    const rerender = () => {
+      bar.innerHTML = paginationInner(this.pagination);
+    };
+
+    bar.addEventListener('click', (e) => {
+      const sizeOption = e.target.closest('.page-size-option');
+      const pageOption = e.target.closest('.page-number-option');
+      const totalPages = Math.ceil(TOTAL_RECORDS / this.pagination.pageSize);
+
+      if (e.target.closest('.page-size-trigger')) {
+        this.pagination.openMenu = this.pagination.openMenu === 'size' ? null : 'size';
+      } else if (e.target.closest('.page-number-trigger')) {
+        this.pagination.openMenu = this.pagination.openMenu === 'page' ? null : 'page';
+      } else if (sizeOption) {
+        this.pagination.pageSize = Number(sizeOption.dataset.size);
+        this.pagination.currentPage = 1;
+        this.pagination.openMenu = null;
+      } else if (pageOption) {
+        this.pagination.currentPage = Number(pageOption.dataset.page);
+        this.pagination.openMenu = null;
+      } else if (e.target.closest('.prev-page')) {
+        this.pagination.currentPage = Math.max(1, this.pagination.currentPage - 1);
+        this.pagination.openMenu = null;
+      } else if (e.target.closest('.next-page')) {
+        this.pagination.currentPage = Math.min(totalPages, this.pagination.currentPage + 1);
+        this.pagination.openMenu = null;
+      } else {
+        return;
+      }
+      rerender();
+    });
+
+    document.addEventListener('click', (e) => {
+      if (this.pagination.openMenu && !bar.contains(e.target)) {
+        this.pagination.openMenu = null;
+        rerender();
+      }
+    });
   }
 }
 

@@ -33,15 +33,121 @@
                     <span class="quickoff-poster-label">Ver grabación</span>
                 </button>
                 <div class="quickoff-highlights">
-                    <h3>Puntos relevantes</h3>
-                    <p>La reunión continuó la definición funcional y técnica del proyecto, profundizando en detalles pendientes de sesiones anteriores.</p>
+                    <h3>Propósito de la reunión</h3>
+                    <p>Alinear técnicamente cómo debe integrarse el nuevo sistema de Interseguros con el SFI del banco, principalmente para autenticación, consulta de usuarios/clientes, emisión de certificados y control de roles/perfiles.</p>
                     <ul>
-                        <li>Se revisaron los puntos pendientes de la reunión anterior.</li>
-                        <li>Se afinaron criterios sobre el modelo de datos entre producto, póliza y certificado.</li>
-                        <li>Se discutió el flujo de aprobación y validación de certificados emitidos.</li>
-                        <li>Se acordó continuar coordinando el acceso a los sistemas del banco (SFI).</li>
-                        <li>Quedaron temas por definir para una próxima sesión de seguimiento.</li>
+                        <li>La integración con SFI debe hacerse por VPN, con servicios expuestos específicamente para el proyecto (no acceso público).</li>
+                        <li>El servicio de login actual de SFI solo devuelve true/false; no alcanza para gestionar permisos, agencia o datos completos del usuario.</li>
+                        <li>Interseguros debe definir sus propios roles y permisos de negocio, y luego mapearlos contra los perfiles que entregue el banco.</li>
+                        <li>El desarrollo no debe depender totalmente de SFI: se recomienda avanzar con lógica propia para no bloquear el proyecto.</li>
+                        <li>Para desgravamen se recomienda usar el número de caso/proceso de crédito, que existe antes del desembolso.</li>
                     </ul>
+                    <details class="quickoff-more">
+                        <summary>Ver más</summary>
+                        <div class="quickoff-more-body">
+                            <h4>Temas</h4>
+                            <p><strong>Integración con SFI</strong></p>
+                            <ul>
+                                <li>Acceso: la integración debe hacerse por VPN entre la infraestructura de Uplabs/Interseguros y el banco.</li>
+                                <li>Exposición de servicios: el banco no expondrá todo su catálogo; solo los servicios necesarios para el caso de uso.</li>
+                                <li>Autenticación actual: existe un servicio que valida usuario y contraseña, pero solo responde si el usuario autentica o no.</li>
+                                <li>Limitación: ese servicio no devuelve suficiente información para operar perfiles, agencias, regionales o permisos del sistema.</li>
+                            </ul>
+                            <p><strong>Usuarios, roles y permisos</strong></p>
+                            <ul>
+                                <li>Definición interna: el sistema de Interseguros debe tener roles propios, por ejemplo emisor de certificados, encargado de agencia, encargado operativo, administrador y consulta/reportes.</li>
+                                <li>Permisos relevantes: emitir certificados, ver producción, anular certificados, revertir operaciones, consultar información de cliente, ver información por agencia, sucursal o regional.</li>
+                                <li>Mapeo con SFI: el banco puede devolver tipo de usuario, perfil, agencia u otros datos, pero Interseguros debe decidir cómo eso se traduce en permisos dentro de su sistema.</li>
+                            </ul>
+                            <p><strong>Rotación de personal del banco</strong></p>
+                            <ul>
+                                <li>El banco tiene alta rotación de usuarios entre agencias, sucursales y áreas.</li>
+                                <li>Un usuario puede estar hoy en una agencia y mañana en otra.</li>
+                                <li>El sistema debe actualizar la agencia/regional/perfil del usuario para que la reportería y productividad no queden distorsionadas.</li>
+                                <li>Se mencionó que Nafinity actualiza datos del usuario en cada login o validación.</li>
+                            </ul>
+                            <p><strong>Consulta de clientes</strong></p>
+                            <ul>
+                                <li>El sistema necesita definir qué datos requiere desde SFI para emitir certificados: código de cliente, nombre completo, carnet/documento, dirección, teléfono/celular, cuentas bancarias, datos personales y datos del crédito o caso.</li>
+                                <li>Se recomendó filtrar cuentas válidas, por ejemplo evitar cuentas que requieren doble firma si eso complica el proceso.</li>
+                            </ul>
+                            <p><strong>Emisión de certificados</strong></p>
+                            <ul>
+                                <li>El objetivo inicial sigue siendo reemplazar certificados físicos/preimpresos, con foco en desgravamen y garantías/ramos generales asociados al crédito.</li>
+                                <li>Actualmente el oficial de crédito hace firmar formularios físicos en papel químico o formularios preimpresos.</li>
+                                <li>La nueva plataforma debería permitir que el ejecutivo registre datos y emita el certificado digitalmente.</li>
+                                <li>Para esta etapa no se busca resolver toda la suscripción compleja ni control completo de cúmulos.</li>
+                            </ul>
+                            <p><strong>Número de caso y número de operación</strong></p>
+                            <ul>
+                                <li>Para desgravamen, el banco maneja un proceso crediticio previo al desembolso: antes existe un número de caso o solicitud, después del desembolso se crea la operación crediticia en SFI.</li>
+                                <li>Se sugirió usar el número de caso para emitir o vincular el certificado antes del desembolso, con una validación posterior para confirmar si el caso fue desembolsado.</li>
+                                <li>Riesgo detectado: emitir un certificado para un crédito que finalmente no se desembolsa.</li>
+                            </ul>
+                            <p><strong>Servicios necesarios</strong></p>
+                            <ul>
+                                <li>Servicio de login: para validar usuario SFI.</li>
+                                <li>Servicio de información de usuario: para traer perfil, agencia, regional, código de empleado u otros datos.</li>
+                                <li>Servicio de cliente: para consultar datos personales y cuentas.</li>
+                                <li>Servicio de caso/crédito: para obtener información del proceso crediticio.</li>
+                                <li>Servicio de confirmación de desembolso: para saber si un número de caso terminó en operación crediticia.</li>
+                                <li>Servicio de baja de usuarios: para deshabilitar usuarios que ya no deben operar.</li>
+                                <li>Servicio de alta/cambio de usuarios: pendiente o en análisis para detectar cambios de área, cargo o permisos.</li>
+                            </ul>
+                            <h4>Decisiones</h4>
+                            <ul>
+                                <li>La integración con SFI debe ir por VPN, coordinada con infraestructura.</li>
+                                <li>El sistema debe manejar su propio modelo de roles y permisos.</li>
+                                <li>SFI debe usarse como fuente de autenticación y datos actualizados, no como copia directa del modelo de permisos del sistema.</li>
+                                <li>El desarrollo debe avanzar en paralelo sin quedar bloqueado por la conexión con SFI.</li>
+                                <li>Para desgravamen, se debe analizar el uso del número de caso como dato clave antes del desembolso.</li>
+                                <li>Se trabajará por ambos lados: Uplabs define la información que necesita y el banco revisa qué servicios existentes pueden cubrirla.</li>
+                            </ul>
+                            <h4>Problemas detectados</h4>
+                            <ul>
+                                <li>El servicio inicial de login es insuficiente porque solo devuelve true/false.</li>
+                                <li>No está definido todavía qué información exacta necesita el sistema para usuario, cliente y emisión.</li>
+                                <li>Si no se actualizan bajas/cambios de usuarios, la reportería y productividad pueden quedar incorrectas.</li>
+                                <li>La rotación del personal del banco complica permisos por agencia, sucursal y regional.</li>
+                                <li>Depender de SFI desde el inicio puede bloquear el desarrollo si la VPN o los servicios demoran.</li>
+                                <li>Falta validar en qué etapa exacta del proceso crediticio debe emitirse el certificado.</li>
+                                <li>Puede haber certificados emitidos para créditos que finalmente no se desembolsen.</li>
+                            </ul>
+                            <h4>Pendientes</h4>
+                            <ul>
+                                <li>Definir roles propios del sistema de Interseguros.</li>
+                                <li>Definir permisos por rol: emisión, anulación, reversión, consulta y reportería.</li>
+                                <li>Definir qué datos del usuario debe devolver SFI.</li>
+                                <li>Definir qué datos del cliente se necesitan para emitir certificados.</li>
+                                <li>Definir qué datos del crédito/caso se necesitan para desgravamen.</li>
+                                <li>Revisar si existen servicios actuales del banco que cubran esas necesidades.</li>
+                                <li>Confirmar si se debe crear un nuevo servicio específico para el proyecto.</li>
+                                <li>Coordinar reunión con infraestructura para la VPN.</li>
+                                <li>Definir mecanismo de baja y alta/cambio de usuarios.</li>
+                                <li>Revisar el proceso práctico de emisión de certificado de desgravamen.</li>
+                            </ul>
+                            <h4>Próximos pasos</h4>
+                            <ul>
+                                <li>Juan Fernando / banco: coordinar con infraestructura una reunión para revisar la conexión VPN.</li>
+                                <li>Banco / Richard: revisar qué servicios existentes pueden servir para login, usuarios, clientes y casos de crédito.</li>
+                                <li>Uplabs: preparar la lista exacta de datos requeridos para login, usuario, cliente, emisión de certificado, caso/proceso de crédito y confirmación de desembolso.</li>
+                                <li>Uplabs / Interseguros: definir roles y permisos propios del sistema.</li>
+                                <li>Equipo funcional: trabajar un caso práctico de emisión de certificado de desgravamen.</li>
+                                <li>Todos: avanzar en paralelo — infraestructura por un lado, definición funcional/técnica por el otro.</li>
+                            </ul>
+                            <h4>Por validar</h4>
+                            <ul>
+                                <li>Nombre exacto del sistema Nafinity/Anafínico.</li>
+                                <li>Servicios SFI disponibles actualmente.</li>
+                                <li>Si el banco ya tiene servicio de alta de usuarios o solo baja.</li>
+                                <li>Datos exactos que devuelve el servicio usado por Nacional/Nafinity.</li>
+                                <li>Si el número de caso será obligatorio para emitir certificados de desgravamen.</li>
+                                <li>Cómo se confirmará posteriormente el desembolso.</li>
+                                <li>Qué pasa con certificados emitidos si el crédito no llega a desembolsarse.</li>
+                                <li>Modelo final de roles: banco, Interseguros, ejecutivo, agencia, regional y administrador.</li>
+                            </ul>
+                        </div>
+                    </details>
                 </div>
             </div>
         </div>

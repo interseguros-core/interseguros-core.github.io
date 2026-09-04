@@ -1,36 +1,41 @@
+import { phosphorIcon } from './ds-phosphor.js';
+
+const TONE = {
+  brand: { bg: 'bg-brand-primary-soft', text: 'text-brand-primary' },
+  warning: { bg: 'bg-warning-soft', text: 'text-warning' },
+  success: { bg: 'bg-success-soft', text: 'text-success' },
+  danger: { bg: 'bg-danger-soft', text: 'text-danger' },
+};
+
 const ACTIVITIES = [
   {
     unread: true,
-    iconBg: '#EEF1FD',
-    iconColor: '#3D5FEB',
-    icon: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>',
+    tone: 'brand',
+    icon: 'file',
     title: 'Póliza PL-20481 creada',
     subtitle: 'Constructora Andina S.A. · Vehicular',
     time: 'Hace 5 min',
   },
   {
     unread: true,
-    iconBg: '#FDF3E2',
-    iconColor: '#D97706',
-    icon: '<path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
+    tone: 'warning',
+    icon: 'warning',
     title: 'Póliza PL-20455 pendiente de pago',
     subtitle: 'Textiles del Sur EIRL · Incendio',
     time: 'Hace 2 h',
   },
   {
     unread: false,
-    iconBg: '#E7F6EF',
-    iconColor: '#1D9A6C',
-    icon: '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>',
+    tone: 'success',
+    icon: 'check-circle',
     title: 'Pago registrado',
     subtitle: 'María Fernanda Rojas · Bs 380.00',
     time: 'Ayer',
   },
   {
     unread: true,
-    iconBg: '#FBEAEA',
-    iconColor: '#DC2626',
-    icon: '<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>',
+    tone: 'danger',
+    icon: 'x-circle',
     title: 'Póliza PL-20401 vencida',
     subtitle: 'Carlos Mendoza Vargas · SOAT',
     time: 'Hace 3 días',
@@ -44,14 +49,12 @@ const DOCS = [
   { name: 'Comprobante de pago.pdf', size: '95 KB', checked: false },
 ];
 
-const ICON_DOC = '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>';
-const ICON_DOWNLOAD = '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>';
-
 function activityRow(a, isLast) {
+  const tone = TONE[a.tone];
   return `
     <div data-unread="${a.unread}" class="activity-item flex items-center gap-3 px-4 py-3 ${isLast ? '' : 'border-b border-[#E2E5EC]'} hover:bg-[#FAFBFC] cursor-pointer">
-      <span class="w-9 h-9 rounded-[3px] flex items-center justify-center shrink-0" style="background-color:${a.iconBg}">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${a.iconColor}" stroke-width="2">${a.icon}</svg>
+      <span class="w-9 h-9 rounded-[3px] flex items-center justify-center shrink-0 ${tone.bg} ${tone.text}">
+        ${phosphorIcon(a.icon, { size: 'sm' })}
       </span>
       <div class="min-w-0 flex-1">
         <p class="activity-title text-[13.5px] ${a.unread ? 'font-semibold' : 'font-medium'} text-[#16213E] truncate">${a.title}</p>
@@ -67,13 +70,13 @@ function docRow(d, isLast) {
   return `
     <label class="doc-item flex items-center gap-3 px-4 py-3 ${isLast ? '' : 'border-b border-[#E2E5EC]'} cursor-pointer transition-colors ${d.checked ? 'bg-[#EEF1FD]' : 'hover:bg-[#FAFBFC]'}">
       <input type="checkbox" ${d.checked ? 'checked' : ''} class="doc-checkbox w-4 h-4 accent-[#3D5FEB] shrink-0" />
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5B6B85" stroke-width="2" class="shrink-0">${ICON_DOC}</svg>
+      <span class="shrink-0 text-text-secondary">${phosphorIcon('file', { size: 'sm' })}</span>
       <div class="min-w-0 flex-1">
         <p class="text-[13.5px] font-medium text-[#16213E] truncate">${d.name}</p>
         <p class="text-[12px] text-[#5B6B85]">${d.size}</p>
       </div>
       <button type="button" class="shrink-0 text-[#5B6B85] hover:text-[#16213E]">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${ICON_DOWNLOAD}</svg>
+        ${phosphorIcon('download', { size: 'sm' })}
       </button>
     </label>
   `;
@@ -110,7 +113,7 @@ class DsList extends HTMLElement {
               ${DOCS.map((d, i) => docRow(d, i === DOCS.length - 1)).join('')}
             </div>
             <button type="button" class="download-btn mt-4 inline-flex items-center gap-[7px] px-4 py-2 text-[13.5px] font-medium rounded-[3px] bg-[#3D5FEB] text-white hover:bg-[#2C46C4] disabled:bg-[#A9B4E8] disabled:cursor-not-allowed">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${ICON_DOWNLOAD}</svg>
+              ${phosphorIcon('download', { size: 'sm' })}
               Descargar seleccionados
             </button>
           </div>
