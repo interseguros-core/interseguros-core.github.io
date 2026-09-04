@@ -1,0 +1,82 @@
+/*
+ * Design tokens for the Design System page (frames/design-system.html and
+ * components/design-system/*.js). Values are the ones already in real use
+ * across those files — see PALETTE in ds-palette.js for the source of truth.
+ * This is a separate light-theme system from the app's own dark portal
+ * chrome (assets/css/variables.css) and does not touch it.
+ */
+@theme {
+  /* Brand */
+  --color-brand-primary: #3D5FEB;
+  --color-brand-primary-hover: #2C46C4;
+  --color-brand-primary-soft: #EEF1FD;
+  --color-brand-navy: #0B1440;
+  --color-brand-slate: #7C8DA6;
+
+  /* Text */
+  --color-text-primary: #16213E;
+  --color-text-secondary: #5B6B85;
+  --color-text-muted: #94A0B8;
+
+  /* Surfaces */
+  --color-surface: #FFFFFF;
+  --color-surface-subtle: #FAFBFC;
+  --color-surface-hover: #F1F2F5;
+  --color-background: #F6F7FA;
+
+  /* Borders */
+  --color-border-default: #E2E5EC;
+  --color-border-strong: #C7CEDB;
+  --color-border-input: #AEB9CE;
+
+  /* Feedback */
+  --color-success: #1D9A6C;
+  --color-success-soft: #E7F6EF;
+  --color-warning: #D97706;
+  --color-warning-soft: #FDF3E2;
+  --color-danger: #DC2626;
+  --color-danger-hover: #C21E1E;
+  --color-danger-soft: #FBEAEA;
+  --color-help: #7C3AED;
+  --color-help-hover: #6D28D9;
+  --color-disabled: #A9B4E8;
+
+  /* Radius */
+  --radius-chip: 2px;
+  --radius-control: 3px;
+  --radius-card: 4px;
+
+  /* Typography — single source of truth for the font family: change it
+     here and every element using font-sans (or these tokens) updates. */
+  --font-sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Only 4 sizes on purpose: chico, mediano, grande, extragrande. */
+  --text-sm: 12px;
+  --text-md: 13.5px;
+  --text-lg: 15px;
+  --text-xl: 18px;
+}
+
+/*
+ * Icon sizes for Phosphor Icons (the Design System's only icon library —
+ * see ds-icons.js). Not a Tailwind @theme block: icon size is applied via
+ * font-size on the <i class="ph ..."> glyph, so these are plain utility
+ * classes rather than a Tailwind-generated scale.
+ */
+:root {
+  --icon-xs: 14px;
+  --icon-sm: 16px;
+  --icon-md: 20px;
+  --icon-lg: 24px;
+  --icon-xl: 32px;
+}
+
+.icon-xs, .icon-sm, .icon-md, .icon-lg, .icon-xl {
+  line-height: 1;
+  vertical-align: middle;
+}
+.icon-xs { font-size: var(--icon-xs); }
+.icon-sm { font-size: var(--icon-sm); }
+.icon-md { font-size: var(--icon-md); }
+.icon-lg { font-size: var(--icon-lg); }
+.icon-xl { font-size: var(--icon-xl); }

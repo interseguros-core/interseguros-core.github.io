@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documento Solicitado — Interseguros</title>
+    <link rel="stylesheet" href="/assets/css/variables.css">
+    <link rel="stylesheet" href="/assets/css/reset.css">
+    <link rel="stylesheet" href="/assets/css/layout.css">
+    <link rel="stylesheet" href="/assets/css/components.css">
+    <link rel="stylesheet" href="/assets/css/documentation.css">
+    <link rel="stylesheet" href="/assets/css/documento-solicitado.css">
+    <link rel="stylesheet" href="/assets/css/responsive.css">
+</head>
+<body>
+
+<app-sidebar></app-sidebar>
+<div class="app-shell">
+<app-navbar heading="Documento Solicitado"></app-navbar>
+<main class="main-content">
+    <div class="docsol-page">
+        <div class="docsol-intro">
+            <h1>Documento Solicitado</h1>
+            <p>Documentación e información que el cliente nos va otorgando durante el proyecto.</p>
+        </div>
+
+        <div class="docsol-card" id="organigrama">
+            <button class="docsol-card-head" type="button" aria-expanded="false" aria-controls="body-organigrama" data-collapse-target="body-organigrama">
+                <span class="docsol-card-head-text">
+                    <h2 class="docsol-card-title">Organigrama</h2>
+                    <p class="docsol-card-sub">Cargos y responsabilidades del equipo cliente</p>
+                </span>
+                <span class="docsol-card-arrow" aria-hidden="true">▼</span>
+            </button>
+            <div class="docsol-card-body" id="body-organigrama" hidden>
+                <div class="sub-grid">
+                    <div class="sub-card">
+                        <h4>Georgina Helguero</h4>
+                        <span class="itag itag-purple">Dirección</span>
+                        <p>Está a cargo de explicar las reglas del negocio y lo que el software debe hacer en general, aprueba las entregas en cada fase.</p>
+                    </div>
+                    <div class="sub-card">
+                        <h4>Adhemar Abrego</h4>
+                        <span class="itag itag-blue">Comercial</span>
+                        <p>Está a cargo de explicar las reglas del negocio y lo que el software debe hacer en detalle desde el punto de vista comercial: carga de datos de clientes, carga de producción, parámetros requeridos en cada producto, entrega de formatos de certificados, entrega de modelos de reportes.</p>
+                    </div>
+                    <div class="sub-card">
+                        <h4>Ingrid Rueda</h4>
+                        <span class="itag itag-green">Contabilidad</span>
+                        <p>Está a cargo de explicar las reglas de contabilización de la producción, temas de registro de facturación y entrega de formatos de reportes necesarios para realizar conciliaciones.</p>
+                    </div>
+                    <div class="sub-card">
+                        <h4>Juan Fernando Hurtado</h4>
+                        <span class="itag itag-orange">Operaciones</span>
+                        <p>Está a cargo del proyecto: debe conectar las necesidades de los usuarios finales con el equipo de desarrollo, revisar cada avance y hacer pruebas para confirmar que el sistema funcione bien.</p>
+                    </div>
+                    <div class="sub-card">
+                        <h4>Jose Manuel Tomelic</h4>
+                        <span class="itag itag-teal">Sistemas y redes</span>
+                        <p>Está a cargo de apoyar desde el punto de vista técnico el avance del proyecto y acompañar en las pruebas para confirmar que el sistema funcione bien y que se tenga claro el plan de contingencias y respaldos.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="docsol-card" id="ramos">
+            <button class="docsol-card-head" type="button" aria-expanded="false" aria-controls="body-ramos" data-collapse-target="body-ramos">
+                <span class="docsol-card-head-text">
+                    <h2 class="docsol-card-title">Ramos de seguros</h2>
+                    <p class="docsol-card-sub">Listado de ramos que maneja la empresa</p>
+                </span>
+                <span class="docsol-card-arrow" aria-hidden="true">▼</span>
+            </button>
+            <div class="docsol-card-body" id="body-ramos" hidden>
+                <div class="docsol-md" id="ramos-content" data-md-src="/assets/data/docSolicitado/ItemRamos.md">
+                    <p>Cargando contenido…</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="docsol-card" id="documentacion-recibida">
+            <button class="docsol-card-head" type="button" aria-expanded="false" aria-controls="body-documentacion-recibida" data-collapse-target="body-documentacion-recibida">
+                <span class="docsol-card-head-text">
+                    <h2 class="docsol-card-title">Documentación recibida</h2>
+                    <p class="docsol-card-sub">Explora las carpetas y documentos entregados por el cliente</p>
+                </span>
+                <span class="docsol-card-arrow" aria-hidden="true">▼</span>
+            </button>
+            <div class="docsol-card-body" id="body-documentacion-recibida" hidden>
+                <div class="doc-tree" id="doc-tree" data-doc-src="/assets/data/docSolicitado/documentos/documents.json">
+                    <p class="doc-tree-status">Cargando documentos…</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</div>
+
+<div class="doc-modal" id="pdf-modal" hidden>
+    <div class="doc-modal-backdrop" id="pdf-modal-backdrop"></div>
+    <section class="doc-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="pdf-modal-title">
+        <header class="doc-modal-header">
+            <div class="doc-modal-heading">
+                <h2 class="doc-modal-title" id="pdf-modal-title"></h2>
+                <nav class="doc-modal-breadcrumb" id="pdf-breadcrumb" aria-label="Ruta del documento"></nav>
+            </div>
+            <button type="button" class="doc-icon-btn doc-modal-close" id="pdf-modal-close-icon" aria-label="Cerrar visor de documento">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+        </header>
+        <div class="doc-modal-body">
+            <p class="doc-modal-status" id="pdf-loading">Cargando documento…</p>
+            <div class="pdf-pages" id="pdf-pages"></div>
+            <p class="doc-modal-status doc-modal-error" id="pdf-error" hidden></p>
+        </div>
+        <footer class="doc-modal-footer">
+            <a class="doc-action-btn" id="pdf-open-tab" href="#" target="_blank" rel="noopener">Abrir en pestaña nueva</a>
+            <a class="doc-action-btn" id="pdf-download" href="#" download>Descargar</a>
+            <button type="button" class="doc-action-btn doc-action-btn-primary" id="pdf-modal-close-button">Cerrar</button>
+        </footer>
+    </section>
+</div>
+
+<script type="module" src="/assets/js/main.js"></script>
+<script type="module" src="/assets/js/documento-solicitado.js"></script>
+</body>
+</html>

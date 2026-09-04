@@ -1,0 +1,14 @@
+{
+  "name": "interseguros-design-system",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Dev-only Tailwind build for the Design System page. GitHub Pages serves the compiled CSS as a static file; Node/npm are not part of the deploy.",
+  "scripts": {
+    "build:css": "tailwindcss -i ./assets/css/ds/input.css -o ./assets/css/ds/output.css --minify",
+    "watch:css": "tailwindcss -i ./assets/css/ds/input.css -o ./assets/css/ds/output.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.0",
+    "tailwindcss": "^4.1.0"
+  }
+}

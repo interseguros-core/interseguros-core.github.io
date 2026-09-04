@@ -1,0 +1,318 @@
+{
+  "name": "Documentación recibida",
+  "type": "folder",
+  "children": [
+    {
+      "name": "Seguros Colectivos",
+      "type": "folder",
+      "children": [
+        {
+          "name": "DESGRAVAMEN",
+          "type": "folder",
+          "children": [
+            {
+              "name": "LICITADO",
+              "type": "folder",
+              "children": [
+                {
+                  "name": "DJS - CERT. COBERTURA - DESGRAVAMEN LICITADO",
+                  "type": "pdf",
+                  "path": "/assets/data/docSolicitado/documentos/Seguros%20Colectivos/DESGRAVAMEN/LICITADO/DJS%20-%20CERT.%20COBERTURA%20-%20DESGRAVAMEN%20LICITADO.pdf",
+                  "size": "186 KB"
+                }
+              ]
+            },
+            {
+              "name": "NO LICITADO",
+              "type": "folder",
+              "children": [
+                {
+                  "name": "(1) DJS - CERT. COBERTURA - DESG. COMPLETO 1.50 - CONYUGE-CODEUDOR 0.90",
+                  "type": "pdf",
+                  "path": "/assets/data/docSolicitado/documentos/Seguros%20Colectivos/DESGRAVAMEN/NO%20LICITADO/(1)%20DJS%20-%20CERT.%20COBERTURA%20-%20DESG.%20COMPLETO%201.50%20-%20CONYUGE-CODEUDOR%200.90.pdf",
+                  "size": "143 KB"
+                },
+                {
+                  "name": "(2) DJS- CERT. DE COBERTURA - TARJETA HABIENTES 1.50",
+                  "type": "pdf",
+                  "path": "/assets/data/docSolicitado/documentos/Seguros%20Colectivos/DESGRAVAMEN/NO%20LICITADO/(2)%20DJS-%20CERT.%20DE%20COBERTURA%20-%20TARJETA%20HABIENTES%201.50.pdf",
+                  "size": "215 KB"
+                },
+                {
+                  "name": "(3) DJS- CERT. DE COBERTURA - PRIMA UNICA",
+                  "type": "pdf",
+                  "path": "/assets/data/docSolicitado/documentos/Seguros%20Colectivos/DESGRAVAMEN/NO%20LICITADO/(3)%20DJS-%20CERT.%20DE%20COBERTURA%20-%20PRIMA%20UNICA.pdf",
+                  "size": "237 KB"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "GARANTIAS",
+          "type": "folder",
+          "children": [
+            {
+              "name": "1. APA1-SC2-000001-02-2024 Automotores Pesado Servicio Particular",
+              "type": "pdf",
+              "path": "/assets/data/docSolicitado/documentos/Seguros%20Colectivos/GARANTIAS/1.%20APA1-SC2-000001-02-2024%20Automotores%20Pesado%20Servicio%20Particular.pdf",
+              "size": "191 KB"
+            },
+            {
+              "name": "10. APU5-SC2-000001-02-2024 Automotores Servicio Publico Prima Unica",
+              "type": "pdf",
+              "path": "/assets/data/docSolicitado/documentos/Seguros%20Colectivos/GARANTIAS/10.%20APU5-SC2-000001-02-2024%20Automotores%20Servicio%20Publico%20Prima%20Unica.pdf",
+              "size": "232 KB"
+            },
+            {
+              "name": "11. AUN1-SC2-000001-00-2022 Automotor Unificada Servicio Publico y Particular",
+              "type": "pdf",
+              "path": "/assets/data/docSolicitado/documentos/Seguros%20Colectivos/GARANTIAS/11.%20AUN1-SC2-000001-00-2022%20Automotor%20Unificada%20Servicio%20Publico%20y%20Particular.pdf",
+              "size": "185 KB"
+            },
+            {
+              "name": "12. MRH1-SC2-000001-01-2024 Multihogar",
+              "type": "pdf",
+              "path": "/assets/data/docSolicitado/documentos/Seguros%20Colectivos/GARANTIAS/12.%20MRH1-SC2-000001-01-2024%20Multihogar.pdf",
+              "size": "269 KB"
+            },
+            {
+              "name": "17. RTE1-SC2-000001-02-2024 Ramos Técnicos Prima mensual",
+              "type": "pdf",
+              "path": "/assets/data/docSolicitado/documentos/Seguros%20Colectivos/GARANTIAS/17.%20RTE1-SC2-000001-02-2024%20Ramos%20T%C3%A9cnicos%20Prima%20mensual.pdf",
+              "size": "212 KB"
+            },
+            {
+              "name": "18. RTE3-SC2-000001-02-2024 Ramos Técnicos Prima mensual (Cartera Antigua)",
+              "type": "pdf",
+              "path": "/assets/data/docSolicitado/documentos/Seguros%20Colectivos/GARANTIAS/18.%20RTE3-SC2-000001-02-2024%20Ramos%20T%C3%A9cnicos%20Prima%20mensual%20(Cartera%20Antigua).pdf",
+              "size": "208 KB"
+            },
+            {
+              "name": "19. TRD1-SC2-000001-02-2024  Garantias Prendarias Existencias",
+              "type": "pdf",
+              "path": "/assets/data/docSolicitado/documentos/Seguros%20Colectivos/GARANTIAS/19.%20TRD1-SC2-000001-02-2024%20%20Garantias%20Prendarias%20Existencias.pdf",
+              "size": "200 KB"
+            },
+            {
+              "name": "2. APA2-SC2-000001-0-2024  Automotores Liviano Servicio Particular (Nueva)",
+              "type": "pdf",
+              "path": "/assets/data/docSolicitado/documentos/Seguros%20Colectivos/GARANTIAS/2.%20APA2-SC2-000001-0-2024%20%20Automotores%20Liviano%20Servicio%20Particular%20(Nueva).pdf",
+              "size": "185 KB"
+            },
+            {
+              "name": "20. TRD2-SC2-000001-02-2024   Garantias Prendarias EXISTENCIAS (CARTERA ANTIGUA)",
+              "type": "pdf",
+              "path": "/assets/data/docSolicitado/documentos/Seguros%20Colectivos/GARANTIAS/20.%20TRD2-SC2-000001-02-2024%20%20%20Garantias%20Prendarias%20EXISTENCIAS%20(CARTERA%20ANTIGUA).pdf",
+              "size": "191 KB"
+            },
+            {
+              "name": "21. TRD3-SC2-000001-02-2024 TR Garantias Prendarias Existencias Prima Unica",
+              "type": "pdf",
+              "path": "/assets/data/docSolicitado/documentos/Seguros%20Colectivos/GARANTIAS/21.%20TRD3-SC2-000001-02-2024%20TR%20Garantias%20Prendarias%20Existencias%20Prima%20Unica.pdf",
+              "size": "230 KB"
+            },
+            {
+              "name": "22. TRO1-SC2-000001-02-2024 TRO Y CAR (TODO RIESGO OPERATIVO Y TR CONSTRUCCION)",
+              "type": "pdf",
+              "path": "/assets/data/docSolicitado/documentos/Seguros%20Colectivos/GARANTIAS/22.%20TRO1-SC2-000001-02-2024%20TRO%20Y%20CAR%20(TODO%20RIESGO%20OPERATIVO%20Y%20TR%20CONSTRUCCION).pdf",
+              "size": "246 KB"
+            },
+            {
+              "name": "23. TRO2-SC2-000001-02-2024 TRO Y  CAR Prima Unica (TRDP y Todo Riesgo Construcción)",
+              "type": "pdf",
+              "path": "/assets/data/docSolicitado/documentos/Seguros%20Colectivos/GARANTIAS/23.%20TRO2-SC2-000001-02-2024%20TRO%20Y%20%20CAR%20Prima%20Unica%20(TRDP%20y%20Todo%20Riesgo%20Construcci%C3%B3n).pdf",
+              "size": "237 KB"
+            },
+            {
+              "name": "24.TRC1-SC2-000001-02-2024 TRC SEGURO COLECTIVO PRIMA UNICA",
+              "type": "pdf",
+              "path": "/assets/data/docSolicitado/documentos/Seguros%20Colectivos/GARANTIAS/24.TRC1-SC2-000001-02-2024%20TRC%20SEGURO%20COLECTIVO%20PRIMA%20UNICA.pdf",
+              "size": "209 KB"
+            },
+            {
+              "name": "25. RTE2-SC2-000001-02-2024 Ramos Técnicos (Valor comercial-Cartera nueva)",
+              "type": "pdf",
+              "path": "/assets/data/docSolicitado/documentos/Seguros%20Colectivos/GARANTIAS/25.%20RTE2-SC2-000001-02-2024%20Ramos%20T%C3%A9cnicos%20(Valor%20comercial-Cartera%20nueva).pdf",
+              "size": "212 KB"
+            },
+            {
+              "name": "26. RTE4-SC2-000001-02-2024 Ramos Técnicos (Valor comercial-Cartera antigua)",
+              "type": "pdf",
+              "path": "/assets/data/docSolicitado/documentos/Seguros%20Colectivos/GARANTIAS/26.%20RTE4-SC2-000001-02-2024%20Ramos%20T%C3%A9cnicos%20(Valor%20comercial-Cartera%20antigua).pdf",
+              "size": "212 KB"
+            },
+            {
+              "name": "3. APA3-SC2-000001-02-2024 Automotores Servicio Particular Pesado (cartera antigua)",
+              "type": "pdf",
+              "path": "/assets/data/docSolicitado/documentos/Seguros%20Colectivos/GARANTIAS/3.%20APA3-SC2-000001-02-2024%20Automotores%20Servicio%20Particular%20Pesado%20(cartera%20antigua).pdf",
+              "size": "217 KB"
+            },
+            {
+              "name": "4. APA4-SC2-000001-02-2024 Automotores Liviano Servicio Particular mensual Cartera Antigua",
+              "type": "pdf",
+              "path": "/assets/data/docSolicitado/documentos/Seguros%20Colectivos/GARANTIAS/4.%20APA4-SC2-000001-02-2024%20Automotores%20Liviano%20Servicio%20Particular%20mensual%20Cartera%20Antigua.pdf",
+              "size": "198 KB"
+            },
+            {
+              "name": "5. APA5-SC2-000001-02-2024 Automotores Servicio Particular Prima Unica",
+              "type": "pdf",
+              "path": "/assets/data/docSolicitado/documentos/Seguros%20Colectivos/GARANTIAS/5.%20APA5-SC2-000001-02-2024%20Automotores%20Servicio%20Particular%20Prima%20Unica.pdf",
+              "size": "219 KB"
+            },
+            {
+              "name": "6. APU1-SC2-000001-02-2024 Automotores Servicio Publico Prima Mensual",
+              "type": "pdf",
+              "path": "/assets/data/docSolicitado/documentos/Seguros%20Colectivos/GARANTIAS/6.%20APU1-SC2-000001-02-2024%20Automotores%20Servicio%20Publico%20Prima%20Mensual.pdf",
+              "size": "205 KB"
+            },
+            {
+              "name": "7. APU2-SC2-000001-02-2024 Automotores Servicio Publico Prima Mensual",
+              "type": "pdf",
+              "path": "/assets/data/docSolicitado/documentos/Seguros%20Colectivos/GARANTIAS/7.%20APU2-SC2-000001-02-2024%20Automotores%20Servicio%20Publico%20Prima%20Mensual.pdf",
+              "size": "202 KB"
+            },
+            {
+              "name": "8. APU3-SC2-000001-02-2024 Automotores Servicio Publico Prima mensual Cartera antigua",
+              "type": "pdf",
+              "path": "/assets/data/docSolicitado/documentos/Seguros%20Colectivos/GARANTIAS/8.%20APU3-SC2-000001-02-2024%20Automotores%20Servicio%20Publico%20Prima%20mensual%20Cartera%20antigua.pdf",
+              "size": "205 KB"
+            },
+            {
+              "name": "9. APU4-SC2-000001-02-2024 Automotores Servicio Publico Prima mensual Cartera Antigua",
+              "type": "pdf",
+              "path": "/assets/data/docSolicitado/documentos/Seguros%20Colectivos/GARANTIAS/9.%20APU4-SC2-000001-02-2024%20Automotores%20Servicio%20Publico%20Prima%20mensual%20Cartera%20Antigua.pdf",
+              "size": "197 KB"
+            },
+            {
+              "name": "DJS - CERT  IND  COBERTURA_BANECO_TC ok",
+              "type": "pdf",
+              "path": "/assets/data/docSolicitado/documentos/Seguros%20Colectivos/GARANTIAS/DJS%20-%20CERT%20%20IND%20%20COBERTURA_BANECO_TC%20ok.pdf",
+              "size": "189 KB"
+            },
+            {
+              "name": "DJS_CERT IND COBERTURA_BANECO_DESGRAVAMEN HIPOTECARIO NO LICITADO",
+              "type": "pdf",
+              "path": "/assets/data/docSolicitado/documentos/Seguros%20Colectivos/GARANTIAS/DJS_CERT%20IND%20COBERTURA_BANECO_DESGRAVAMEN%20HIPOTECARIO%20NO%20LICITADO.pdf",
+              "size": "333 KB"
+            },
+            {
+              "name": "DJS-CERT IND COBERTURA_BANECO_DH 1.55",
+              "type": "pdf",
+              "path": "/assets/data/docSolicitado/documentos/Seguros%20Colectivos/GARANTIAS/DJS-CERT%20IND%20COBERTURA_BANECO_DH%201.55.pdf",
+              "size": "227 KB"
+            },
+            {
+              "name": "DJS-CERT QR",
+              "type": "pdf",
+              "path": "/assets/data/docSolicitado/documentos/Seguros%20Colectivos/GARANTIAS/DJS-CERT%20QR.pdf",
+              "size": "260 KB"
+            }
+          ]
+        },
+        {
+          "name": "TARJETAS",
+          "type": "folder",
+          "children": [
+            {
+              "name": "13. PTH1-SC2-000001-02-2024 Protección Tarjetas Crédito (Internacional y Oro)",
+              "type": "pdf",
+              "path": "/assets/data/docSolicitado/documentos/Seguros%20Colectivos/TARJETAS/13.%20PTH1-SC2-000001-02-2024%20Protecci%C3%B3n%20Tarjetas%20Cr%C3%A9dito%20(Internacional%20y%20Oro).pdf",
+              "size": "234 KB"
+            },
+            {
+              "name": "14. PTH2-SC2-000001-02-2024 Protección Tarjetas Crédito Titanium-Platinum-Empresarial",
+              "type": "pdf",
+              "path": "/assets/data/docSolicitado/documentos/Seguros%20Colectivos/TARJETAS/14.%20PTH2-SC2-000001-02-2024%20Protecci%C3%B3n%20Tarjetas%20Cr%C3%A9dito%20Titanium-Platinum-Empresarial.pdf",
+              "size": "235 KB"
+            },
+            {
+              "name": "15. PTH3-SC2-000001-02-2024 Protección Tarjetas -Débito",
+              "type": "pdf",
+              "path": "/assets/data/docSolicitado/documentos/Seguros%20Colectivos/TARJETAS/15.%20PTH3-SC2-000001-02-2024%20Protecci%C3%B3n%20Tarjetas%20-D%C3%A9bito.pdf",
+              "size": "228 KB"
+            },
+            {
+              "name": "15. PTH3-SC2-000001-02-2024 Protección Tarjetas Crédito-Débito",
+              "type": "pdf",
+              "path": "/assets/data/docSolicitado/documentos/Seguros%20Colectivos/TARJETAS/15.%20PTH3-SC2-000001-02-2024%20Protecci%C3%B3n%20Tarjetas%20Cr%C3%A9dito-D%C3%A9bito.pdf",
+              "size": "228 KB"
+            },
+            {
+              "name": "16. PTH4-SC2-000001-02-2024 Protección Tarjetas Débito Funcionarios",
+              "type": "pdf",
+              "path": "/assets/data/docSolicitado/documentos/Seguros%20Colectivos/TARJETAS/16.%20PTH4-SC2-000001-02-2024%20Protecci%C3%B3n%20Tarjetas%20D%C3%A9bito%20Funcionarios.pdf",
+              "size": "227 KB"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Seguros Masivos",
+      "type": "folder",
+      "children": [
+        {
+          "name": "remesa segura",
+          "type": "folder",
+          "children": [
+            {
+              "name": "VMRS-SC-005371-00-2026_Remesa Segura",
+              "type": "pdf",
+              "path": "/assets/data/docSolicitado/documentos/Seguros%20Masivos/remesa%20segura/VMRS-SC-005371-00-2026_Remesa%20Segura.pdf",
+              "size": "729 KB"
+            }
+          ]
+        },
+        {
+          "name": "vida max recargado",
+          "type": "folder",
+          "children": [
+            {
+              "name": "VMPR-SC-006252-00-2026-DJS",
+              "type": "pdf",
+              "path": "/assets/data/docSolicitado/documentos/Seguros%20Masivos/vida%20max%20recargado/VMPR-SC-006252-00-2026-DJS.pdf",
+              "size": "610 KB"
+            },
+            {
+              "name": "VMPR-SC-006252-00-2026",
+              "type": "pdf",
+              "path": "/assets/data/docSolicitado/documentos/Seguros%20Masivos/vida%20max%20recargado/VMPR-SC-006252-00-2026.pdf",
+              "size": "716 KB"
+            }
+          ]
+        },
+        {
+          "name": "vida mes protegido",
+          "type": "folder",
+          "children": [
+            {
+              "name": "VMPA-SC-000001-00-2026_Vida Mes Protegido",
+              "type": "pdf",
+              "path": "/assets/data/docSolicitado/documentos/Seguros%20Masivos/vida%20mes%20protegido/VMPA-SC-000001-00-2026_Vida%20Mes%20Protegido.pdf",
+              "size": "721 KB"
+            }
+          ]
+        },
+        {
+          "name": "vida premium",
+          "type": "folder",
+          "children": [
+            {
+              "name": "DJS-Vida Premium-Masivos",
+              "type": "pdf",
+              "path": "/assets/data/docSolicitado/documentos/Seguros%20Masivos/vida%20premium/DJS-Vida%20Premium-Masivos.pdf",
+              "size": "673 KB"
+            },
+            {
+              "name": "Poliza certificado- VIda premium",
+              "type": "pdf",
+              "path": "/assets/data/docSolicitado/documentos/Seguros%20Masivos/vida%20premium/Poliza%20certificado-%20VIda%20premium.pdf",
+              "size": "772 KB"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

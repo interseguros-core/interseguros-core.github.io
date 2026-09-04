@@ -1,0 +1,7 @@
+@import "tailwindcss";
+@import "./tokens.css";
+
+/* Where Tailwind should scan for class names used by the Design System. */
+@source "../../../components/design-system/**/*.js";
+@source "../../../frames/design-system.html";
+@source "../../../pages/design-system/**/*.html";
