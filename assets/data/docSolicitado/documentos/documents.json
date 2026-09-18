@@ -3,6 +3,60 @@
   "type": "folder",
   "children": [
     {
+      "name": "Detalle de cobros",
+      "type": "folder",
+      "children": [
+        {
+          "name": "Det_Cobros_Naf_V1",
+          "type": "xlsx",
+          "path": "/assets/data/docSolicitado/documentos/Detalle%20de%20cobros/Det_Cobros_Naf_V1.xlsx",
+          "size": "316 KB"
+        }
+      ]
+    },
+    {
+      "name": "Detalle de produccion",
+      "type": "folder",
+      "children": [
+        {
+          "name": "Det_Produccion_Naf_V1",
+          "type": "xlsx",
+          "path": "/assets/data/docSolicitado/documentos/Detalle%20de%20produccion/Det_Produccion_Naf_V1.xlsx",
+          "size": "224 KB"
+        }
+      ]
+    },
+    {
+      "name": "Infraestructura",
+      "type": "folder",
+      "children": [
+        {
+          "name": "Formulario VPN BEC-HOLOSAI-UPLABSAI",
+          "type": "pdf",
+          "path": "/assets/data/docSolicitado/documentos/Infraestructura/Formulario%20VPN%20BEC-HOLOSAI-UPLABSAI.pdf",
+          "size": "412 KB"
+        }
+      ]
+    },
+    {
+      "name": "polizas Madre",
+      "type": "folder",
+      "children": [
+        {
+          "name": "Póliza de desgravamen Hipotecario (Condiciones Particulares y Condiciones Generales)",
+          "type": "pdf",
+          "path": "/assets/data/docSolicitado/documentos/polizas%20Madre/P%C3%B3liza%20de%20desgravamen%20Hipotecario%20(Condiciones%20Particulares%20y%20Condiciones%20Generales).pdf",
+          "size": "8.7 MB"
+        },
+        {
+          "name": "POLIZA DH",
+          "type": "pdf",
+          "path": "/assets/data/docSolicitado/documentos/polizas%20Madre/POLIZA%20DH.pdf",
+          "size": "2.3 MB"
+        }
+      ]
+    },
+    {
       "name": "Seguros Colectivos",
       "type": "folder",
       "children": [

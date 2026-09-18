@@ -192,6 +192,9 @@
 .doc-icon-pdf {
   color: var(--color-danger);
 }
+.doc-icon-sheet {
+  color: var(--color-success);
+}
 
 .doc-row-name {
   flex: 1;
@@ -423,6 +426,62 @@
 }
 .doc-action-btn-primary:hover {
   background: var(--color-secondary);
+}
+
+/* ══ Modal de visualización de hoja de cálculo ══ */
+
+.doc-sheet-body {
+  background: var(--color-surface);
+  padding: 0;
+}
+
+.doc-sheet-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--color-border);
+  position: sticky;
+  top: 0;
+  background: var(--color-surface);
+  z-index: 1;
+}
+.doc-sheet-tab {
+  padding: 6px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: none;
+  color: var(--color-text-muted);
+  font: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+.doc-sheet-tab:hover {
+  background: var(--color-surface-hover);
+}
+.doc-sheet-tab-active {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+  background: rgba(99, 114, 255, 0.12);
+}
+
+.doc-sheet-table-wrap {
+  padding: 18px;
+  overflow: auto;
+}
+.doc-sheet-table {
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+.doc-sheet-table td,
+.doc-sheet-table th {
+  border: 1px solid var(--color-border);
+  padding: 4px 8px;
+}
+.doc-sheet-table tr:nth-child(odd) {
+  background: var(--color-surface-hover);
 }
 
 @media (max-width: 640px) {

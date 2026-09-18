@@ -94,6 +94,7 @@ const DOC_ICONS = {
     folderClosed: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg>',
     folderOpen: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2H9l-2 8H3V7Z"/><path d="M5 19h14l2-8H7l-2 8Z"/></svg>',
     pdf: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><path d="M14 2v6h6"/><path d="M9 17v-4h1.5a1.5 1.5 0 0 1 0 3H9"/><path d="M13 17v-4h1.3c.9 0 1.7.9 1.7 2s-.8 2-1.7 2H13Z"/></svg>',
+    sheet: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><path d="M14 2v6h6"/><path d="M8 13h8"/><path d="M8 17h8"/><path d="M11 13v6"/></svg>',
     chevron: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>',
     eye: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>',
     externalLink: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>',
@@ -104,9 +105,9 @@ const DOC_ICONS = {
 let docTreeIdSeq = 0;
 const nextDocTreeId = () => `doc-node-${++docTreeIdSeq}`;
 
-function countPdfs(node) {
-    if (node.type === 'pdf') return 1;
-    return (node.children || []).reduce((total, child) => total + countPdfs(child), 0);
+function countDocuments(node) {
+    if (node.type === 'pdf' || node.type === 'xlsx') return 1;
+    return (node.children || []).reduce((total, child) => total + countDocuments(child), 0);
 }
 
 function filenameFromPath(filePath) {
@@ -131,7 +132,8 @@ function buildFileRow(node, breadcrumb) {
     const row = document.createElement('div');
     row.className = 'doc-row doc-row-file';
 
-    row.appendChild(createIconSpan(DOC_ICONS.pdf, 'doc-icon-pdf'));
+    const isSheet = node.type === 'xlsx';
+    row.appendChild(createIconSpan(isSheet ? DOC_ICONS.sheet : DOC_ICONS.pdf, isSheet ? 'doc-icon-sheet' : 'doc-icon-pdf'));
 
     const name = document.createElement('span');
     name.className = 'doc-row-name';
@@ -145,8 +147,10 @@ function buildFileRow(node, breadcrumb) {
     row.appendChild(size);
 
     const handleAction = (action) => {
-        if (action === 'view') openPdfModal(node, breadcrumb);
-        else if (action === 'open') window.open(node.path, '_blank', 'noopener');
+        if (action === 'view') {
+            if (isSheet) openSheetModal(node, breadcrumb);
+            else openPdfModal(node, breadcrumb);
+        } else if (action === 'open') window.open(node.path, '_blank', 'noopener');
         else if (action === 'download') downloadDocument(node);
     };
 
@@ -204,7 +208,7 @@ function buildFolderRow(node, breadcrumb) {
     li.className = 'doc-tree-item';
 
     const childListId = nextDocTreeId();
-    const docCount = countPdfs(node);
+    const docCount = countDocuments(node);
 
     const row = document.createElement('button');
     row.type = 'button';
@@ -251,7 +255,7 @@ function buildTreeList(children, breadcrumb) {
     children.forEach((child) => {
         if (child.type === 'folder') {
             ul.appendChild(buildFolderRow(child, breadcrumb));
-        } else if (child.type === 'pdf') {
+        } else if (child.type === 'pdf' || child.type === 'xlsx') {
             ul.appendChild(buildFileRow(child, breadcrumb));
         }
     });
@@ -454,7 +458,160 @@ function initPdfModal() {
     });
 }
 
+/* ── Modal de visualización de hojas de cálculo (renderizado con SheetJS) ── */
+
+const XLSX_CDN_URL = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+
+let xlsxLibPromise = null;
+function loadXlsxLib() {
+    if (!xlsxLibPromise) {
+        xlsxLibPromise = new Promise((resolve, reject) => {
+            if (window.XLSX) {
+                resolve(window.XLSX);
+                return;
+            }
+            const script = document.createElement('script');
+            script.src = XLSX_CDN_URL;
+            script.onload = () => resolve(window.XLSX);
+            script.onerror = () => reject(new Error('No se pudo cargar la librería de hojas de cálculo.'));
+            document.head.appendChild(script);
+        });
+    }
+    return xlsxLibPromise;
+}
+
+let activeSheetRender = null;
+
+function cancelActiveSheetRender() {
+    if (!activeSheetRender) return;
+    activeSheetRender.cancelled = true;
+    if (activeSheetRender.abortController) {
+        try { activeSheetRender.abortController.abort(); } catch { /* noop */ }
+    }
+    activeSheetRender = null;
+}
+
+async function renderSheetIntoModal(path) {
+    cancelActiveSheetRender();
+    const renderState = { cancelled: false, abortController: new AbortController() };
+    activeSheetRender = renderState;
+
+    const loadingEl = document.getElementById('sheet-loading');
+    const errorEl = document.getElementById('sheet-error');
+    const tabsEl = document.getElementById('sheet-tabs');
+    const tableEl = document.getElementById('sheet-table');
+
+    tabsEl.replaceChildren();
+    tableEl.replaceChildren();
+    tabsEl.hidden = true;
+    errorEl.hidden = true;
+    errorEl.textContent = '';
+    loadingEl.hidden = false;
+    loadingEl.textContent = 'Cargando hoja de cálculo…';
+
+    try {
+        const response = await fetch(path, { signal: renderState.abortController.signal });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const arrayBuffer = await response.arrayBuffer();
+        if (renderState.cancelled) return;
+
+        const XLSX = await loadXlsxLib();
+        if (renderState.cancelled) return;
+
+        const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+        if (renderState.cancelled) return;
+        loadingEl.hidden = true;
+
+        const renderSheet = (sheetName) => {
+            const worksheet = workbook.Sheets[sheetName];
+            tableEl.innerHTML = XLSX.utils.sheet_to_html(worksheet);
+            const table = tableEl.querySelector('table');
+            if (table) table.classList.add('doc-sheet-table');
+        };
+
+        workbook.SheetNames.forEach((sheetName, index) => {
+            const tab = document.createElement('button');
+            tab.type = 'button';
+            tab.className = `doc-sheet-tab${index === 0 ? ' doc-sheet-tab-active' : ''}`;
+            tab.textContent = sheetName;
+            tab.addEventListener('click', () => {
+                tabsEl.querySelectorAll('.doc-sheet-tab').forEach((t) => t.classList.remove('doc-sheet-tab-active'));
+                tab.classList.add('doc-sheet-tab-active');
+                renderSheet(sheetName);
+            });
+            tabsEl.appendChild(tab);
+        });
+        tabsEl.hidden = workbook.SheetNames.length < 2;
+
+        renderSheet(workbook.SheetNames[0]);
+    } catch (err) {
+        if (renderState.cancelled || err?.name === 'AbortError') return;
+        loadingEl.hidden = true;
+        errorEl.hidden = false;
+        errorEl.textContent = 'No se pudo cargar la vista previa del documento. Usa los botones inferiores para abrirlo o descargarlo.';
+        console.error(`Error renderizando hoja de cálculo ${path}:`, err);
+    }
+}
+
+function buildSheetBreadcrumb(breadcrumb, node) {
+    const nav = document.getElementById('sheet-breadcrumb');
+    nav.replaceChildren();
+    const ol = document.createElement('ol');
+    [...breadcrumb, filenameFromPath(node.path)].forEach((segment) => {
+        const li = document.createElement('li');
+        li.textContent = segment;
+        ol.appendChild(li);
+    });
+    nav.appendChild(ol);
+}
+
+function openSheetModal(node, breadcrumb) {
+    const modal = document.getElementById('sheet-modal');
+    if (!modal) return;
+
+    document.getElementById('sheet-modal-title').textContent = node.name;
+    buildSheetBreadcrumb(breadcrumb, node);
+
+    const openTab = document.getElementById('sheet-open-tab');
+    const download = document.getElementById('sheet-download');
+    openTab.href = node.path;
+    download.href = node.path;
+    download.download = filenameFromPath(node.path);
+
+    modal.hidden = false;
+    document.body.style.overflow = 'hidden';
+
+    renderSheetIntoModal(node.path);
+}
+
+function closeSheetModal() {
+    const modal = document.getElementById('sheet-modal');
+    if (!modal || modal.hidden) return;
+
+    cancelActiveSheetRender();
+    modal.hidden = true;
+    document.getElementById('sheet-tabs').replaceChildren();
+    document.getElementById('sheet-table').replaceChildren();
+    document.getElementById('sheet-loading').hidden = false;
+    document.getElementById('sheet-error').hidden = true;
+    document.body.style.overflow = '';
+}
+
+function initSheetModal() {
+    const modal = document.getElementById('sheet-modal');
+    if (!modal) return;
+
+    document.getElementById('sheet-modal-close-icon').addEventListener('click', closeSheetModal);
+    document.getElementById('sheet-modal-close-button').addEventListener('click', closeSheetModal);
+    document.getElementById('sheet-modal-backdrop').addEventListener('click', closeSheetModal);
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && !modal.hidden) closeSheetModal();
+    });
+}
+
 initCollapsibleCards();
 loadMarkdownSections();
 loadDocTree();
 initPdfModal();
+initSheetModal();
