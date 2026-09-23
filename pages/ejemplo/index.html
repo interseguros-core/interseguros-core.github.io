@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emisión de Pólizas</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <header class="topbar">
+        <div class="topbar-row">
+            <h1>Emisión de pólizas</h1>
+            <div class="row">
+                <span id="estado-conexion" class="badge off">Sin conexión</span>
+                <button class="btn small" id="btn-recargar" title="Volver a leer la hoja">↻ Recargar</button>
+            </div>
+        </div>
+        <nav class="tabs" id="tabs">
+            <button data-tab="ramos" class="active">Ramos</button>
+            <button data-tab="productos">Productos</button>
+            <button data-tab="clientes">Clientes</button>
+            <button data-tab="emision">Emitir póliza</button>
+            <button data-tab="polizas">Pólizas emitidas</button>
+            <button data-tab="config">Configuración</button>
+        </nav>
+    </header>
+
+    <main>
+        <!-- RAMOS -->
+        <section id="tab-ramos" class="tab active">
+            <div class="section-head">
+                <div>
+                    <h2>Ramos</h2>
+                    <p class="muted">Líneas de negocio (Automotores, Salud, Vida…). Cada producto pertenece a un ramo.</p>
+                </div>
+                <button class="btn primary" id="btn-nuevo-ramo">+ Nuevo ramo</button>
+            </div>
+            <div id="lista-ramos"></div>
+        </section>
+
+        <!-- PRODUCTOS -->
+        <section id="tab-productos" class="tab">
+            <div class="section-head">
+                <div>
+                    <h2>Productos</h2>
+                    <p class="muted">Pólizas preconfiguradas: monedas, formas de pago, prima, vigencia y coberturas.</p>
+                </div>
+                <div class="row">
+                    <select id="filtro-ramo-productos"></select>
+                    <button class="btn primary" id="btn-nuevo-producto">+ Nuevo producto</button>
+                </div>
+            </div>
+            <div id="lista-productos"></div>
+        </section>
+
+        <!-- CLIENTES -->
+        <section id="tab-clientes" class="tab">
+            <div class="section-head">
+                <div>
+                    <h2>Clientes</h2>
+                    <p class="muted">Personas registradas. Un cliente puede ser tomador, asegurado o beneficiario en una póliza.</p>
+                </div>
+                <div class="row">
+                    <input id="buscar-cliente" type="search" placeholder="Buscar por nombre, documento, email…">
+                    <button class="btn primary" id="btn-nuevo-cliente">+ Nuevo cliente</button>
+                </div>
+            </div>
+            <div id="lista-clientes"></div>
+        </section>
+
+        <!-- EMISION -->
+        <section id="tab-emision" class="tab">
+            <div class="section-head">
+                <div>
+                    <h2>Emitir póliza</h2>
+                    <p class="muted">Elige un producto: las opciones de moneda y pago se limitan a lo que ese producto permite.</p>
+                </div>
+            </div>
+            <form id="form-emision" class="grid-emision" autocomplete="off">
+                <div class="card">
+                    <h3>1. Producto</h3>
+                    <label>Producto
+                        <select name="productoId" id="em-producto" required></select>
+                    </label>
+                    <div id="em-producto-info" class="info-box"></div>
+                </div>
+
+                <div class="card">
+                    <h3>2. Participantes</h3>
+                    <div class="field-label">Tomador (contratante y responsable del pago)</div>
+                    <div id="em-tomador" class="picker-host"></div>
+
+                    <label class="check" style="margin-top:12px"><input type="checkbox" id="em-aseg-mismo" checked> El asegurado es el mismo tomador</label>
+                    <div id="em-aseg-wrap" hidden>
+                        <div class="field-label">Asegurado</div>
+                        <div id="em-asegurado" class="picker-host"></div>
+                    </div>
+
+                    <div id="em-benef-block" hidden>
+                        <div class="field-label" style="margin-top:14px">Beneficiarios <span id="em-benef-regla" class="muted"></span></div>
+                        <div id="em-benef-list"></div>
+                        <div class="row">
+                            <button type="button" class="btn small" id="btn-add-benef">+ Agregar beneficiario</button>
+                            <span id="em-benef-total" class="hint" style="margin:0"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>3. Condiciones</h3>
+                    <div class="grid2">
+                        <label>Moneda<select name="moneda" id="em-moneda" required></select></label>
+                        <label>Suma asegurada<input name="suma" id="em-suma" type="number" min="0" step="0.01" required></label>
+                        <label>Vigencia desde<input name="desde" id="em-desde" type="date" required></label>
+                        <label>Vigencia hasta<input name="hasta" id="em-hasta" type="date" readonly></label>
+                    </div>
+                    <p id="em-suma-hint" class="hint"></p>
+                </div>
+
+                <div class="card">
+                    <h3>4. Forma de pago</h3>
+                    <div class="grid2">
+                        <label>Modalidad<select name="modalidad" id="em-modalidad" required></select></label>
+                        <label>Medio de pago<select name="medio" id="em-medio" required></select></label>
+                        <label id="em-cuotas-wrap" hidden>Número de cuotas<select name="cuotas" id="em-cuotas"></select></label>
+                    </div>
+                </div>
+
+                <div class="card resumen">
+                    <h3>Resumen de prima</h3>
+                    <div id="em-resumen" class="muted">Selecciona un producto.</div>
+                    <p id="em-error" class="error"></p>
+                    <button class="btn primary big" type="submit" id="btn-emitir">Emitir póliza</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- POLIZAS -->
+        <section id="tab-polizas" class="tab">
+            <div class="section-head">
+                <div>
+                    <h2>Pólizas emitidas</h2>
+                    <p class="muted">Cada póliza guarda una copia de las condiciones del producto al momento de emitirla.</p>
+                </div>
+                <input id="buscar-poliza" type="search" placeholder="Buscar por número, asegurado o CI…">
+            </div>
+            <div id="lista-polizas"></div>
+        </section>
+
+        <!-- CONFIG -->
+        <section id="tab-config" class="tab">
+            <div class="section-head">
+                <div>
+                    <h2>Configuración</h2>
+                    <p class="muted">Parámetros generales y respaldo de datos.</p>
+                </div>
+            </div>
+            <div class="card narrow">
+                <h3>Conexión con Google Sheets</h3>
+                <form id="form-conexion">
+                    <label>URL de la aplicación web de Apps Script (termina en /exec)
+                        <input name="url" type="url" required placeholder="https://script.google.com/macros/s/…/exec">
+                    </label>
+                    <label>Clave de API (solo si la definiste en Code.gs)
+                        <input name="key" type="password" autocomplete="off">
+                    </label>
+                    <div class="row">
+                        <button class="btn primary" type="submit">Guardar y conectar</button>
+                        <a class="btn" id="link-hoja" target="_blank" rel="noopener">Abrir la hoja ↗</a>
+                    </div>
+                </form>
+                <details class="setup">
+                    <summary>¿Cómo obtengo la URL?</summary>
+                    <ol>
+                        <li>Abre la hoja → <strong>Extensiones → Apps Script</strong>.</li>
+                        <li>Borra el contenido de <code>Code.gs</code> y pega el archivo <code>apps-script/Code.gs</code> de este proyecto. Guarda.</li>
+                        <li>Selecciona la función <code>setup</code> y pulsa <strong>Ejecutar</strong> (acepta los permisos). Esto crea los encabezados.</li>
+                        <li><strong>Implementar → Nueva implementación</strong> → tipo <em>Aplicación web</em>. Ejecutar como: <em>Yo</em>. Acceso: <em>Cualquier usuario</em>.</li>
+                        <li>Copia la URL que termina en <code>/exec</code> y pégala arriba.</li>
+                    </ol>
+                </details>
+            </div>
+            <div class="card narrow">
+                <h3>Parámetros</h3>
+                <form id="form-config">
+                    <label>Tipo de cambio (Bs por 1 USD)
+                        <input name="tipoCambio" type="number" step="0.0001" min="0.0001" required>
+                    </label>
+                    <button class="btn primary" type="submit">Guardar en la hoja</button>
+                </form>
+            </div>
+            <div class="card narrow">
+                <h3>Datos de ejemplo</h3>
+                <p class="muted" style="margin-bottom:10px">Crea 4 ramos, 4 productos (incluido uno de Vida con beneficiarios) y 4 clientes de ejemplo. Solo carga lo que la hoja aún no tenga: ramos/productos si no hay ramos, clientes si no hay clientes.</p>
+                <button class="btn" id="btn-demo">Cargar datos de ejemplo</button>
+            </div>
+        </section>
+    </main>
+
+    <dialog id="modal">
+        <form method="dialog" id="modal-form" autocomplete="off">
+            <header class="modal-head">
+                <h3 id="modal-title"></h3>
+                <button type="button" class="icon-btn" data-close aria-label="Cerrar">✕</button>
+            </header>
+            <div id="modal-body" class="modal-body"></div>
+            <p id="modal-error" class="error"></p>
+            <footer class="modal-foot" id="modal-foot">
+                <button type="button" class="btn" data-close>Cancelar</button>
+                <button type="submit" class="btn primary" value="ok">Guardar</button>
+            </footer>
+        </form>
+    </dialog>
+
+    <div id="loading" hidden><div class="spinner"></div><span id="loading-text">Cargando…</span></div>
+    <div id="print-area"></div>
+    <div id="toast"></div>
+
+    <script src="index.js"></script>
+</body>
+</html>
