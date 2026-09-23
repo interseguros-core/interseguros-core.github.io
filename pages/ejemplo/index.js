@@ -593,6 +593,7 @@ function renderProductos() {
         cont.innerHTML = '<div class="empty">No hay productos para este filtro.</div>';
         return;
     }
+    const emitibles = new Set(productosEmitibles().map(p => p.id));
     cont.innerHTML = `
         <div class="table-wrap"><table>
             <thead><tr><th>Producto</th><th>Ramo</th><th>Monedas</th><th>Prima</th><th>Pago</th><th>Estado</th><th></th></tr></thead>
@@ -613,6 +614,7 @@ function renderProductos() {
                     <td>${mods.map(esc).join('<br>')}<div class="muted">${p.pago.medios.map(m => MEDIOS_PAGO[m]).join(', ')}</div></td>
                     <td>${p.activo ? '<span class="badge ok">Activo</span>' : '<span class="badge off">Inactivo</span>'}</td>
                     <td class="actions">
+                        ${emitibles.has(p.id) ? `<button class="btn small primary" data-prod-emit="${esc(p.id)}">Emitir</button>` : ''}
                         <button class="btn small" data-prod-edit="${esc(p.id)}">Editar</button>
                         <button class="btn small" data-prod-dup="${esc(p.id)}">Duplicar</button>
                         <button class="btn small danger" data-prod-del="${esc(p.id)}">Eliminar</button>
@@ -725,7 +727,7 @@ function formProducto(producto, { duplicar = false } = {}) {
                         ${Object.entries(TIPOS_POLIZA).map(([k, t]) => `<option value="${k}" ${k === p.tipoPoliza ? 'selected' : ''}>${t}</option>`).join('')}
                     </select>
                 </label>
-                <p class="hint" style="margin:-4px 0 10px">Colectiva: se emite una póliza madre al tomador y luego se agregan certificados, cada uno con su asegurado y su suma asegurada. Cada certificado tiene su propia vigencia; si su plazo difiere del producto, la prima se calcula a prorrata.</p>
+                <p class="hint" style="margin:-4px 0 10px">Colectiva: se emite una póliza madre al tomador y luego se agregan certificados, cada uno con su asegurado y su valor asegurado. Cada certificado tiene su propia vigencia; si su plazo difiere del producto, la prima se calcula a prorrata.</p>
                 <label class="check"><input type="checkbox" name="activo" ${chk(p.activo)}> Activo (disponible para emitir)</label>
             </fieldset>
 
@@ -738,12 +740,12 @@ function formProducto(producto, { duplicar = false } = {}) {
                         ${Object.entries(MONEDAS).filter(([k, m]) => m.activo || k === p.monedaRef).map(([k, m]) => `<option value="${k}" ${k === p.monedaRef ? 'selected' : ''}>${esc(m.nombre)}</option>`).join('')}
                     </select>
                 </label>
-                <p class="hint">Los montos (prima fija, mínima, límites de suma asegurada) se definen en esta moneda y se convierten con el tipo de cambio al emitir en la otra.</p>
+                <p class="hint">Los montos (prima fija, mínima, límites de valor asegurado) se definen en esta moneda y se convierten con el tipo de cambio al emitir en la otra.</p>
             </fieldset>
 
-            <fieldset><legend>Prima y suma asegurada</legend>
+            <fieldset><legend>Prima y valor asegurado</legend>
                 <div class="checks">
-                    <label class="check"><input type="radio" name="primaTipo" value="tasa" ${chk(p.prima.tipo === 'tasa')}> Tasa sobre suma asegurada</label>
+                    <label class="check"><input type="radio" name="primaTipo" value="tasa" ${chk(p.prima.tipo === 'tasa')}> Tasa sobre valor asegurado</label>
                     <label class="check"><input type="radio" name="primaTipo" value="fija" ${chk(p.prima.tipo === 'fija')}> Prima fija</label>
                 </div>
                 <div class="grid3">
@@ -752,11 +754,11 @@ function formProducto(producto, { duplicar = false } = {}) {
                     <label data-show="fija">Prima fija<input name="montoFijo" type="number" step="0.01" min="0" value="${p.prima.montoFijo}"></label>
                 </div>
                 <div class="grid3">
-                    <label>Suma aseg. mínima<input name="sumaMin" type="number" step="0.01" min="0" value="${p.sumaMin}"></label>
-                    <label>Suma aseg. máxima<input name="sumaMax" type="number" step="0.01" min="0" value="${p.sumaMax}"></label>
+                    <label>Valor aseg. mínima<input name="sumaMin" type="number" step="0.01" min="0" value="${p.sumaMin}"></label>
+                    <label>Valor aseg. máxima<input name="sumaMax" type="number" step="0.01" min="0" value="${p.sumaMax}"></label>
                     <label>Vigencia (meses)<input name="vigenciaMeses" type="number" min="1" max="120" value="${p.vigenciaMeses}" required></label>
                 </div>
-                <p class="hint">Suma máxima en 0 = sin límite. Si mínima = máxima, la suma asegurada queda fija.</p>
+                <p class="hint">Valor máximo en 0 = sin límite. Si mínima = máxima, el valor asegurado queda fijo.</p>
             </fieldset>
 
             <fieldset><legend>Formas de pago</legend>
@@ -891,10 +893,22 @@ $('#btn-nuevo-producto').addEventListener('click', () => {
 });
 $('#filtro-ramo-productos').addEventListener('change', renderProductos);
 
+/** Abre "Emitir póliza" con el producto ya seleccionado y sus opciones precargadas. */
+function emitirProducto(id) {
+    showTab('emision');
+    const sel = $('#em-producto');
+    if ([...sel.options].some(o => o.value === id)) {
+        sel.value = id;
+        onProductoChange(true);
+    }
+}
+
 $('#lista-productos').addEventListener('click', async e => {
+    const emitir = e.target.closest('[data-prod-emit]');
     const edit = e.target.closest('[data-prod-edit]');
     const dup = e.target.closest('[data-prod-dup]');
     const del = e.target.closest('[data-prod-del]');
+    if (emitir) emitirProducto(emitir.dataset.prodEmit);
     if (edit) formProducto(productoById(edit.dataset.prodEdit));
     if (dup) formProducto(productoById(dup.dataset.prodDup), { duplicar: true });
     if (del) {
