@@ -316,3 +316,11 @@ a.btn { text-decoration: none; }
 .picker-selected .muted { font-size: 0.82rem; margin: 0; }
 .benef-row { display: grid; grid-template-columns: 1fr 140px 90px auto; gap: 8px; align-items: start; margin-bottom: 8px; }
 @media (max-width: 800px) { .benef-row { grid-template-columns: 1fr 1fr; } .benef-row .picker-host { grid-column: 1 / -1; } }
+
+/* Carteras en el formulario de producto */
+.cart-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+.cart-row [data-cart=nombre] { flex: 2; }
+.cart-row input[type=number] { flex: 1; }
+@media (max-width: 800px) { .cart-row { flex-wrap: wrap; } .cart-row [data-cart=nombre] { flex-basis: 100%; } }
+
+.kv dd.tachado { text-decoration: line-through; color: var(--muted); }

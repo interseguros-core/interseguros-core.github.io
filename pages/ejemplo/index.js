@@ -38,7 +38,7 @@ const DEFAULT_API_URL = 'https://script.google.com/macros/s/AKfycbw3_GFuoKPNpOOw
 /* =========================================================
    Estado (espejo en memoria de la hoja)
    ========================================================= */
-let state = { config: {}, ramos: [], productos: [], clientes: [], polizas: [], certificados: [], beneficiarios: [] };
+let state = { config: {}, ramos: [], productos: [], clientes: [], polizas: [], certificados: [], beneficiarios: [], carteras: [] };
 let conectado = false;
 
 /* =========================================================
@@ -222,7 +222,7 @@ const polizaFromRow = r => ({
     modalidad: str(r.modalidad),
     medio: str(r.medio_pago),
     cuotas: parseInt(r.cuotas, 10) || 1,
-    primaNeta: num(r.prima_neta),
+    prima: num(r.prima_neta),
     ajuste: num(r.ajuste),
     ajusteLabel: str(r.ajuste_concepto),
     primaTotal: num(r.prima_total),
@@ -232,6 +232,7 @@ const polizaFromRow = r => ({
     fechaAnulacion: str(r.fecha_anulacion),
     coberturas: json(r.coberturas, []),
     cronograma: json(r.cronograma, []),
+    ...carteraSnapshot(r),
 });
 
 const certificadoFromRow = r => ({
@@ -242,7 +243,7 @@ const certificadoFromRow = r => ({
     nombre: str(r.asegurado_nombre),
     doc: str(r.asegurado_doc),
     suma: num(r.suma_asegurada),
-    primaNeta: num(r.prima_neta),
+    prima: num(r.prima_neta),
     ajuste: num(r.ajuste),
     prima: num(r.prima),
     cronograma: json(r.cronograma, []),
@@ -250,7 +251,31 @@ const certificadoFromRow = r => ({
     hasta: str(r.vigencia_hasta),
     estado: str(r.estado) || 'vigente',
     fechaEmision: str(r.fecha_emision),
+    ...carteraSnapshot(r),
 });
+
+const carteraFromRow = r => ({
+    id: str(r.id),
+    productoId: str(r.producto_id),
+    polizaId: str(r.poliza_id),
+    nombre: str(r.nombre),
+    tasa: num(r.tasa),
+    primaFija: num(r.prima_fija),
+    activo: r.activo === '' || r.activo === undefined ? true : bool(r.activo),
+});
+
+const carteraToRow = c => ({
+    id: c.id || '',
+    producto_id: c.productoId,
+    poliza_id: c.polizaId || '',
+    nombre: c.nombre,
+    tasa: c.tasa,
+    prima_fija: c.primaFija,
+    activo: c.activo,
+});
+
+/** Datos de cartera copiados a una póliza o certificado al emitir. */
+const carteraSnapshot = r => ({ carteraId: str(r.cartera_id), carteraNombre: str(r.cartera_nombre), carteraTasa: num(r.cartera_tasa) });
 
 const beneficiarioFromRow = r => ({
     id: str(r.id),
@@ -280,6 +305,7 @@ function aplicarDatos(data) {
     state.certificados = data.certificados.map(certificadoFromRow);
     state.clientes = (data.clientes || []).map(clienteFromRow).sort((a, b) => nombreCompleto(a).localeCompare(nombreCompleto(b)));
     state.beneficiarios = (data.beneficiarios || []).map(beneficiarioFromRow);
+    state.carteras = (data.carteras || []).map(carteraFromRow);
     state.config = data.config || {};
 }
 
@@ -376,6 +402,15 @@ function toast(msg) {
 const ramoById = id => state.ramos.find(r => r.id === id);
 const productoById = id => state.productos.find(p => p.id === id);
 const clienteById = id => state.clientes.find(c => c.id === id);
+const carteraById = id => state.carteras.find(c => c.id === id);
+const carterasProducto = (productoId, soloActivas = true) => state.carteras.filter(c => c.productoId === productoId && !c.polizaId && (!soloActivas || c.activo));
+const carterasPoliza = (polizaId, soloActivas = true) => state.carteras.filter(c => c.polizaId === polizaId && (!soloActivas || c.activo));
+
+/** Tarifa de una cartera según el tipo de prima del producto: tasa % o prima fija. */
+const valorCartera = (prod, c) => (prod?.prima.tipo === 'fija' ? c.primaFija : c.tasa);
+function textoTarifa(prod, valor, moneda) {
+    return prod?.prima.tipo === 'fija' ? `prima fija ${money(valor, moneda || prod.monedaRef)}` : `tasa ${fmtTc(valor)}%`;
+}
 
 function upsertLocal(arr, item) {
     const i = arr.findIndex(x => x.id === item.id);
@@ -574,7 +609,7 @@ function renderProductos() {
                     <td><strong>${esc(p.nombre)}</strong>${p.tipoPoliza === 'colectiva' ? ' <span class="badge">Colectiva</span>' : ''}<div class="muted">${esc(p.codigo)} · ${p.vigenciaMeses} meses</div></td>
                     <td>${esc(ramo?.nombre ?? '—')}</td>
                     <td>${p.monedas.map(m => `<span class="badge${MONEDAS[m]?.activo === false ? ' off' : ''}">${esc(MONEDAS[m]?.simbolo ?? m)}</span>`).join('')}</td>
-                    <td>${prima}</td>
+                    <td>${prima}${carterasProducto(p.id).length ? `<div class="muted">${carterasProducto(p.id).length} carteras</div>` : ''}</td>
                     <td>${mods.map(esc).join('<br>')}<div class="muted">${p.pago.medios.map(m => MEDIOS_PAGO[m]).join(', ')}</div></td>
                     <td>${p.activo ? '<span class="badge ok">Activo</span>' : '<span class="badge off">Inactivo</span>'}</td>
                     <td class="actions">
@@ -604,6 +639,57 @@ function productoVacio() {
             credito: { habilitado: false, cuotas: [], recargo: 0, inicial: 0 },
         },
     };
+}
+
+function carteraRow(c = { id: '', nombre: '', tasa: '', primaFija: '', activo: true }) {
+    return `<div class="cart-row" data-cart-id="${esc(c.id)}">
+        <input data-cart="nombre" placeholder="Nombre de la cartera" value="${esc(c.nombre)}">
+        <input data-cart="tasa" data-show="tasa" type="number" step="0.0001" min="0" placeholder="Tasa %" value="${c.tasa === '' ? '' : c.tasa}">
+        <input data-cart="primaFija" data-show="fija" type="number" step="0.01" min="0" placeholder="Prima fija" value="${c.primaFija === '' ? '' : c.primaFija}">
+        <label class="check" style="margin:0"><input type="checkbox" data-cart="activo" ${c.activo ? 'checked' : ''}> Activa</label>
+        <button type="button" class="btn small danger" data-cart-del title="Quitar">✕</button>
+    </div>`;
+}
+
+/**
+ * Guarda las carteras editadas en un formulario: crea/actualiza las filas presentes y elimina las quitadas.
+ * Si una cartera quitada ya se usó en pólizas, se desactiva en lugar de eliminarse.
+ */
+async function sincronizarCarteras(filas, anteriores, base) {
+    const ids = new Set(filas.map(f => f.id).filter(Boolean));
+    const avisos = [];
+    for (const c of anteriores.filter(a => !ids.has(a.id))) {
+        try {
+            await api.post('delete', { sheet: 'carteras', id: c.id });
+            state.carteras = state.carteras.filter(x => x.id !== c.id);
+        } catch (err) {
+            filas.push({ ...c, activo: false });
+            avisos.push(`"${c.nombre}" ya se usó; quedó desactivada.`);
+        }
+    }
+    if (filas.length) {
+        const saved = await api.post('batch', { ops: filas.map(f => ({ sheet: 'carteras', record: carteraToRow({ ...f, ...base }) })) });
+        saved.map(carteraFromRow).forEach(c => upsertLocal(state.carteras, c));
+    }
+    return avisos;
+}
+
+function leerCarteras(body) {
+    return $$('.cart-row', body).map(row => ({
+        id: row.dataset.cartId,
+        nombre: $('[data-cart=nombre]', row).value.trim(),
+        tasa: parseFloat($('[data-cart=tasa]', row).value) || 0,
+        primaFija: parseFloat($('[data-cart=primaFija]', row).value) || 0,
+        activo: $('[data-cart=activo]', row).checked,
+    })).filter(c => c.nombre);
+}
+
+function validarCarteras(carteras, tipoPrima) {
+    const nombres = carteras.map(c => c.nombre.toUpperCase());
+    if (new Set(nombres).size !== nombres.length) return 'Hay carteras con el mismo nombre.';
+    const malas = carteras.filter(c => (tipoPrima === 'fija' ? c.primaFija : c.tasa) <= 0);
+    if (malas.length) return `La cartera "${malas[0].nombre}" necesita ${tipoPrima === 'fija' ? 'una prima fija' : 'una tasa'} mayor a 0.`;
+    return '';
 }
 
 function coberturaRow(c = { nombre: '', detalle: '' }) {
@@ -639,7 +725,7 @@ function formProducto(producto, { duplicar = false } = {}) {
                         ${Object.entries(TIPOS_POLIZA).map(([k, t]) => `<option value="${k}" ${k === p.tipoPoliza ? 'selected' : ''}>${t}</option>`).join('')}
                     </select>
                 </label>
-                <p class="hint" style="margin:-4px 0 10px">Colectiva: se emite una póliza madre al tomador y luego se agregan certificados, cada uno con su asegurado y su suma asegurada. La prima de cada certificado se calcula a prorrata.</p>
+                <p class="hint" style="margin:-4px 0 10px">Colectiva: se emite una póliza madre al tomador y luego se agregan certificados, cada uno con su asegurado y su suma asegurada. Cada certificado tiene su propia vigencia; si su plazo difiere del producto, la prima se calcula a prorrata.</p>
                 <label class="check"><input type="checkbox" name="activo" ${chk(p.activo)}> Activo (disponible para emitir)</label>
             </fieldset>
 
@@ -703,6 +789,13 @@ function formProducto(producto, { duplicar = false } = {}) {
                 <p class="hint" style="margin:-4px 0 10px">Por ejemplo: obligatorios en Vida, no aplica en Automotores.</p>
             </fieldset>
 
+            <fieldset><legend>Carteras</legend>
+                <p class="hint" style="margin:0 0 10px">Subclasificaciones con su propia tasa (o prima fija). Si el producto tiene carteras, al emitir hay que elegir una y la prima se calcula con su tarifa. En pólizas colectivas, la póliza madre recibe una copia que luego se puede ajustar.</p>
+                <div id="carteras">${(editando ? carterasProducto(producto.id, false) : duplicar ? carterasProducto(producto.id, false).map(c => ({ ...c, id: '' })) : []).map(carteraRow).join('')}</div>
+                <button type="button" class="btn small" id="btn-add-cart">+ Agregar cartera</button>
+                <div style="height:10px"></div>
+            </fieldset>
+
             <fieldset><legend>Coberturas</legend>
                 <div id="coberturas">${p.coberturas.map(coberturaRow).join('')}</div>
                 <button type="button" class="btn small" id="btn-add-cob">+ Agregar cobertura</button>
@@ -717,6 +810,13 @@ function formProducto(producto, { duplicar = false } = {}) {
             };
             body.addEventListener('change', sync);
             sync();
+            $('#btn-add-cart', body).addEventListener('click', () => {
+                $('#carteras', body).insertAdjacentHTML('beforeend', carteraRow());
+                sync();
+            });
+            $('#carteras', body).addEventListener('click', e => {
+                if (e.target.closest('[data-cart-del]')) e.target.closest('.cart-row').remove();
+            });
             $('#btn-add-cob', body).addEventListener('click', () => {
                 $('#coberturas', body).insertAdjacentHTML('beforeend', coberturaRow());
             });
@@ -771,10 +871,15 @@ function formProducto(producto, { duplicar = false } = {}) {
             if (!data.pago.contado.habilitado && !data.pago.credito.habilitado) return 'Habilita al menos una modalidad: contado o crédito.';
             if (data.pago.credito.habilitado && !data.pago.credito.cuotas.length) return 'Indica al menos una cantidad de cuotas (2 o más) para crédito.';
 
-            const saved = await api.post('upsert', { sheet: 'productos', record: productoToRow(data) });
-            upsertLocal(state.productos, productoFromRow(saved));
+            const carteras = leerCarteras(body);
+            const errCart = validarCarteras(carteras, data.prima.tipo);
+            if (errCart) return errCart;
+
+            const saved = productoFromRow(await api.post('upsert', { sheet: 'productos', record: productoToRow(data) }));
+            upsertLocal(state.productos, saved);
+            const avisos = await sincronizarCarteras(carteras, editando ? carterasProducto(saved.id, false) : [], { productoId: saved.id, polizaId: '' });
             renderAll();
-            toast('Producto guardado en la hoja');
+            toast(avisos.length ? `Producto guardado. ${avisos.join(' ')}` : 'Producto guardado en la hoja');
         },
     });
 }
@@ -1152,6 +1257,7 @@ function onProductoChange(resetSuma = true) {
     if (regla === 'no') benefEm.clear();
     else if (regla === 'requerido' && !benefEm.length) benefEm.add();
     if (!p) {
+        $('#em-cartera-wrap').hidden = true;
         info.innerHTML = '';
         ['#em-moneda', '#em-modalidad', '#em-medio', '#em-cuotas'].forEach(s => { $(s).innerHTML = ''; });
         $('#em-suma-hint').textContent = '';
@@ -1170,6 +1276,9 @@ function onProductoChange(resetSuma = true) {
     setOptions($('#em-modalidad'), mods);
     setOptions($('#em-medio'), p.pago.medios.map(m => [m, MEDIOS_PAGO[m]]));
     setOptions($('#em-cuotas'), p.pago.credito.cuotas.map(c => [c, `${c} cuotas`]));
+    const carts = colectiva ? [] : carterasProducto(p.id);
+    $('#em-cartera-wrap').hidden = !carts.length;
+    setOptions($('#em-cartera'), carts.map(c => [c.id, `${c.nombre} · ${textoTarifa(p, valorCartera(p, c))}`]));
 
     if (!$('#em-desde').value) $('#em-desde').value = hoyISO();
     onMonedaChange(resetSuma);
@@ -1204,7 +1313,7 @@ function onMonedaChange(resetSuma = false) {
  * Para certificados de una póliza madre se pasa "hasta" (fin de la madre) y "factor" de prorrata;
  * las cuotas se limitan a los meses que quedan de vigencia.
  */
-function calcularPrima(p, { moneda, suma, modalidad, cuotas, desde, hasta, factor = 1 }) {
+function calcularPrima(p, { moneda, suma, modalidad, cuotas, desde, hasta, factor = 1, cartera = null }) {
     if (!p) return { error: 'Selecciona un producto.' };
     if (!p.monedas.includes(moneda) || !MONEDAS[moneda]?.activo) return { error: 'Moneda no permitida para este producto.' };
     const { min, max } = limitesSuma(p, moneda);
@@ -1213,15 +1322,17 @@ function calcularPrima(p, { moneda, suma, modalidad, cuotas, desde, hasta, facto
     if (max && suma > max) return { error: `La suma asegurada máxima es ${money(max, moneda)}.` };
     if (!desde) return { error: 'Indica la fecha de inicio de vigencia.' };
 
-    let primaNeta = p.prima.tipo === 'tasa'
-        ? suma * p.prima.tasa / 100
-        : convertir(p.prima.montoFijo, p.monedaRef, moneda);
+    // La cartera reemplaza la tasa (o la prima fija) del producto
+    const tasa = cartera ? cartera.tasa : p.prima.tasa;
+    const montoFijo = cartera ? cartera.primaFija : p.prima.montoFijo;
+    let prima = p.prima.tipo === 'tasa'
+        ? suma * tasa / 100
+        : convertir(montoFijo, p.monedaRef, moneda);
+    const primaTarifa = round2(prima * factor); // lo que da la tasa, antes de aplicar la mínima
+    const primaMinima = p.prima.tipo === 'tasa' && p.prima.minima > 0 ? round2(convertir(p.prima.minima, p.monedaRef, moneda) * factor) : 0;
     let aplicoMinima = false;
-    if (p.prima.tipo === 'tasa' && p.prima.minima > 0) {
-        const minima = convertir(p.prima.minima, p.monedaRef, moneda);
-        if (primaNeta < minima) { primaNeta = minima; aplicoMinima = true; }
-    }
-    primaNeta = round2(primaNeta * factor);
+    if (primaMinima && prima * factor < primaMinima) { prima = primaMinima / factor; aplicoMinima = true; }
+    prima = round2(prima * factor);
     const fin = hasta || sumarMeses(desde, p.vigenciaMeses);
 
     let ajuste = 0;
@@ -1231,14 +1342,14 @@ function calcularPrima(p, { moneda, suma, modalidad, cuotas, desde, hasta, facto
     if (modalidad === 'contado') {
         if (!p.pago.contado.habilitado) return { error: 'Pago al contado no permitido.' };
         const d = p.pago.contado.descuento;
-        if (d) { ajuste = -round2(primaNeta * d / 100); ajusteLabel = `Descuento contado (${d}%)`; }
-        cronograma = [{ n: 1, fecha: desde, monto: round2(primaNeta + ajuste) }];
+        if (d) { ajuste = -round2(prima * d / 100); ajusteLabel = `Descuento contado (${d}%)`; }
+        cronograma = [{ n: 1, fecha: desde, monto: round2(prima + ajuste) }];
     } else if (modalidad === 'credito') {
         const c = p.pago.credito;
         if (!c.habilitado) return { error: 'Pago a crédito no permitido.' };
         if (!c.cuotas.includes(cuotas)) return { error: 'Número de cuotas no permitido.' };
-        if (c.recargo) { ajuste = round2(primaNeta * c.recargo / 100); ajusteLabel = `Recargo financiamiento (${c.recargo}%)`; }
-        const total = round2(primaNeta + ajuste);
+        if (c.recargo) { ajuste = round2(prima * c.recargo / 100); ajusteLabel = `Recargo financiamiento (${c.recargo}%)`; }
+        const total = round2(prima + ajuste);
         const nCuotas = Math.min(cuotas, mesesRestantes(desde, fin));
         cronograma = [];
         let restante = total;
@@ -1261,8 +1372,8 @@ function calcularPrima(p, { moneda, suma, modalidad, cuotas, desde, hasta, facto
     }
 
     return {
-        primaNeta, aplicoMinima, ajuste, ajusteLabel,
-        primaTotal: round2(primaNeta + ajuste),
+        prima, primaTarifa, primaMinima, aplicoMinima, ajuste, ajusteLabel,
+        primaTotal: round2(prima + ajuste),
         cronograma,
         hasta: fin,
     };
@@ -1279,6 +1390,7 @@ function leerEmision() {
         medio: fd.get('medio'),
         cuotas: parseInt(fd.get('cuotas'), 10),
         desde: fd.get('desde'),
+        cartera: $('#em-cartera-wrap').hidden ? null : carteraById(fd.get('cartera')) || null,
         tomadorId,
         aseguradoId: $('#em-aseg-mismo').checked ? tomadorId : aseguradoPicker.value,
         beneficiarios: benefEm.values(),
@@ -1302,6 +1414,18 @@ function validarMadre(p, d) {
     return '';
 }
 
+/**
+ * Filas del resumen que explican la prima: lo que da la tasa y, si no alcanza, la prima mínima aplicada.
+ */
+function lineasPrima(prod, r, moneda, cartera) {
+    if (prod.prima.tipo !== 'tasa') return `<dt>Prima (fija)</dt><dd>${money(r.prima, moneda)}</dd>`;
+    const tasa = cartera ? cartera.tasa : prod.prima.tasa;
+    const tarifa = `<dt>Prima por tasa (${fmtTc(tasa)}%)</dt><dd${r.aplicoMinima ? ' class="tachado"' : ''}>${money(r.primaTarifa, moneda)}</dd>`;
+    if (!r.aplicoMinima) return tarifa;
+    return tarifa + `<dt>Prima mínima aplicada</dt><dd>${money(r.prima, moneda)}</dd>
+        <dt></dt><dd class="hint">La prima por tasa no alcanza la mínima del producto (${money(r.primaMinima, moneda)}).</dd>`;
+}
+
 function tablaCronograma(cron, moneda) {
     return `<table class="cronograma">
         <thead><tr><th>#</th><th>Vencimiento</th><th class="num">Monto</th></tr></thead>
@@ -1317,6 +1441,7 @@ function recalcular() {
     pintarTotalBenef($('#em-benef-total'), d.beneficiarios);
     if (esColectiva(p)) return resumenMadre(p, d);
     let r = calcularPrima(p, d);
+    if (!r.error && !$('#em-cartera-wrap').hidden && !d.cartera) r = { error: 'Selecciona una cartera.' };
     if (!r.error) {
         const errP = validarParticipantes(p, d);
         if (errP) r = { ...r, error: errP, soloParticipantes: true };
@@ -1333,8 +1458,8 @@ function recalcular() {
         <dl class="kv">
             <dt>Suma asegurada</dt><dd>${money(d.suma, d.moneda)}</dd>
             ${d.moneda !== MONEDA_BASE ? `<dt>Tipo de cambio</dt><dd>1 ${esc(d.moneda)} = ${fmtTc(MONEDAS[d.moneda].tc)} Bs</dd>` : ''}
-            <dt>${p.prima.tipo === 'tasa' ? `Prima neta (tasa ${p.prima.tasa}%)` : 'Prima neta (fija)'}</dt><dd>${money(r.primaNeta, d.moneda)}</dd>
-            ${r.aplicoMinima ? '<dt></dt><dd class="hint">Se aplicó la prima mínima</dd>' : ''}
+            ${d.cartera ? `<dt>Cartera</dt><dd>${esc(d.cartera.nombre)}</dd>` : ''}
+            ${lineasPrima(p, r, d.moneda, d.cartera)}
             ${r.ajusteLabel ? `<dt>${esc(r.ajusteLabel)}</dt><dd>${money(r.ajuste, d.moneda)}</dd>` : ''}
             <dt class="total">Prima total</dt><dd class="total">${money(r.primaTotal, d.moneda)}</dd>
         </dl>
@@ -1344,7 +1469,9 @@ function recalcular() {
 function resumenMadre(p, d) {
     const error = validarMadre(p, d) || validarParticipantes(p, d);
     $('#em-hasta').value = d.desde ? sumarMeses(d.desde, p.vigenciaMeses) : '';
-    const tarifa = p.prima.tipo === 'tasa' ? `Tasa ${p.prima.tasa}% sobre la suma asegurada` : `Prima fija ${money(convertir(p.prima.montoFijo, p.monedaRef, d.moneda), d.moneda)}`;
+    const tarifa = carterasProducto(p.id).length ? 'Según la cartera de cada certificado'
+        : p.prima.tipo === 'tasa' ? `Tasa ${fmtTc(p.prima.tasa)}% sobre la suma asegurada`
+        : `Prima fija ${money(convertir(p.prima.montoFijo, p.monedaRef, d.moneda), d.moneda)}`;
     const pago = d.modalidad === 'credito' ? `Crédito, hasta ${d.cuotas} cuotas` : 'Contado';
     $('#btn-emitir').disabled = !!error;
     $('#em-resumen').innerHTML = (error ? `<p class="error">${esc(conectado ? error : 'Sin conexión con la hoja.')}</p>` : '') + `
@@ -1353,8 +1480,10 @@ function resumenMadre(p, d) {
             <dt>Tarifa por certificado</dt><dd>${esc(tarifa)}</dd>
             ${d.moneda && d.moneda !== MONEDA_BASE ? `<dt>Tipo de cambio</dt><dd>1 ${esc(d.moneda)} = ${fmtTc(MONEDAS[d.moneda]?.tc ?? 1)} Bs</dd>` : ''}
             <dt>Forma de pago</dt><dd>${esc(pago)}</dd>
+            ${carterasProducto(p.id).length ? `<dt>Carteras</dt><dd>${carterasProducto(p.id).map(c => `${esc(c.nombre)} (${textoTarifa(p, valorCartera(p, c), d.moneda)})`).join('<br>')}</dd>` : ''}
         </dl>
-        <p class="hint">Después de emitirla, agrega los certificados desde <strong>Pólizas emitidas → Ver</strong>. Cada certificado paga a prorrata de los días que le quedan a la madre.</p>`;
+        ${carterasProducto(p.id).length ? '<p class="hint">Estas carteras se copian a la póliza madre, donde podrás editarlas o crear otras.</p>' : ''}
+        <p class="hint">Después de emitirla, agrega los certificados desde <strong>Pólizas emitidas → Ver</strong>. Cada certificado tiene su propia vigencia, independiente de la madre.</p>`;
 }
 
 $('#em-producto').addEventListener('change', () => onProductoChange(true));
@@ -1373,8 +1502,9 @@ fe.addEventListener('submit', async e => {
     if (!p.pago.medios.includes(d.medio)) { err.textContent = 'Medio de pago no permitido.'; return; }
     const colectiva = esColectiva(p);
     const r = colectiva
-        ? { error: validarMadre(p, d), primaNeta: 0, ajuste: 0, ajusteLabel: '', primaTotal: 0, cronograma: [], hasta: sumarMeses(d.desde, p.vigenciaMeses) }
+        ? { error: validarMadre(p, d), prima: 0, ajuste: 0, ajusteLabel: '', primaTotal: 0, cronograma: [], hasta: sumarMeses(d.desde, p.vigenciaMeses) }
         : calcularPrima(p, d);
+    if (!r.error && !colectiva && !$('#em-cartera-wrap').hidden && !d.cartera) r.error = 'Selecciona una cartera.';
     if (r.error) { err.textContent = r.error; return; }
 
     const ramo = ramoById(p.ramoId);
@@ -1393,18 +1523,19 @@ fe.addEventListener('submit', async e => {
         modalidad: d.modalidad,
         medio_pago: d.medio,
         cuotas: d.modalidad === 'credito' ? d.cuotas : 1,
-        prima_neta: r.primaNeta,
+        prima_neta: r.prima,
         ajuste: r.ajuste,
         ajuste_concepto: r.ajusteLabel,
         prima_total: r.primaTotal,
         tipo_cambio: MONEDAS[d.moneda].tc,
         coberturas: JSON.stringify(p.coberturas),
         cronograma: JSON.stringify(r.cronograma),
+        cartera_id: d.cartera?.id || '',
     };
     const certificadosRows = colectiva ? [] : [{
         asegurado_id: d.aseguradoId,
         suma_asegurada: d.suma,
-        prima_neta: r.primaNeta,
+        prima_neta: r.prima,
         ajuste: r.ajuste,
         prima: r.primaTotal,
         cronograma: JSON.stringify(r.cronograma),
@@ -1423,6 +1554,7 @@ fe.addEventListener('submit', async e => {
         state.polizas.unshift(poliza);
         state.certificados.push(...res.certificados.map(certificadoFromRow));
         state.beneficiarios.push(...res.beneficiarios.map(beneficiarioFromRow));
+        state.carteras.push(...(res.carteras || []).map(carteraFromRow));
 
         // Limpiar participantes pero conservar el producto para emitir otra rápido
         tomadorPicker.clear();
@@ -1543,7 +1675,8 @@ function certificadoHTML(p, { acciones = false } = {}) {
                 <dt>Vigencia</dt><dd>${fecha(p.desde)} al ${fecha(p.hasta)}</dd>
                 <dt>Moneda</dt><dd>${textoMoneda(p)}</dd>
                 <dt>Suma asegurada</dt><dd>${money(p.suma, p.moneda)}</dd>
-                <dt>Prima neta</dt><dd>${money(p.primaNeta, p.moneda)}</dd>
+                ${p.carteraNombre ? `<dt>Cartera</dt><dd>${esc(p.carteraNombre)} · ${textoTarifa(productoById(p.productoId), p.carteraTasa, p.moneda)}</dd>` : ''}
+                <dt>Prima </dt><dd>${money(p.prima, p.moneda)}</dd>
                 ${p.ajusteLabel ? `<dt>${esc(p.ajusteLabel)}</dt><dd>${money(p.ajuste, p.moneda)}</dd>` : ''}
                 <dt class="total">Prima total</dt><dd class="total">${money(p.primaTotal, p.moneda)}</dd>
                 <dt>Forma de pago</dt><dd>${textoPago(p)}</dd>
@@ -1578,17 +1711,20 @@ function polizaMadreHTML(p, acciones) {
             </dl>
         </section>
 
+        ${seccionCarterasMadre(p, acciones)}
+
         <section>
             <div class="row" style="justify-content:space-between">
                 <h4 style="margin:0">Certificados</h4>
                 ${puedeAgregar ? '<button type="button" class="btn small primary" data-cert-nuevo>+ Nuevo certificado</button>' : ''}
             </div>
             ${certs.length ? `<div class="table-wrap" style="margin-top:8px"><table>
-                <thead><tr><th>Certificado</th><th>Asegurado</th><th>Desde</th><th class="num">Suma asegurada</th><th class="num">Prima</th><th>Estado</th>${acciones ? '<th></th>' : ''}</tr></thead>
+                <thead><tr><th>Certificado</th><th>Asegurado</th><th>Cartera</th><th>Vigencia</th><th class="num">Suma asegurada</th><th class="num">Prima</th><th>Estado</th>${acciones ? '<th></th>' : ''}</tr></thead>
                 <tbody>${certs.map(c => `<tr>
                     <td>${esc(c.numero)}</td>
                     <td>${esc(c.nombre)}<div class="muted">${esc(c.doc)}</div></td>
-                    <td>${fecha(c.desde)}</td>
+                    <td>${c.carteraNombre ? `${esc(c.carteraNombre)}<div class="muted">${textoTarifa(productoById(p.productoId), c.carteraTasa, p.moneda)}</div>` : '—'}</td>
+                    <td>${fecha(c.desde)} – ${fecha(c.hasta)}</td>
                     <td class="num">${money(c.suma, p.moneda)}</td>
                     <td class="num">${money(c.prima, p.moneda)}</td>
                     <td>${badgeEstado(c.estado, 'Excluido')}</td>
@@ -1602,6 +1738,65 @@ function polizaMadreHTML(p, acciones) {
 
         ${seccionCoberturas(p)}
     </div>`;
+}
+
+function seccionCarterasMadre(p, acciones) {
+    const carts = carterasPoliza(p.id, false);
+    const prod = productoById(p.productoId);
+    const editable = acciones && p.estado !== 'anulada';
+    if (!carts.length && !editable) return '';
+    return `<section>
+        <div class="row" style="justify-content:space-between">
+            <h4 style="margin:0">Carteras de la póliza</h4>
+            ${editable ? '<button type="button" class="btn small" data-cart-nueva>+ Nueva cartera</button>' : ''}
+        </div>
+        ${carts.length ? `<div class="table-wrap" style="margin-top:8px"><table>
+            <thead><tr><th>Cartera</th><th>Tarifa</th><th class="num">Certificados vigentes</th><th>Estado</th>${editable ? '<th></th>' : ''}</tr></thead>
+            <tbody>${carts.map(c => `<tr>
+                <td>${esc(c.nombre)}</td>
+                <td>${textoTarifa(prod, valorCartera(prod, c), p.moneda)}</td>
+                <td class="num">${certificadosVigentes(p.id).filter(x => x.carteraId === c.id).length}</td>
+                <td>${c.activo ? '<span class="badge ok">Activa</span>' : '<span class="badge off">Inactiva</span>'}</td>
+                ${editable ? `<td class="actions"><button type="button" class="btn small" data-cart-edit="${esc(c.id)}">Editar</button></td>` : ''}
+            </tr>`).join('')}</tbody>
+        </table></div>` : '<p class="muted">Sin carteras: los certificados usan la tarifa del producto.</p>'}
+    </section>`;
+}
+
+/** Crear o editar una cartera de la póliza madre. Los certificados ya emitidos conservan la tasa que tenían. */
+function formCarteraMadre(p, cartera, onSaved) {
+    const prod = productoById(p.productoId);
+    if (!prod) return alert('El producto de esta póliza ya no existe.');
+    const fija = prod.prima.tipo === 'fija';
+    const c = cartera || { nombre: '', tasa: prod.prima.tasa, primaFija: prod.prima.montoFijo, activo: true };
+    openModal({
+        title: cartera ? `Editar cartera · ${p.numero}` : `Nueva cartera · ${p.numero}`,
+        body: `
+            <label>Nombre<input name="nombre" value="${esc(c.nombre)}" required></label>
+            ${fija
+                ? `<label>Prima fija (${esc(MONEDAS[prod.monedaRef]?.simbolo ?? prod.monedaRef)})<input name="valor" type="number" step="0.01" min="0.01" value="${c.primaFija}" required></label>`
+                : `<label>Tasa (%)<input name="valor" type="number" step="0.0001" min="0.0001" value="${c.tasa}" required></label>`}
+            <label class="check"><input type="checkbox" name="activo" ${c.activo ? 'checked' : ''}> Activa (disponible para nuevos certificados)</label>
+            ${cartera ? '<p class="hint">Cambiar la tarifa solo afecta a los certificados que se emitan desde ahora.</p>' : ''}`,
+        onSubmit: async body => {
+            const nombre = $('[name=nombre]', body).value.trim();
+            const valor = parseFloat($('[name=valor]', body).value) || 0;
+            if (!nombre) return 'El nombre es obligatorio.';
+            if (valor <= 0) return fija ? 'La prima fija debe ser mayor a 0.' : 'La tasa debe ser mayor a 0.';
+            if (carterasPoliza(p.id, false).some(x => x.nombre.toUpperCase() === nombre.toUpperCase() && x.id !== cartera?.id)) return 'Ya existe una cartera con ese nombre en la póliza.';
+            const saved = await api.post('upsert', {
+                sheet: 'carteras',
+                record: carteraToRow({
+                    id: cartera?.id || '', productoId: p.productoId, polizaId: p.id, nombre,
+                    tasa: fija ? c.tasa || 0 : valor, primaFija: fija ? valor : c.primaFija || 0,
+                    activo: $('[name=activo]', body).checked,
+                }),
+            });
+            upsertLocal(state.carteras, carteraFromRow(saved));
+            onSaved?.();
+            toast('Cartera guardada');
+        },
+    });
 }
 
 /** Certificado individual dentro de una póliza madre. */
@@ -1623,7 +1818,8 @@ function certificadoMadreHTML(p, c) {
                 <dt>Vigencia</dt><dd>${fecha(c.desde)} al ${fecha(c.hasta)}</dd>
                 <dt>Moneda</dt><dd>${textoMoneda(p)}</dd>
                 <dt>Suma asegurada</dt><dd>${money(c.suma, p.moneda)}</dd>
-                <dt>Prima neta</dt><dd>${money(c.primaNeta, p.moneda)}</dd>
+                ${c.carteraNombre ? `<dt>Cartera</dt><dd>${esc(c.carteraNombre)} · ${textoTarifa(productoById(p.productoId), c.carteraTasa, p.moneda)}</dd>` : ''}
+                <dt>Prima </dt><dd>${money(c.prima, p.moneda)}</dd>
                 ${c.ajuste ? `<dt>${c.ajuste < 0 ? 'Descuento' : 'Recargo'}</dt><dd>${money(c.ajuste, p.moneda)}</dd>` : ''}
                 <dt class="total">Prima total</dt><dd class="total">${money(c.prima, p.moneda)}</dd>
                 <dt>Forma de pago</dt><dd>${textoPago(p)}</dd>
@@ -1651,6 +1847,9 @@ function verPoliza(p) {
             body.addEventListener('click', async e => {
                 if (e.target.closest('[data-imprimir]')) imprimir(certificadoHTML(p));
                 if (e.target.closest('[data-cert-nuevo]')) formCertificado(p, pintar);
+                if (e.target.closest('[data-cart-nueva]')) formCarteraMadre(p, null, pintar);
+                const ce = e.target.closest('[data-cart-edit]');
+                if (ce) formCarteraMadre(p, carteraById(ce.dataset.cartEdit), pintar);
                 const ver = e.target.closest('[data-cert-ver]');
                 if (ver) verCertificado(p, state.certificados.find(c => c.id === ver.dataset.certVer));
                 const exc = e.target.closest('[data-cert-excluir]');
@@ -1686,7 +1885,7 @@ function verCertificado(p, c) {
 
 function aplicarTotales(p, t) {
     p.suma = num(t.suma_asegurada);
-    p.primaNeta = num(t.prima_neta);
+    p.prima = num(t.prima_neta);
     p.ajuste = num(t.ajuste);
     p.primaTotal = num(t.prima_total);
 }
@@ -1698,27 +1897,31 @@ function formCertificado(p, onSaved) {
     const regla = prod.beneficiarios;
     const { min, max } = limitesSuma(prod, p.moneda);
     const fija = max && min === max;
-    const hoy = hoyISO();
-    const desdeDefault = hoy < p.desde ? p.desde : hoy >= p.hasta ? p.desde : hoy;
+    const vigenciaProducto = desde => sumarMeses(desde, prod.vigenciaMeses);
+    const carts = carterasPoliza(p.id);
     let pickerAseg, benefs;
+    let hastaManual = false; // mientras el usuario no edite la fecha hasta, se recalcula al cambiar desde
 
     const leer = body => ({
         aseguradoId: pickerAseg.value,
         suma: parseFloat($('[name=suma]', body).value),
         desde: $('[name=desde]', body).value,
+        hasta: $('[name=hasta]', body).value,
+        cartera: carts.length ? carteraById($('[name=cartera]', body).value) || null : null,
         beneficiarios: benefs ? benefs.values() : [],
     });
 
     const calcular = body => {
+        if (!hastaManual && $('[name=desde]', body).value) $('[name=hasta]', body).value = vigenciaProducto($('[name=desde]', body).value);
         const d = leer(body);
-        const diasTot = diasEntre(p.desde, p.hasta);
-        const dias = d.desde ? diasEntre(d.desde, p.hasta) : 0;
+        // La tarifa del producto corresponde a su vigencia estándar; un plazo distinto paga a prorrata
+        const diasTot = d.desde ? diasEntre(d.desde, vigenciaProducto(d.desde)) : 0;
+        const dias = d.desde && d.hasta ? diasEntre(d.desde, d.hasta) : 0;
         let r;
-        if (!d.desde || d.desde < p.desde || d.desde >= p.hasta) {
-            r = { error: `La inclusión debe estar entre ${fecha(p.desde)} y el día anterior a ${fecha(p.hasta)}.` };
-        } else {
-            r = calcularPrima(prod, { moneda: p.moneda, suma: d.suma, modalidad: p.modalidad, cuotas: p.cuotas, desde: d.desde, hasta: p.hasta, factor: dias / diasTot });
-        }
+        if (!d.desde || !d.hasta) r = { error: 'Indica la vigencia desde y hasta del certificado.' };
+        else if (d.hasta <= d.desde) r = { error: 'La vigencia hasta debe ser posterior a la vigencia desde.' };
+        else if (carts.length && !d.cartera) r = { error: 'Selecciona la cartera del certificado.' };
+        else r = calcularPrima(prod, { moneda: p.moneda, suma: d.suma, modalidad: p.modalidad, cuotas: p.cuotas, desde: d.desde, hasta: d.hasta, factor: dias / diasTot, cartera: d.cartera });
         if (!r.error) {
             const dup = certificadosVigentes(p.id).some(c => c.clienteId === d.aseguradoId);
             r.error = !d.aseguradoId ? 'Selecciona el asegurado.'
@@ -1733,8 +1936,10 @@ function formCertificado(p, onSaved) {
         } else {
             res.innerHTML = (r.error ? `<p class="error">${esc(r.error)}</p>` : '') + `
                 <dl class="kv">
-                    <dt>Prorrata</dt><dd>${dias} de ${diasTot} días (${fmtTc(round2(dias / diasTot * 100))}%)</dd>
-                    <dt>Prima neta</dt><dd>${money(r.primaNeta, p.moneda)}</dd>
+                    ${d.cartera ? `<dt>Cartera</dt><dd>${esc(d.cartera.nombre)} · ${textoTarifa(prod, valorCartera(prod, d.cartera), p.moneda)}</dd>` : `<dt>Tarifa</dt><dd>${textoTarifa(prod, prod.prima.tipo === 'fija' ? prod.prima.montoFijo : prod.prima.tasa, prod.monedaRef)} (producto)</dd>`}
+                    ${prod.prima.tipo === 'tasa' && prod.prima.minima > 0 ? `<dt>Prima mínima</dt><dd>${money(convertir(prod.prima.minima, prod.monedaRef, p.moneda), p.moneda)}</dd>` : ''}
+                    <dt>Plazo</dt><dd>${dias} días${dias !== diasTot ? ` · prorrata ${fmtTc(round2(dias / diasTot * 100))}% de ${prod.vigenciaMeses} meses` : ''}</dd>
+                    ${lineasPrima(prod, r, p.moneda, d.cartera)}
                     ${r.ajusteLabel ? `<dt>${esc(r.ajusteLabel)}</dt><dd>${money(r.ajuste, p.moneda)}</dd>` : ''}
                     <dt class="total">Prima del certificado</dt><dd class="total">${money(r.primaTotal, p.moneda)}</dd>
                 </dl>
@@ -1748,12 +1953,20 @@ function formCertificado(p, onSaved) {
         submitLabel: 'Emitir certificado',
         body: `
             <p class="muted" style="margin:0 0 12px">${esc(p.producto.nombre)} · Tomador: ${esc(p.tomador.nombre)} · Vigencia ${fecha(p.desde)} al ${fecha(p.hasta)} · ${textoPago(p)}</p>
+            ${carts.length ? `<label>Cartera
+                <select name="cartera" required>
+                    <option value="">— Selecciona —</option>
+                    ${carts.map(c => `<option value="${esc(c.id)}">${esc(c.nombre)} · ${textoTarifa(prod, valorCartera(prod, c), p.moneda)}</option>`).join('')}
+                </select>
+            </label>` : ''}
             <div class="field-label">Asegurado</div>
             <div data-aseg class="picker-host"></div>
             <div class="grid2" style="margin-top:12px">
                 <label>Suma asegurada (${esc(MONEDAS[p.moneda]?.simbolo ?? p.moneda)})<input name="suma" type="number" step="0.01" min="${min}" ${max ? `max="${max}"` : ''} value="${fija ? min : ''}" ${fija ? 'readonly' : ''} required></label>
-                <label>Inclusión desde<input name="desde" type="date" min="${p.desde}" max="${sumarMeses(p.hasta, 0)}" value="${desdeDefault}" required></label>
+                <label>Vigencia desde<input name="desde" type="date" value="${hoyISO()}" required></label>
+                <label>Vigencia hasta<input name="hasta" type="date" value="${vigenciaProducto(hoyISO())}" required></label>
             </div>
+            <p class="hint" style="margin-top:-4px">La vigencia del certificado es independiente de la póliza madre. Por defecto dura lo que el producto (${prod.vigenciaMeses} meses).</p>
             <p class="hint" style="margin-top:-4px">${fija ? `Suma fija del producto: ${money(min, p.moneda)}` : `Rango permitido: ${money(min, p.moneda)}${max ? ` a ${money(max, p.moneda)}` : ' en adelante'}`}</p>
             ${regla !== 'no' ? `
                 <div class="field-label" style="margin-top:12px">Beneficiarios ${regla === 'requerido' ? '(obligatorio)' : '(opcional)'}</div>
@@ -1771,6 +1984,7 @@ function formCertificado(p, onSaved) {
                 $('[data-benef-add]', body).addEventListener('click', () => benefs.add());
                 if (regla === 'requerido') benefs.add();
             }
+            $('[name=hasta]', body).addEventListener('input', () => { hastaManual = true; });
             body.addEventListener('input', recalc);
             body.addEventListener('change', recalc);
             recalc();
@@ -1784,10 +1998,12 @@ function formCertificado(p, onSaved) {
                     asegurado_id: d.aseguradoId,
                     suma_asegurada: d.suma,
                     vigencia_desde: d.desde,
-                    prima_neta: r.primaNeta,
+                    vigencia_hasta: d.hasta,
+                    prima_neta: r.prima,
                     ajuste: r.ajuste,
                     prima: r.primaTotal,
                     cronograma: JSON.stringify(r.cronograma),
+                    cartera_id: d.cartera?.id || '',
                 },
                 beneficiarios: d.beneficiarios.map(b => ({ cliente_id: b.clienteId, parentesco: b.parentesco, porcentaje: b.porcentaje })),
             });
@@ -2025,7 +2241,13 @@ $('#btn-demo').addEventListener('click', async () => {
                     ].map(r => ({ sheet: 'ramos', record: ramoToRow({ ...r, activo: true }) })),
                 });
                 const ids = Object.fromEntries(ramos.map(r => [r.codigo, r.id]));
-                await api.post('batch', { ops: productosDemo(ids).map(p => ({ sheet: 'productos', record: productoToRow(p) })) });
+                const prods = await api.post('batch', { ops: productosDemo(ids).map(p => ({ sheet: 'productos', record: productoToRow(p) })) });
+                const pid = Object.fromEntries(prods.map(p => [p.codigo, p.id]));
+                const carteras = [
+                    ['AUT-TR', 'Particular', 3.5], ['AUT-TR', 'Taxi / servicio público', 5.2], ['AUT-TR', 'Flota empresarial', 3],
+                    ['DES-COL', 'Hipotecario de vivienda', 0.45], ['DES-COL', 'Consumo', 0.6], ['DES-COL', 'PyME', 0.75],
+                ];
+                await api.post('batch', { ops: carteras.map(([cod, nombre, tasa]) => ({ sheet: 'carteras', record: carteraToRow({ productoId: pid[cod], nombre, tasa, primaFija: 0, activo: true }) })) });
             }
             if (!state.clientes.length) {
                 await api.post('batch', { ops: CLIENTES_DEMO.map(c => ({ sheet: 'clientes', record: clienteToRow({ ...c, activo: true }) })) });
