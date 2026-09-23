@@ -3,10 +3,13 @@
 /* =========================================================
    Catálogos fijos
    ========================================================= */
-const MONEDAS = {
-    BOB: { nombre: 'Bolivianos', simbolo: 'Bs' },
-    USD: { nombre: 'Dólares', simbolo: '$us' },
+// Catálogo de monedas: se carga desde la hoja "monedas". tc = cuántos Bs vale 1 unidad (Bs = 1).
+const MONEDAS_DEFAULT = {
+    BOB: { id: '', nombre: 'Bolivianos', simbolo: 'Bs', tc: 1, base: true, activo: true },
+    USD: { id: '', nombre: 'Dólares', simbolo: '$us', tc: 6.96, base: false, activo: true },
 };
+let MONEDAS = { ...MONEDAS_DEFAULT };
+const MONEDA_BASE = 'BOB';
 
 const MEDIOS_PAGO = {
     efectivo: 'Efectivo',
@@ -25,6 +28,7 @@ const MODALIDADES = {
 const TIPOS_DOC = { CI: 'Cédula de identidad', NIT: 'NIT', PAS: 'Pasaporte', CE: 'Carnet de extranjero' };
 const EXPEDIDO = ['LP', 'SC', 'CB', 'OR', 'PT', 'CH', 'TJ', 'BE', 'PD'];
 const PARENTESCOS = ['Cónyuge', 'Hijo(a)', 'Padre', 'Madre', 'Hermano(a)', 'Nieto(a)', 'Otro'];
+const TIPOS_POLIZA = { individual: 'Individual', colectiva: 'Colectiva (póliza madre con certificados)' };
 const REGLAS_BENEF = { no: 'No aplica', opcional: 'Opcionales', requerido: 'Obligatorios' };
 
 const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1YPWC66ecbzcHsILRlAHJNe-0rfyGxhUlTV2HP5OyK18/edit';
@@ -34,7 +38,7 @@ const DEFAULT_API_URL = 'https://script.google.com/macros/s/AKfycbw3_GFuoKPNpOOw
 /* =========================================================
    Estado (espejo en memoria de la hoja)
    ========================================================= */
-let state = { config: { tipoCambio: 6.96 }, ramos: [], productos: [], clientes: [], polizas: [], certificados: [], beneficiarios: [] };
+let state = { config: {}, ramos: [], productos: [], clientes: [], polizas: [], certificados: [], beneficiarios: [] };
 let conectado = false;
 
 /* =========================================================
@@ -154,13 +158,14 @@ const productoFromRow = r => ({
     descripcion: str(r.descripcion),
     activo: bool(r.activo),
     monedas: list(r.monedas).filter(m => MONEDAS[m]),
-    monedaRef: MONEDAS[str(r.moneda_ref)] ? str(r.moneda_ref) : 'BOB',
+    monedaRef: MONEDAS[str(r.moneda_ref)] ? str(r.moneda_ref) : MONEDA_BASE,
     prima: { tipo: str(r.prima_tipo) === 'fija' ? 'fija' : 'tasa', tasa: num(r.tasa), montoFijo: num(r.prima_fija), minima: num(r.prima_minima) },
     sumaMin: num(r.suma_min),
     sumaMax: num(r.suma_max),
     vigenciaMeses: parseInt(r.vigencia_meses, 10) || 12,
     coberturas: json(r.coberturas, []),
     beneficiarios: REGLAS_BENEF[str(r.beneficiarios)] ? str(r.beneficiarios) : 'no',
+    tipoPoliza: str(r.tipo_poliza) === 'colectiva' ? 'colectiva' : 'individual',
     pago: {
         medios: list(r.medios_pago).filter(m => MEDIOS_PAGO[m]),
         contado: { habilitado: bool(r.contado), descuento: num(r.descuento_contado) },
@@ -198,11 +203,13 @@ const productoToRow = p => ({
     cuota_inicial: p.pago.credito.inicial,
     coberturas: JSON.stringify(p.coberturas),
     beneficiarios: p.beneficiarios,
+    tipo_poliza: p.tipoPoliza,
 });
 
 const polizaFromRow = r => ({
     id: str(r.id),
     numero: str(r.numero),
+    tipo: str(r.tipo) === 'madre' ? 'madre' : 'individual',
     productoId: str(r.producto_id),
     ramo: { codigo: str(r.ramo_codigo), nombre: str(r.ramo_nombre) },
     producto: { codigo: str(r.producto_codigo), nombre: str(r.producto_nombre) },
@@ -235,13 +242,20 @@ const certificadoFromRow = r => ({
     nombre: str(r.asegurado_nombre),
     doc: str(r.asegurado_doc),
     suma: num(r.suma_asegurada),
+    primaNeta: num(r.prima_neta),
+    ajuste: num(r.ajuste),
     prima: num(r.prima),
-    estado: str(r.estado),
+    cronograma: json(r.cronograma, []),
+    desde: str(r.vigencia_desde),
+    hasta: str(r.vigencia_hasta),
+    estado: str(r.estado) || 'vigente',
+    fechaEmision: str(r.fecha_emision),
 });
 
 const beneficiarioFromRow = r => ({
     id: str(r.id),
     polizaId: str(r.poliza_id),
+    certificadoId: str(r.certificado_id),
     clienteId: str(r.cliente_id),
     nombre: str(r.nombre),
     doc: str(r.doc),
@@ -250,14 +264,23 @@ const beneficiarioFromRow = r => ({
 });
 
 function aplicarDatos(data) {
+    // Las monedas van primero: los productos filtran sus monedas contra este catálogo
+    const monedas = (data.monedas || []).map(m => [str(m.codigo).toUpperCase(), {
+        id: str(m.id),
+        nombre: str(m.nombre),
+        simbolo: str(m.simbolo) || str(m.codigo),
+        tc: bool(m.es_base) ? 1 : num(m.tipo_cambio) || 1,
+        base: bool(m.es_base),
+        activo: m.activo === '' || m.activo === undefined ? true : bool(m.activo),
+    }]);
+    MONEDAS = monedas.length ? Object.fromEntries(monedas) : { ...MONEDAS_DEFAULT };
     state.ramos = data.ramos.map(ramoFromRow);
     state.productos = data.productos.map(productoFromRow);
     state.polizas = data.polizas.map(polizaFromRow).sort((a, b) => b.fechaEmision.localeCompare(a.fechaEmision));
     state.certificados = data.certificados.map(certificadoFromRow);
     state.clientes = (data.clientes || []).map(clienteFromRow).sort((a, b) => nombreCompleto(a).localeCompare(nombreCompleto(b)));
     state.beneficiarios = (data.beneficiarios || []).map(beneficiarioFromRow);
-    const tc = num(data.config?.tipoCambio);
-    state.config.tipoCambio = tc > 0 ? tc : 6.96;
+    state.config = data.config || {};
 }
 
 async function recargar() {
@@ -300,12 +323,18 @@ function money(n, moneda) {
     return `${MONEDAS[moneda]?.simbolo ?? ''} ${f}`;
 }
 
+/** Convierte pasando por Bs: monto × TC(origen) / TC(destino). */
 function convertir(monto, de, a) {
     if (de === a) return monto;
-    const tc = state.config.tipoCambio;
-    if (de === 'USD' && a === 'BOB') return monto * tc;
-    if (de === 'BOB' && a === 'USD') return monto / tc;
-    return monto;
+    const tcDe = MONEDAS[de]?.tc || 1;
+    const tcA = MONEDAS[a]?.tc || 1;
+    return monto * tcDe / tcA;
+}
+
+const monedasActivas = () => Object.entries(MONEDAS).filter(([, m]) => m.activo);
+
+function fmtTc(n) {
+    return new Intl.NumberFormat('es-BO', { maximumFractionDigits: 6 }).format(n);
 }
 
 function hoyISO() {
@@ -319,6 +348,15 @@ function sumarMeses(iso, meses) {
     const ultimoDia = new Date(Date.UTC(target.getUTCFullYear(), target.getUTCMonth() + 1, 0)).getUTCDate();
     target.setUTCDate(Math.min(d, ultimoDia));
     return target.toISOString().slice(0, 10);
+}
+
+const diasEntre = (a, b) => Math.round((Date.parse(b) - Date.parse(a)) / 86400000);
+
+/** Cuántas cuotas mensuales caben desde "desde" hasta antes de "hasta" (mínimo 1). */
+function mesesRestantes(desde, hasta) {
+    let n = 1;
+    while (sumarMeses(desde, n) < hasta) n++;
+    return n;
 }
 
 function fecha(iso) {
@@ -374,47 +412,47 @@ function sinConexionHTML() {
 /* =========================================================
    Modal genérico
    ========================================================= */
-const modal = $('#modal');
-let modalOnSubmit = null;
+/**
+ * Abre un diálogo. Se pueden apilar (p. ej. registrar un cliente mientras se agrega un certificado).
+ * onSubmit(body) devuelve un mensaje de error de validación, o nada si salió bien y el diálogo se cierra.
+ */
+function openModal({ title, body, onSubmit, submitLabel = 'Guardar', readonly = false, onOpen, wide = false }) {
+    const dlg = document.createElement('dialog');
+    if (wide) dlg.classList.add('wide');
+    dlg.innerHTML = `<form method="dialog" autocomplete="off">
+        <header class="modal-head"><h3></h3><button type="button" class="icon-btn" data-close aria-label="Cerrar">✕</button></header>
+        <div class="modal-body">${body}</div>
+        <p class="error modal-error"></p>
+        <footer class="modal-foot">${readonly
+            ? '<button type="button" class="btn" data-close>Cerrar</button>'
+            : `<button type="button" class="btn" data-close>Cancelar</button><button type="submit" class="btn primary">${esc(submitLabel)}</button>`}</footer>
+    </form>`;
+    $('h3', dlg).textContent = title;
+    document.body.appendChild(dlg);
+    const bodyEl = $('.modal-body', dlg);
 
-function openModal({ title, body, onSubmit, submitLabel = 'Guardar', readonly = false, onOpen }) {
-    $('#modal-title').textContent = title;
-    $('#modal-body').innerHTML = body;
-    $('#modal-error').textContent = '';
-    const foot = $('#modal-foot');
-    foot.innerHTML = readonly
-        ? '<button type="button" class="btn" data-close>Cerrar</button>'
-        : `<button type="button" class="btn" data-close>Cancelar</button><button type="submit" class="btn primary">${esc(submitLabel)}</button>`;
-    modalOnSubmit = onSubmit;
-    modal.showModal();
-    onOpen?.($('#modal-body'));
+    const cerrar = () => { dlg.close(); dlg.remove(); };
+    dlg.addEventListener('cancel', e => { e.preventDefault(); cerrar(); }); // tecla Escape
+    dlg.addEventListener('click', e => { if (e.target.closest('[data-close]')) cerrar(); });
+    $('form', dlg).addEventListener('submit', async e => {
+        e.preventDefault();
+        if (!onSubmit) return cerrar();
+        const btn = $('.modal-foot [type=submit]', dlg);
+        btn.disabled = true;
+        try {
+            const error = await onSubmit(bodyEl);
+            if (error) $('.modal-error', dlg).textContent = error;
+            else cerrar();
+        } catch (err) {
+            $('.modal-error', dlg).textContent = err.message;
+        } finally {
+            btn.disabled = false;
+        }
+    });
+    dlg.showModal();
+    onOpen?.(bodyEl, dlg);
+    return dlg;
 }
-
-function closeModal() {
-    modal.close();
-    modalOnSubmit = null;
-}
-
-modal.addEventListener('click', e => {
-    if (e.target.closest('[data-close]')) closeModal();
-});
-
-$('#modal-form').addEventListener('submit', async e => {
-    e.preventDefault();
-    if (!modalOnSubmit) return closeModal();
-    const btn = $('#modal-foot [type=submit]');
-    btn.disabled = true;
-    try {
-        // onSubmit devuelve un mensaje (error de validación) o nada si todo salió bien
-        const error = await modalOnSubmit($('#modal-body'));
-        if (error) $('#modal-error').textContent = error;
-        else closeModal();
-    } catch (err) {
-        $('#modal-error').textContent = err.message;
-    } finally {
-        btn.disabled = false;
-    }
-});
 
 /* =========================================================
    RAMOS
@@ -533,9 +571,9 @@ function renderProductos() {
                 if (p.pago.contado.habilitado) mods.push(`Contado${p.pago.contado.descuento ? ` (-${p.pago.contado.descuento}%)` : ''}`);
                 if (p.pago.credito.habilitado) mods.push(`Crédito ${p.pago.credito.cuotas.join('/')} cuotas`);
                 return `<tr>
-                    <td><strong>${esc(p.nombre)}</strong><div class="muted">${esc(p.codigo)} · ${p.vigenciaMeses} meses</div></td>
+                    <td><strong>${esc(p.nombre)}</strong>${p.tipoPoliza === 'colectiva' ? ' <span class="badge">Colectiva</span>' : ''}<div class="muted">${esc(p.codigo)} · ${p.vigenciaMeses} meses</div></td>
                     <td>${esc(ramo?.nombre ?? '—')}</td>
-                    <td>${p.monedas.map(m => `<span class="badge">${MONEDAS[m].simbolo}</span>`).join('')}</td>
+                    <td>${p.monedas.map(m => `<span class="badge${MONEDAS[m]?.activo === false ? ' off' : ''}">${esc(MONEDAS[m]?.simbolo ?? m)}</span>`).join('')}</td>
                     <td>${prima}</td>
                     <td>${mods.map(esc).join('<br>')}<div class="muted">${p.pago.medios.map(m => MEDIOS_PAGO[m]).join(', ')}</div></td>
                     <td>${p.activo ? '<span class="badge ok">Activo</span>' : '<span class="badge off">Inactivo</span>'}</td>
@@ -559,6 +597,7 @@ function productoVacio() {
         sumaMin: 0, sumaMax: 0, vigenciaMeses: 12,
         coberturas: [],
         beneficiarios: 'no',
+        tipoPoliza: 'individual',
         pago: {
             medios: ['efectivo'],
             contado: { habilitado: true, descuento: 0 },
@@ -595,16 +634,22 @@ function formProducto(producto, { duplicar = false } = {}) {
                 </div>
                 <label>Nombre<input name="nombre" value="${esc(p.nombre)}" required></label>
                 <label>Descripción<textarea name="descripcion" rows="2">${esc(p.descripcion)}</textarea></label>
+                <label>Tipo de póliza
+                    <select name="tipoPoliza">
+                        ${Object.entries(TIPOS_POLIZA).map(([k, t]) => `<option value="${k}" ${k === p.tipoPoliza ? 'selected' : ''}>${t}</option>`).join('')}
+                    </select>
+                </label>
+                <p class="hint" style="margin:-4px 0 10px">Colectiva: se emite una póliza madre al tomador y luego se agregan certificados, cada uno con su asegurado y su suma asegurada. La prima de cada certificado se calcula a prorrata.</p>
                 <label class="check"><input type="checkbox" name="activo" ${chk(p.activo)}> Activo (disponible para emitir)</label>
             </fieldset>
 
             <fieldset><legend>Monedas de emisión</legend>
                 <div class="checks">
-                    ${Object.entries(MONEDAS).map(([k, m]) => `<label class="check"><input type="checkbox" name="monedas" value="${k}" ${chk(p.monedas.includes(k))}> ${m.nombre} (${m.simbolo})</label>`).join('')}
+                    ${Object.entries(MONEDAS).filter(([k, m]) => m.activo || p.monedas.includes(k)).map(([k, m]) => `<label class="check"><input type="checkbox" name="monedas" value="${k}" ${chk(p.monedas.includes(k))}> ${esc(m.nombre)} (${esc(m.simbolo)})${m.activo ? '' : ' — inactiva'}</label>`).join('')}
                 </div>
                 <label>Moneda de referencia para los montos de este producto
                     <select name="monedaRef">
-                        ${Object.entries(MONEDAS).map(([k, m]) => `<option value="${k}" ${k === p.monedaRef ? 'selected' : ''}>${m.nombre}</option>`).join('')}
+                        ${Object.entries(MONEDAS).filter(([k, m]) => m.activo || k === p.monedaRef).map(([k, m]) => `<option value="${k}" ${k === p.monedaRef ? 'selected' : ''}>${esc(m.nombre)}</option>`).join('')}
                     </select>
                 </label>
                 <p class="hint">Los montos (prima fija, mínima, límites de suma asegurada) se definen en esta moneda y se convierten con el tipo de cambio al emitir en la otra.</p>
@@ -701,6 +746,7 @@ function formProducto(producto, { duplicar = false } = {}) {
                     .map(row => ({ nombre: $('[data-cob=nombre]', row).value.trim(), detalle: $('[data-cob=detalle]', row).value.trim() }))
                     .filter(c => c.nombre),
                 beneficiarios: v('beneficiarios'),
+                tipoPoliza: v('tipoPoliza'),
                 pago: {
                     medios: checked('medios'),
                     contado: { habilitado: $('[name=contado]', body).checked, descuento: n('descuento') },
@@ -989,41 +1035,82 @@ function crearPicker(host, { onChange } = {}) {
 const fe = $('#form-emision');
 const tomadorPicker = crearPicker($('#em-tomador'), { onChange: () => recalcular() });
 const aseguradoPicker = crearPicker($('#em-asegurado'), { onChange: () => recalcular() });
-let benefRows = [];
 
-function addBenefRow() {
-    const row = document.createElement('div');
-    row.className = 'benef-row';
-    row.innerHTML = `
-        <div class="picker-host"></div>
-        <select data-b="parentesco">${PARENTESCOS.map(p => `<option>${p}</option>`).join('')}</select>
-        <input data-b="porcentaje" type="number" min="0" max="100" step="0.01" placeholder="%">
-        <button type="button" class="btn small danger" data-b-del title="Quitar">✕</button>`;
-    $('#em-benef-list').appendChild(row);
-    const item = { row, picker: crearPicker($('.picker-host', row), { onChange: () => recalcular() }) };
-    benefRows.push(item);
-    // Reparte 100% en partes iguales entre todos los beneficiarios
-    const parte = round2(100 / benefRows.length);
-    benefRows.forEach((b, i) => {
-        $('[data-b=porcentaje]', b.row).value = i === benefRows.length - 1 ? round2(100 - parte * (benefRows.length - 1)) : parte;
+/**
+ * Lista editable de beneficiarios (cliente + parentesco + %). Se usa en la emisión y al agregar certificados.
+ */
+function crearBeneficiarios(listEl, onChange) {
+    let rows = [];
+    const comp = {
+        get length() { return rows.length; },
+        add() {
+            const row = document.createElement('div');
+            row.className = 'benef-row';
+            row.innerHTML = `
+                <div class="picker-host"></div>
+                <select data-b="parentesco">${PARENTESCOS.map(p => `<option>${p}</option>`).join('')}</select>
+                <input data-b="porcentaje" type="number" min="0" max="100" step="0.01" placeholder="%">
+                <button type="button" class="btn small danger" data-b-del title="Quitar">✕</button>`;
+            listEl.appendChild(row);
+            rows.push({ row, picker: crearPicker($('.picker-host', row), { onChange }) });
+            // Reparte 100% en partes iguales entre todos los beneficiarios
+            const parte = round2(100 / rows.length);
+            rows.forEach((b, i) => {
+                $('[data-b=porcentaje]', b.row).value = i === rows.length - 1 ? round2(100 - parte * (rows.length - 1)) : parte;
+            });
+            onChange();
+        },
+        clear() {
+            rows = [];
+            listEl.innerHTML = '';
+        },
+        values() {
+            return rows.map(b => ({
+                clienteId: b.picker.value,
+                parentesco: $('[data-b=parentesco]', b.row).value,
+                porcentaje: parseFloat($('[data-b=porcentaje]', b.row).value) || 0,
+            }));
+        },
+        rows: () => rows,
+    };
+    listEl.addEventListener('click', e => {
+        const del = e.target.closest('[data-b-del]');
+        if (!del) return;
+        const row = del.closest('.benef-row');
+        rows = rows.filter(b => b.row !== row);
+        row.remove();
+        onChange();
     });
-    recalcular();
+    listEl.addEventListener('input', onChange);
+    listEl.addEventListener('change', onChange);
+    return comp;
 }
 
-function clearBenefRows() {
-    benefRows = [];
-    $('#em-benef-list').innerHTML = '';
+/** Valida la lista de beneficiarios según la regla del producto. Devuelve un mensaje de error o ''. */
+function validarBeneficiarios(regla, benefs, aseguradoId) {
+    if (regla === 'requerido' && !benefs.length) return 'Este producto requiere al menos un beneficiario.';
+    if (!benefs.length) return '';
+    if (benefs.some(b => !b.clienteId)) return 'Selecciona el cliente de cada beneficiario (o quita la fila vacía).';
+    if (benefs.some(b => b.porcentaje <= 0)) return 'Cada beneficiario debe tener un porcentaje mayor a 0.';
+    const ids = benefs.map(b => b.clienteId);
+    if (new Set(ids).size !== ids.length) return 'Un mismo cliente está repetido como beneficiario.';
+    if (aseguradoId && ids.includes(aseguradoId)) return 'El asegurado no puede ser su propio beneficiario.';
+    const total = round2(benefs.reduce((acc, b) => acc + b.porcentaje, 0));
+    if (total !== 100) return `Los porcentajes de beneficiarios suman ${total}%; deben sumar 100%.`;
+    return '';
 }
 
-$('#btn-add-benef').addEventListener('click', addBenefRow);
-$('#em-benef-list').addEventListener('click', e => {
-    const del = e.target.closest('[data-b-del]');
-    if (!del) return;
-    const row = del.closest('.benef-row');
-    benefRows = benefRows.filter(b => b.row !== row);
-    row.remove();
-    recalcular();
-});
+/** Muestra el total de % debajo de la lista (en rojo si no suma 100). */
+function pintarTotalBenef(el, benefs) {
+    const total = round2(benefs.reduce((acc, b) => acc + b.porcentaje, 0));
+    el.textContent = benefs.length ? `Total: ${total}%` : '';
+    el.style.color = benefs.length && total !== 100 ? 'var(--danger)' : '';
+}
+
+const benefEm = crearBeneficiarios($('#em-benef-list'), () => recalcular());
+$('#btn-add-benef').addEventListener('click', () => benefEm.add());
+
+const esColectiva = p => p?.tipoPoliza === 'colectiva';
 
 function productosEmitibles() {
     return state.productos.filter(p => p.activo && ramoById(p.ramoId)?.activo);
@@ -1053,11 +1140,17 @@ function setOptions(sel, entries, keep = true) {
 function onProductoChange(resetSuma = true) {
     const p = productoById($('#em-producto').value);
     const info = $('#em-producto-info');
-    const regla = p?.beneficiarios || 'no';
+    // En la póliza madre el asegurado es el tomador; asegurados, sumas y beneficiarios van en cada certificado
+    const colectiva = esColectiva(p);
+    const regla = colectiva ? 'no' : p?.beneficiarios || 'no';
+    $('#em-aseg-block').hidden = colectiva;
+    $('#em-suma-wrap').hidden = colectiva;
+    $('#em-suma-hint').hidden = colectiva;
+    $('#em-madre-note').hidden = !colectiva;
     $('#em-benef-block').hidden = regla === 'no';
     $('#em-benef-regla').textContent = regla === 'requerido' ? '(obligatorio)' : '(opcional)';
-    if (regla === 'no') clearBenefRows();
-    else if (regla === 'requerido' && !benefRows.length) addBenefRow();
+    if (regla === 'no') benefEm.clear();
+    else if (regla === 'requerido' && !benefEm.length) benefEm.add();
     if (!p) {
         info.innerHTML = '';
         ['#em-moneda', '#em-modalidad', '#em-medio', '#em-cuotas'].forEach(s => { $(s).innerHTML = ''; });
@@ -1068,9 +1161,9 @@ function onProductoChange(resetSuma = true) {
     info.innerHTML = `
         <p>${esc(p.descripcion)}</p>
         ${p.coberturas.length ? `<p><strong>Coberturas:</strong> ${p.coberturas.map(c => esc(c.nombre)).join(', ')}</p>` : ''}
-        <p>Vigencia: ${p.vigenciaMeses} meses</p>`;
+        <p>Vigencia: ${p.vigenciaMeses} meses${colectiva ? ' · <strong>Póliza colectiva</strong>' : ''}</p>`;
 
-    setOptions($('#em-moneda'), p.monedas.map(m => [m, `${MONEDAS[m].nombre} (${MONEDAS[m].simbolo})`]));
+    setOptions($('#em-moneda'), p.monedas.filter(m => MONEDAS[m]?.activo).map(m => [m, `${MONEDAS[m].nombre} (${MONEDAS[m].simbolo})`]));
     const mods = [];
     if (p.pago.contado.habilitado) mods.push(['contado', MODALIDADES.contado]);
     if (p.pago.credito.habilitado) mods.push(['credito', MODALIDADES.credito]);
@@ -1106,10 +1199,14 @@ function onMonedaChange(resetSuma = false) {
     recalcular();
 }
 
-/** Calcula prima y cronograma. Devuelve { error } o el detalle completo. */
-function calcularPrima(p, { moneda, suma, modalidad, cuotas, desde }) {
+/**
+ * Calcula prima y cronograma. Devuelve { error } o el detalle completo.
+ * Para certificados de una póliza madre se pasa "hasta" (fin de la madre) y "factor" de prorrata;
+ * las cuotas se limitan a los meses que quedan de vigencia.
+ */
+function calcularPrima(p, { moneda, suma, modalidad, cuotas, desde, hasta, factor = 1 }) {
     if (!p) return { error: 'Selecciona un producto.' };
-    if (!p.monedas.includes(moneda)) return { error: 'Moneda no permitida para este producto.' };
+    if (!p.monedas.includes(moneda) || !MONEDAS[moneda]?.activo) return { error: 'Moneda no permitida para este producto.' };
     const { min, max } = limitesSuma(p, moneda);
     if (!(suma > 0)) return { error: 'Ingresa la suma asegurada.' };
     if (suma < min) return { error: `La suma asegurada mínima es ${money(min, moneda)}.` };
@@ -1124,7 +1221,8 @@ function calcularPrima(p, { moneda, suma, modalidad, cuotas, desde }) {
         const minima = convertir(p.prima.minima, p.monedaRef, moneda);
         if (primaNeta < minima) { primaNeta = minima; aplicoMinima = true; }
     }
-    primaNeta = round2(primaNeta);
+    primaNeta = round2(primaNeta * factor);
+    const fin = hasta || sumarMeses(desde, p.vigenciaMeses);
 
     let ajuste = 0;
     let ajusteLabel = '';
@@ -1141,15 +1239,16 @@ function calcularPrima(p, { moneda, suma, modalidad, cuotas, desde }) {
         if (!c.cuotas.includes(cuotas)) return { error: 'Número de cuotas no permitido.' };
         if (c.recargo) { ajuste = round2(primaNeta * c.recargo / 100); ajusteLabel = `Recargo financiamiento (${c.recargo}%)`; }
         const total = round2(primaNeta + ajuste);
+        const nCuotas = Math.min(cuotas, mesesRestantes(desde, fin));
         cronograma = [];
         let restante = total;
-        let n = cuotas;
+        let n = nCuotas;
         let inicio = 0;
-        if (c.inicial > 0) {
+        if (c.inicial > 0 && nCuotas > 1) {
             const ini = round2(total * c.inicial / 100);
             cronograma.push({ n: 1, fecha: desde, monto: ini, inicial: true });
             restante = round2(total - ini);
-            n = cuotas - 1;
+            n = nCuotas - 1;
             inicio = 1;
         }
         const cuota = round2(restante / n);
@@ -1165,7 +1264,7 @@ function calcularPrima(p, { moneda, suma, modalidad, cuotas, desde }) {
         primaNeta, aplicoMinima, ajuste, ajusteLabel,
         primaTotal: round2(primaNeta + ajuste),
         cronograma,
-        hasta: sumarMeses(desde, p.vigenciaMeses),
+        hasta: fin,
     };
 }
 
@@ -1182,28 +1281,24 @@ function leerEmision() {
         desde: fd.get('desde'),
         tomadorId,
         aseguradoId: $('#em-aseg-mismo').checked ? tomadorId : aseguradoPicker.value,
-        beneficiarios: benefRows.map(b => ({
-            clienteId: b.picker.value,
-            parentesco: $('[data-b=parentesco]', b.row).value,
-            porcentaje: parseFloat($('[data-b=porcentaje]', b.row).value) || 0,
-        })),
+        beneficiarios: benefEm.values(),
     };
 }
 
 /** Valida tomador, asegurado y beneficiarios. Devuelve un mensaje de error o ''. */
 function validarParticipantes(p, d) {
     if (!d.tomadorId) return 'Selecciona el tomador.';
+    if (esColectiva(p)) return '';
     if (!d.aseguradoId) return 'Selecciona el asegurado.';
-    const regla = p?.beneficiarios || 'no';
-    if (regla === 'requerido' && !d.beneficiarios.length) return 'Este producto requiere al menos un beneficiario.';
-    if (!d.beneficiarios.length) return '';
-    if (d.beneficiarios.some(b => !b.clienteId)) return 'Selecciona el cliente de cada beneficiario (o quita la fila vacía).';
-    if (d.beneficiarios.some(b => b.porcentaje <= 0)) return 'Cada beneficiario debe tener un porcentaje mayor a 0.';
-    const ids = d.beneficiarios.map(b => b.clienteId);
-    if (new Set(ids).size !== ids.length) return 'Un mismo cliente está repetido como beneficiario.';
-    if (ids.includes(d.aseguradoId)) return 'El asegurado no puede ser su propio beneficiario.';
-    const total = round2(d.beneficiarios.reduce((acc, b) => acc + b.porcentaje, 0));
-    if (total !== 100) return `Los porcentajes de beneficiarios suman ${total}%; deben sumar 100%.`;
+    return validarBeneficiarios(p?.beneficiarios || 'no', d.beneficiarios, d.aseguradoId);
+}
+
+/** Valida las condiciones de la póliza madre (sin suma ni prima propias). */
+function validarMadre(p, d) {
+    if (!p.monedas.includes(d.moneda) || !MONEDAS[d.moneda]?.activo) return 'Moneda no permitida para este producto.';
+    if (!d.desde) return 'Indica la fecha de inicio de vigencia.';
+    if (!d.modalidad) return 'Selecciona la modalidad de pago.';
+    if (d.modalidad === 'credito' && !p.pago.credito.cuotas.includes(d.cuotas)) return 'Número de cuotas no permitido.';
     return '';
 }
 
@@ -1219,9 +1314,8 @@ function recalcular() {
     const p = productoById(d.productoId);
     $('#em-cuotas-wrap').hidden = d.modalidad !== 'credito';
     $('#em-aseg-wrap').hidden = $('#em-aseg-mismo').checked;
-    const total = round2(d.beneficiarios.reduce((acc, b) => acc + b.porcentaje, 0));
-    $('#em-benef-total').textContent = d.beneficiarios.length ? `Total: ${total}%` : '';
-    $('#em-benef-total').style.color = d.beneficiarios.length && total !== 100 ? 'var(--danger)' : '';
+    pintarTotalBenef($('#em-benef-total'), d.beneficiarios);
+    if (esColectiva(p)) return resumenMadre(p, d);
     let r = calcularPrima(p, d);
     if (!r.error) {
         const errP = validarParticipantes(p, d);
@@ -1238,12 +1332,29 @@ function recalcular() {
     res.innerHTML = (r.error ? `<p class="error">${esc(r.error)}</p>` : '') + `
         <dl class="kv">
             <dt>Suma asegurada</dt><dd>${money(d.suma, d.moneda)}</dd>
+            ${d.moneda !== MONEDA_BASE ? `<dt>Tipo de cambio</dt><dd>1 ${esc(d.moneda)} = ${fmtTc(MONEDAS[d.moneda].tc)} Bs</dd>` : ''}
             <dt>${p.prima.tipo === 'tasa' ? `Prima neta (tasa ${p.prima.tasa}%)` : 'Prima neta (fija)'}</dt><dd>${money(r.primaNeta, d.moneda)}</dd>
             ${r.aplicoMinima ? '<dt></dt><dd class="hint">Se aplicó la prima mínima</dd>' : ''}
             ${r.ajusteLabel ? `<dt>${esc(r.ajusteLabel)}</dt><dd>${money(r.ajuste, d.moneda)}</dd>` : ''}
             <dt class="total">Prima total</dt><dd class="total">${money(r.primaTotal, d.moneda)}</dd>
         </dl>
         ${tablaCronograma(r.cronograma, d.moneda)}`;
+}
+
+function resumenMadre(p, d) {
+    const error = validarMadre(p, d) || validarParticipantes(p, d);
+    $('#em-hasta').value = d.desde ? sumarMeses(d.desde, p.vigenciaMeses) : '';
+    const tarifa = p.prima.tipo === 'tasa' ? `Tasa ${p.prima.tasa}% sobre la suma asegurada` : `Prima fija ${money(convertir(p.prima.montoFijo, p.monedaRef, d.moneda), d.moneda)}`;
+    const pago = d.modalidad === 'credito' ? `Crédito, hasta ${d.cuotas} cuotas` : 'Contado';
+    $('#btn-emitir').disabled = !!error;
+    $('#em-resumen').innerHTML = (error ? `<p class="error">${esc(conectado ? error : 'Sin conexión con la hoja.')}</p>` : '') + `
+        <p><strong>Póliza madre</strong>: se emite sin suma ni prima propias.</p>
+        <dl class="kv">
+            <dt>Tarifa por certificado</dt><dd>${esc(tarifa)}</dd>
+            ${d.moneda && d.moneda !== MONEDA_BASE ? `<dt>Tipo de cambio</dt><dd>1 ${esc(d.moneda)} = ${fmtTc(MONEDAS[d.moneda]?.tc ?? 1)} Bs</dd>` : ''}
+            <dt>Forma de pago</dt><dd>${esc(pago)}</dd>
+        </dl>
+        <p class="hint">Después de emitirla, agrega los certificados desde <strong>Pólizas emitidas → Ver</strong>. Cada certificado paga a prorrata de los días que le quedan a la madre.</p>`;
 }
 
 $('#em-producto').addEventListener('change', () => onProductoChange(true));
@@ -1260,7 +1371,10 @@ fe.addEventListener('submit', async e => {
     const errP = validarParticipantes(p, d);
     if (errP) { err.textContent = errP; return; }
     if (!p.pago.medios.includes(d.medio)) { err.textContent = 'Medio de pago no permitido.'; return; }
-    const r = calcularPrima(p, d);
+    const colectiva = esColectiva(p);
+    const r = colectiva
+        ? { error: validarMadre(p, d), primaNeta: 0, ajuste: 0, ajusteLabel: '', primaTotal: 0, cronograma: [], hasta: sumarMeses(d.desde, p.vigenciaMeses) }
+        : calcularPrima(p, d);
     if (r.error) { err.textContent = r.error; return; }
 
     const ramo = ramoById(p.ramoId);
@@ -1273,7 +1387,7 @@ fe.addEventListener('submit', async e => {
         producto_nombre: p.nombre,
         tomador_id: d.tomadorId, // nombre, documento y contacto los completa el servidor desde la hoja clientes
         moneda: d.moneda,
-        suma_asegurada: d.suma,
+        suma_asegurada: colectiva ? 0 : d.suma,
         vigencia_desde: d.desde,
         vigencia_hasta: r.hasta,
         modalidad: d.modalidad,
@@ -1283,14 +1397,17 @@ fe.addEventListener('submit', async e => {
         ajuste: r.ajuste,
         ajuste_concepto: r.ajusteLabel,
         prima_total: r.primaTotal,
-        tipo_cambio: state.config.tipoCambio,
+        tipo_cambio: MONEDAS[d.moneda].tc,
         coberturas: JSON.stringify(p.coberturas),
         cronograma: JSON.stringify(r.cronograma),
     };
-    const certificadosRows = [{
+    const certificadosRows = colectiva ? [] : [{
         asegurado_id: d.aseguradoId,
         suma_asegurada: d.suma,
+        prima_neta: r.primaNeta,
+        ajuste: r.ajuste,
         prima: r.primaTotal,
+        cronograma: JSON.stringify(r.cronograma),
     }];
     const beneficiariosRows = d.beneficiarios.map(b => ({
         cliente_id: b.clienteId,
@@ -1301,7 +1418,7 @@ fe.addEventListener('submit', async e => {
     const btn = $('#btn-emitir');
     btn.disabled = true;
     try {
-        const res = await conCarga('Emitiendo póliza…', () => api.post('emitir', { poliza: polizaRow, certificados: certificadosRows, beneficiarios: beneficiariosRows }));
+        const res = await conCarga(colectiva ? 'Emitiendo póliza madre…' : 'Emitiendo póliza…', () => api.post('emitir', { poliza: polizaRow, certificados: certificadosRows, beneficiarios: beneficiariosRows }));
         const poliza = polizaFromRow(res.poliza);
         state.polizas.unshift(poliza);
         state.certificados.push(...res.certificados.map(certificadoFromRow));
@@ -1311,13 +1428,13 @@ fe.addEventListener('submit', async e => {
         tomadorPicker.clear();
         aseguradoPicker.clear();
         $('#em-aseg-mismo').checked = true;
-        clearBenefRows();
+        benefEm.clear();
         onProductoChange(false);
         renderPolizas();
         renderClientes();
         recalcular();
         verPoliza(poliza);
-        toast(`Póliza ${poliza.numero} emitida`);
+        toast(colectiva ? `Póliza madre ${poliza.numero} emitida: ya puedes agregar certificados` : `Póliza ${poliza.numero} emitida`);
     } catch (ex) {
         err.textContent = ex.message;
     } finally {
@@ -1330,6 +1447,9 @@ fe.addEventListener('submit', async e => {
    ========================================================= */
 const certificadosDe = polizaId => state.certificados.filter(c => c.polizaId === polizaId);
 const beneficiariosDe = polizaId => state.beneficiarios.filter(b => b.polizaId === polizaId);
+const beneficiariosCert = certId => state.beneficiarios.filter(b => b.certificadoId === certId);
+const certificadosVigentes = polizaId => certificadosDe(polizaId).filter(c => c.estado !== 'anulada');
+const badgeEstado = (estado, anulado = 'Anulada') => (estado === 'anulada' ? `<span class="badge danger">${anulado}</span>` : '<span class="badge ok">Vigente</span>');
 
 function renderPolizas() {
     const q = $('#buscar-poliza').value.trim().toLowerCase();
@@ -1353,13 +1473,13 @@ function renderPolizas() {
             <thead><tr><th>Número</th><th>Tomador</th><th>Producto</th><th>Vigencia</th><th class="num">Prima total</th><th>Pago</th><th>Estado</th><th></th></tr></thead>
             <tbody>
             ${lista.map(p => `<tr>
-                <td><strong>${esc(p.numero)}</strong><div class="muted">${fecha(p.fechaEmision)}</div></td>
+                <td><strong>${esc(p.numero)}</strong>${p.tipo === 'madre' ? ` <span class="badge">Madre · ${certificadosVigentes(p.id).length} cert.</span>` : ''}<div class="muted">${fecha(p.fechaEmision)}</div></td>
                 <td>${esc(p.tomador.nombre)}<div class="muted">${esc(p.tomador.doc)}</div></td>
                 <td>${esc(p.producto.nombre)}<div class="muted">${esc(p.ramo.nombre)}</div></td>
                 <td>${fecha(p.desde)} – ${fecha(p.hasta)}</td>
                 <td class="num">${money(p.primaTotal, p.moneda)}</td>
                 <td>${p.modalidad === 'credito' ? `${p.cuotas} cuotas` : 'Contado'}<div class="muted">${esc(MEDIOS_PAGO[p.medio] ?? p.medio)}</div></td>
-                <td>${p.estado === 'anulada' ? '<span class="badge danger">Anulada</span>' : '<span class="badge ok">Vigente</span>'}</td>
+                <td>${badgeEstado(p.estado)}</td>
                 <td class="actions">
                     <button class="btn small" data-pol-ver="${esc(p.id)}">Ver</button>
                     ${p.estado !== 'anulada' ? `<button class="btn small danger" data-pol-anular="${esc(p.id)}">Anular</button>` : ''}
@@ -1369,8 +1489,37 @@ function renderPolizas() {
         </table></div>`;
 }
 
-function certificadoHTML(p) {
-    const t = p.tomador;
+function tablaBeneficiarios(benefs) {
+    return `<table>
+        <thead><tr><th>Nombre</th><th>Documento</th><th>Parentesco</th><th class="num">%</th></tr></thead>
+        <tbody>${benefs.map(b => `<tr><td>${esc(b.nombre)}</td><td>${esc(b.doc)}</td><td>${esc(b.parentesco)}</td><td class="num">${b.porcentaje}%</td></tr>`).join('')}</tbody>
+    </table>`;
+}
+
+function seccionTomador(t) {
+    return `<section><h4>Tomador</h4>
+        <dl class="kv">
+            <dt>Nombre</dt><dd>${esc(t.nombre)}</dd>
+            <dt>Documento</dt><dd>${esc(t.doc)}</dd>
+            ${t.email ? `<dt>Correo</dt><dd>${esc(t.email)}</dd>` : ''}
+            ${t.tel ? `<dt>Teléfono</dt><dd>${esc(t.tel)}</dd>` : ''}
+            ${t.direccion ? `<dt>Dirección</dt><dd>${esc(t.direccion)}</dd>` : ''}
+        </dl>
+    </section>`;
+}
+
+const textoMoneda = p => `${esc(MONEDAS[p.moneda]?.nombre ?? p.moneda)}${p.moneda !== MONEDA_BASE && p.tipoCambio ? ` (TC ${fmtTc(p.tipoCambio)} Bs)` : ''}`;
+const textoPago = p => `${esc(MODALIDADES[p.modalidad] ?? p.modalidad)}${p.modalidad === 'credito' ? ` (hasta ${p.cuotas} cuotas)` : ''} · ${esc(MEDIOS_PAGO[p.medio] ?? p.medio)}`;
+
+function seccionCoberturas(p) {
+    return p.coberturas.length ? `<section><h4>Coberturas</h4>
+        <table><tbody>${p.coberturas.map(c => `<tr><td>${esc(c.nombre)}</td><td class="num">${esc(c.detalle)}</td></tr>`).join('')}</tbody></table>
+    </section>` : '';
+}
+
+/** HTML de la póliza. Con acciones=true la tabla de certificados de una madre incluye botones. */
+function certificadoHTML(p, { acciones = false } = {}) {
+    if (p.tipo === 'madre') return polizaMadreHTML(p, acciones);
     const certs = certificadosDe(p.id);
     const benefs = beneficiariosDe(p.id);
     return `<div class="cert">
@@ -1378,15 +1527,7 @@ function certificadoHTML(p) {
         <div class="cert-num">${esc(p.numero)} ${p.estado === 'anulada' ? '<span class="badge danger">ANULADA</span>' : ''}</div>
         <p class="muted">${esc(p.ramo.nombre)} · ${esc(p.producto.nombre)} (${esc(p.producto.codigo)}) · Emitida el ${fecha(p.fechaEmision)}</p>
 
-        <section><h4>Tomador</h4>
-            <dl class="kv">
-                <dt>Nombre</dt><dd>${esc(t.nombre)}</dd>
-                <dt>Documento</dt><dd>${esc(t.doc)}</dd>
-                ${t.email ? `<dt>Correo</dt><dd>${esc(t.email)}</dd>` : ''}
-                ${t.tel ? `<dt>Teléfono</dt><dd>${esc(t.tel)}</dd>` : ''}
-                ${t.direccion ? `<dt>Dirección</dt><dd>${esc(t.direccion)}</dd>` : ''}
-            </dl>
-        </section>
+        ${seccionTomador(p.tomador)}
 
         ${certs.length ? `<section><h4>Certificados / Asegurados</h4>
             <table>
@@ -1395,43 +1536,268 @@ function certificadoHTML(p) {
             </table>
         </section>` : ''}
 
-        ${benefs.length ? `<section><h4>Beneficiarios</h4>
-            <table>
-                <thead><tr><th>Nombre</th><th>Documento</th><th>Parentesco</th><th class="num">%</th></tr></thead>
-                <tbody>${benefs.map(b => `<tr><td>${esc(b.nombre)}</td><td>${esc(b.doc)}</td><td>${esc(b.parentesco)}</td><td class="num">${b.porcentaje}%</td></tr>`).join('')}</tbody>
-            </table>
-        </section>` : ''}
+        ${benefs.length ? `<section><h4>Beneficiarios</h4>${tablaBeneficiarios(benefs)}</section>` : ''}
 
         <section><h4>Condiciones</h4>
             <dl class="kv">
                 <dt>Vigencia</dt><dd>${fecha(p.desde)} al ${fecha(p.hasta)}</dd>
-                <dt>Moneda</dt><dd>${esc(MONEDAS[p.moneda]?.nombre ?? p.moneda)}</dd>
+                <dt>Moneda</dt><dd>${textoMoneda(p)}</dd>
                 <dt>Suma asegurada</dt><dd>${money(p.suma, p.moneda)}</dd>
                 <dt>Prima neta</dt><dd>${money(p.primaNeta, p.moneda)}</dd>
                 ${p.ajusteLabel ? `<dt>${esc(p.ajusteLabel)}</dt><dd>${money(p.ajuste, p.moneda)}</dd>` : ''}
                 <dt class="total">Prima total</dt><dd class="total">${money(p.primaTotal, p.moneda)}</dd>
-                <dt>Forma de pago</dt><dd>${esc(MODALIDADES[p.modalidad] ?? p.modalidad)} · ${esc(MEDIOS_PAGO[p.medio] ?? p.medio)}</dd>
+                <dt>Forma de pago</dt><dd>${textoPago(p)}</dd>
             </dl>
         </section>
 
-        ${p.coberturas.length ? `<section><h4>Coberturas</h4>
-            <table><tbody>${p.coberturas.map(c => `<tr><td>${esc(c.nombre)}</td><td class="num">${esc(c.detalle)}</td></tr>`).join('')}</tbody></table>
-        </section>` : ''}
+        ${seccionCoberturas(p)}
 
         ${p.cronograma.length ? `<section><h4>Plan de pagos</h4>${tablaCronograma(p.cronograma, p.moneda)}</section>` : ''}
     </div>`;
 }
 
+function polizaMadreHTML(p, acciones) {
+    const certs = certificadosDe(p.id);
+    const vigentes = certs.filter(c => c.estado !== 'anulada');
+    const puedeAgregar = acciones && p.estado !== 'anulada';
+    return `<div class="cert">
+        <h2>Póliza colectiva (madre)</h2>
+        <div class="cert-num">${esc(p.numero)} ${p.estado === 'anulada' ? '<span class="badge danger">ANULADA</span>' : ''}</div>
+        <p class="muted">${esc(p.ramo.nombre)} · ${esc(p.producto.nombre)} (${esc(p.producto.codigo)}) · Emitida el ${fecha(p.fechaEmision)}</p>
+
+        ${seccionTomador(p.tomador)}
+
+        <section><h4>Condiciones</h4>
+            <dl class="kv">
+                <dt>Vigencia</dt><dd>${fecha(p.desde)} al ${fecha(p.hasta)}</dd>
+                <dt>Moneda</dt><dd>${textoMoneda(p)}</dd>
+                <dt>Forma de pago</dt><dd>${textoPago(p)}</dd>
+                <dt>Certificados vigentes</dt><dd>${vigentes.length}</dd>
+                <dt>Suma asegurada total</dt><dd>${money(p.suma, p.moneda)}</dd>
+                <dt class="total">Prima total</dt><dd class="total">${money(p.primaTotal, p.moneda)}</dd>
+            </dl>
+        </section>
+
+        <section>
+            <div class="row" style="justify-content:space-between">
+                <h4 style="margin:0">Certificados</h4>
+                ${puedeAgregar ? '<button type="button" class="btn small primary" data-cert-nuevo>+ Nuevo certificado</button>' : ''}
+            </div>
+            ${certs.length ? `<div class="table-wrap" style="margin-top:8px"><table>
+                <thead><tr><th>Certificado</th><th>Asegurado</th><th>Desde</th><th class="num">Suma asegurada</th><th class="num">Prima</th><th>Estado</th>${acciones ? '<th></th>' : ''}</tr></thead>
+                <tbody>${certs.map(c => `<tr>
+                    <td>${esc(c.numero)}</td>
+                    <td>${esc(c.nombre)}<div class="muted">${esc(c.doc)}</div></td>
+                    <td>${fecha(c.desde)}</td>
+                    <td class="num">${money(c.suma, p.moneda)}</td>
+                    <td class="num">${money(c.prima, p.moneda)}</td>
+                    <td>${badgeEstado(c.estado, 'Excluido')}</td>
+                    ${acciones ? `<td class="actions">
+                        <button type="button" class="btn small" data-cert-ver="${esc(c.id)}">Ver</button>
+                        ${c.estado !== 'anulada' && p.estado !== 'anulada' ? `<button type="button" class="btn small danger" data-cert-excluir="${esc(c.id)}">Excluir</button>` : ''}
+                    </td>` : ''}
+                </tr>`).join('')}</tbody>
+            </table></div>` : '<p class="muted">Aún no hay certificados.</p>'}
+        </section>
+
+        ${seccionCoberturas(p)}
+    </div>`;
+}
+
+/** Certificado individual dentro de una póliza madre. */
+function certificadoMadreHTML(p, c) {
+    const benefs = beneficiariosCert(c.id);
+    return `<div class="cert">
+        <h2>Certificado de cobertura</h2>
+        <div class="cert-num">${esc(c.numero)} ${c.estado === 'anulada' ? '<span class="badge danger">EXCLUIDO</span>' : ''}</div>
+        <p class="muted">Póliza madre ${esc(p.numero)} · ${esc(p.producto.nombre)} · Tomador: ${esc(p.tomador.nombre)}</p>
+        <section><h4>Asegurado</h4>
+            <dl class="kv">
+                <dt>Nombre</dt><dd>${esc(c.nombre)}</dd>
+                <dt>Documento</dt><dd>${esc(c.doc)}</dd>
+            </dl>
+        </section>
+        ${benefs.length ? `<section><h4>Beneficiarios</h4>${tablaBeneficiarios(benefs)}</section>` : ''}
+        <section><h4>Condiciones</h4>
+            <dl class="kv">
+                <dt>Vigencia</dt><dd>${fecha(c.desde)} al ${fecha(c.hasta)}</dd>
+                <dt>Moneda</dt><dd>${textoMoneda(p)}</dd>
+                <dt>Suma asegurada</dt><dd>${money(c.suma, p.moneda)}</dd>
+                <dt>Prima neta</dt><dd>${money(c.primaNeta, p.moneda)}</dd>
+                ${c.ajuste ? `<dt>${c.ajuste < 0 ? 'Descuento' : 'Recargo'}</dt><dd>${money(c.ajuste, p.moneda)}</dd>` : ''}
+                <dt class="total">Prima total</dt><dd class="total">${money(c.prima, p.moneda)}</dd>
+                <dt>Forma de pago</dt><dd>${textoPago(p)}</dd>
+            </dl>
+        </section>
+        ${seccionCoberturas(p)}
+        ${c.cronograma.length ? `<section><h4>Plan de pagos</h4>${tablaCronograma(c.cronograma, p.moneda)}</section>` : ''}
+    </div>`;
+}
+
+function imprimir(html) {
+    $('#print-area').innerHTML = html;
+    window.print();
+}
+
 function verPoliza(p) {
-    openModal({
+    const dlg = openModal({
         title: `Póliza ${p.numero}`,
-        body: certificadoHTML(p) + '<div class="row" style="margin-top:16px"><button type="button" class="btn" id="btn-imprimir">Imprimir</button></div>',
+        wide: p.tipo === 'madre',
+        body: '<div data-detalle></div><div class="row" style="margin-top:16px"><button type="button" class="btn" data-imprimir>Imprimir</button></div>',
         readonly: true,
         onOpen: body => {
-            $('#btn-imprimir', body).addEventListener('click', () => {
-                $('#print-area').innerHTML = certificadoHTML(p);
-                window.print();
+            const pintar = () => { $('[data-detalle]', body).innerHTML = certificadoHTML(p, { acciones: true }); };
+            pintar();
+            body.addEventListener('click', async e => {
+                if (e.target.closest('[data-imprimir]')) imprimir(certificadoHTML(p));
+                if (e.target.closest('[data-cert-nuevo]')) formCertificado(p, pintar);
+                const ver = e.target.closest('[data-cert-ver]');
+                if (ver) verCertificado(p, state.certificados.find(c => c.id === ver.dataset.certVer));
+                const exc = e.target.closest('[data-cert-excluir]');
+                if (exc) {
+                    const c = state.certificados.find(x => x.id === exc.dataset.certExcluir);
+                    if (!confirm(`¿Excluir el certificado ${c.numero} de ${c.nombre}?`)) return;
+                    try {
+                        const res = await conCarga('Excluyendo…', () => api.post('excluir', { id: c.id }));
+                        c.estado = 'anulada';
+                        aplicarTotales(p, res.totales);
+                        pintar();
+                        renderPolizas();
+                    } catch (err) {
+                        alert(err.message);
+                    }
+                }
             });
+        },
+    });
+    return dlg;
+}
+
+function verCertificado(p, c) {
+    openModal({
+        title: `Certificado ${c.numero}`,
+        body: certificadoMadreHTML(p, c) + '<div class="row" style="margin-top:16px"><button type="button" class="btn" data-imprimir>Imprimir certificado</button></div>',
+        readonly: true,
+        onOpen: body => {
+            $('[data-imprimir]', body).addEventListener('click', () => imprimir(certificadoMadreHTML(p, c)));
+        },
+    });
+}
+
+function aplicarTotales(p, t) {
+    p.suma = num(t.suma_asegurada);
+    p.primaNeta = num(t.prima_neta);
+    p.ajuste = num(t.ajuste);
+    p.primaTotal = num(t.prima_total);
+}
+
+/** Formulario para agregar un certificado (asegurado + suma + inclusión + beneficiarios) a una póliza madre. */
+function formCertificado(p, onSaved) {
+    const prod = productoById(p.productoId);
+    if (!prod) return alert('El producto de esta póliza ya no existe.');
+    const regla = prod.beneficiarios;
+    const { min, max } = limitesSuma(prod, p.moneda);
+    const fija = max && min === max;
+    const hoy = hoyISO();
+    const desdeDefault = hoy < p.desde ? p.desde : hoy >= p.hasta ? p.desde : hoy;
+    let pickerAseg, benefs;
+
+    const leer = body => ({
+        aseguradoId: pickerAseg.value,
+        suma: parseFloat($('[name=suma]', body).value),
+        desde: $('[name=desde]', body).value,
+        beneficiarios: benefs ? benefs.values() : [],
+    });
+
+    const calcular = body => {
+        const d = leer(body);
+        const diasTot = diasEntre(p.desde, p.hasta);
+        const dias = d.desde ? diasEntre(d.desde, p.hasta) : 0;
+        let r;
+        if (!d.desde || d.desde < p.desde || d.desde >= p.hasta) {
+            r = { error: `La inclusión debe estar entre ${fecha(p.desde)} y el día anterior a ${fecha(p.hasta)}.` };
+        } else {
+            r = calcularPrima(prod, { moneda: p.moneda, suma: d.suma, modalidad: p.modalidad, cuotas: p.cuotas, desde: d.desde, hasta: p.hasta, factor: dias / diasTot });
+        }
+        if (!r.error) {
+            const dup = certificadosVigentes(p.id).some(c => c.clienteId === d.aseguradoId);
+            r.error = !d.aseguradoId ? 'Selecciona el asegurado.'
+                : dup ? 'Este cliente ya tiene un certificado vigente en la póliza.'
+                : validarBeneficiarios(regla, d.beneficiarios, d.aseguradoId);
+            r.soloValidacion = true;
+        }
+        if (benefs) pintarTotalBenef($('[data-benef-total]', body), d.beneficiarios);
+        const res = $('[data-resumen]', body);
+        if (r.error && !r.soloValidacion) {
+            res.innerHTML = `<p class="muted">${esc(r.error)}</p>`;
+        } else {
+            res.innerHTML = (r.error ? `<p class="error">${esc(r.error)}</p>` : '') + `
+                <dl class="kv">
+                    <dt>Prorrata</dt><dd>${dias} de ${diasTot} días (${fmtTc(round2(dias / diasTot * 100))}%)</dd>
+                    <dt>Prima neta</dt><dd>${money(r.primaNeta, p.moneda)}</dd>
+                    ${r.ajusteLabel ? `<dt>${esc(r.ajusteLabel)}</dt><dd>${money(r.ajuste, p.moneda)}</dd>` : ''}
+                    <dt class="total">Prima del certificado</dt><dd class="total">${money(r.primaTotal, p.moneda)}</dd>
+                </dl>
+                ${tablaCronograma(r.cronograma, p.moneda)}`;
+        }
+        return { d, r };
+    };
+
+    openModal({
+        title: `Nuevo certificado · ${p.numero}`,
+        submitLabel: 'Emitir certificado',
+        body: `
+            <p class="muted" style="margin:0 0 12px">${esc(p.producto.nombre)} · Tomador: ${esc(p.tomador.nombre)} · Vigencia ${fecha(p.desde)} al ${fecha(p.hasta)} · ${textoPago(p)}</p>
+            <div class="field-label">Asegurado</div>
+            <div data-aseg class="picker-host"></div>
+            <div class="grid2" style="margin-top:12px">
+                <label>Suma asegurada (${esc(MONEDAS[p.moneda]?.simbolo ?? p.moneda)})<input name="suma" type="number" step="0.01" min="${min}" ${max ? `max="${max}"` : ''} value="${fija ? min : ''}" ${fija ? 'readonly' : ''} required></label>
+                <label>Inclusión desde<input name="desde" type="date" min="${p.desde}" max="${sumarMeses(p.hasta, 0)}" value="${desdeDefault}" required></label>
+            </div>
+            <p class="hint" style="margin-top:-4px">${fija ? `Suma fija del producto: ${money(min, p.moneda)}` : `Rango permitido: ${money(min, p.moneda)}${max ? ` a ${money(max, p.moneda)}` : ' en adelante'}`}</p>
+            ${regla !== 'no' ? `
+                <div class="field-label" style="margin-top:12px">Beneficiarios ${regla === 'requerido' ? '(obligatorio)' : '(opcional)'}</div>
+                <div data-benef-list></div>
+                <div class="row">
+                    <button type="button" class="btn small" data-benef-add>+ Agregar beneficiario</button>
+                    <span data-benef-total class="hint" style="margin:0"></span>
+                </div>` : ''}
+            <div class="card" style="margin:14px 0 0" data-resumen></div>`,
+        onOpen: body => {
+            const recalc = () => calcular(body);
+            pickerAseg = crearPicker($('[data-aseg]', body), { onChange: recalc });
+            if (regla !== 'no') {
+                benefs = crearBeneficiarios($('[data-benef-list]', body), recalc);
+                $('[data-benef-add]', body).addEventListener('click', () => benefs.add());
+                if (regla === 'requerido') benefs.add();
+            }
+            body.addEventListener('input', recalc);
+            body.addEventListener('change', recalc);
+            recalc();
+        },
+        onSubmit: async body => {
+            const { d, r } = calcular(body);
+            if (r.error) return r.error;
+            const res = await api.post('certificado', {
+                poliza_id: p.id,
+                certificado: {
+                    asegurado_id: d.aseguradoId,
+                    suma_asegurada: d.suma,
+                    vigencia_desde: d.desde,
+                    prima_neta: r.primaNeta,
+                    ajuste: r.ajuste,
+                    prima: r.primaTotal,
+                    cronograma: JSON.stringify(r.cronograma),
+                },
+                beneficiarios: d.beneficiarios.map(b => ({ cliente_id: b.clienteId, parentesco: b.parentesco, porcentaje: b.porcentaje })),
+            });
+            state.certificados.push(certificadoFromRow(res.certificado));
+            state.beneficiarios.push(...res.beneficiarios.map(beneficiarioFromRow));
+            aplicarTotales(p, res.totales);
+            onSaved?.();
+            renderPolizas();
+            renderClientes();
+            toast(`Certificado ${res.certificado.numero_certificado} emitido`);
         },
     });
 }
@@ -1464,7 +1830,7 @@ function renderConfig() {
     const fc = $('#form-conexion').elements;
     if (document.activeElement !== fc.url) fc.url.value = c.url || '';
     if (document.activeElement !== fc.key) fc.key.value = c.key || '';
-    $('#form-config').elements.tipoCambio.value = state.config.tipoCambio;
+    renderMonedas();
     $('#btn-demo').disabled = !conectado || (state.ramos.length > 0 && state.clientes.length > 0);
 }
 
@@ -1482,17 +1848,74 @@ $('#form-conexion').addEventListener('submit', async e => {
     }
 });
 
-$('#form-config').addEventListener('submit', async e => {
-    e.preventDefault();
-    const tc = parseFloat(e.target.elements.tipoCambio.value);
-    if (!(tc > 0)) return;
-    try {
-        await conCarga('Guardando…', () => api.post('config', { clave: 'tipoCambio', valor: tc }));
-        state.config.tipoCambio = tc;
-        recalcular();
-        toast('Tipo de cambio guardado en la hoja');
-    } catch (err) {
-        alert(err.message);
+function renderMonedas() {
+    const cont = $('#lista-monedas');
+    if (!conectado) { cont.innerHTML = ''; return; }
+    cont.innerHTML = `<div class="table-wrap"><table>
+        <thead><tr><th>Código</th><th>Moneda</th><th class="num">Tipo de cambio (Bs)</th><th>Estado</th><th></th></tr></thead>
+        <tbody>${Object.entries(MONEDAS).map(([k, m]) => `<tr>
+            <td><strong>${esc(k)}</strong></td>
+            <td>${esc(m.nombre)} <span class="muted">(${esc(m.simbolo)})</span></td>
+            <td class="num">${m.base ? '1 <span class="badge">base</span>' : fmtTc(m.tc)}</td>
+            <td>${m.activo ? '<span class="badge ok">Activa</span>' : '<span class="badge off">Inactiva</span>'}</td>
+            <td class="actions">
+                ${m.id ? `<button class="btn small" data-mon-edit="${esc(k)}">Editar</button>` : ''}
+                ${m.id && !m.base ? `<button class="btn small danger" data-mon-del="${esc(k)}">Eliminar</button>` : ''}
+            </td>
+        </tr>`).join('')}</tbody>
+    </table></div>`;
+}
+
+function formMoneda(codigo) {
+    const m = codigo ? MONEDAS[codigo] : { nombre: '', simbolo: '', tc: 1, base: false, activo: true };
+    openModal({
+        title: codigo ? `Editar moneda ${codigo}` : 'Nueva moneda',
+        body: `
+            <div class="grid3">
+                <label>Código (ISO)<input name="codigo" value="${esc(codigo || '')}" maxlength="3" required placeholder="EUR" ${codigo ? 'readonly' : ''}></label>
+                <label>Nombre<input name="nombre" value="${esc(m.nombre)}" required placeholder="Euros"></label>
+                <label>Símbolo<input name="simbolo" value="${esc(m.simbolo)}" required placeholder="€"></label>
+            </div>
+            <label>Tipo de cambio: cuántos Bs vale 1 unidad
+                <input name="tc" type="number" step="0.000001" min="0.000001" value="${m.tc}" ${m.base ? 'readonly' : ''} required>
+            </label>
+            ${m.base ? '<p class="hint">Es la moneda base: su tipo de cambio siempre es 1.</p>' : ''}
+            <label class="check"><input type="checkbox" name="activo" ${m.activo ? 'checked' : ''} ${m.base ? 'disabled' : ''}> Activa (disponible en productos y emisión)</label>`,
+        onSubmit: async body => {
+            const v = n => $(`[name=${n}]`, body).value.trim();
+            const cod = v('codigo').toUpperCase();
+            const tc = parseFloat(v('tc'));
+            if (!/^[A-Z]{3}$/.test(cod)) return 'El código debe tener 3 letras (ej. EUR, PEN, BRL).';
+            if (!codigo && MONEDAS[cod]) return `La moneda ${cod} ya existe.`;
+            if (!v('nombre') || !v('simbolo')) return 'Nombre y símbolo son obligatorios.';
+            if (!(tc > 0)) return 'El tipo de cambio debe ser mayor a 0.';
+            await api.post('upsert', {
+                sheet: 'monedas',
+                record: { id: m.id || '', codigo: cod, nombre: v('nombre'), simbolo: v('simbolo'), tipo_cambio: m.base ? 1 : tc, es_base: !!m.base, activo: m.base || $('[name=activo]', body).checked },
+            });
+            await recargar();
+            toast(`Moneda ${cod} guardada`);
+        },
+    });
+}
+
+$('#btn-nueva-moneda').addEventListener('click', () => {
+    if (!conectado) return;
+    formMoneda();
+});
+$('#lista-monedas').addEventListener('click', async e => {
+    const edit = e.target.closest('[data-mon-edit]');
+    const del = e.target.closest('[data-mon-del]');
+    if (edit) formMoneda(edit.dataset.monEdit);
+    if (del) {
+        const cod = del.dataset.monDel;
+        if (!confirm(`¿Eliminar la moneda ${cod}?`)) return;
+        try {
+            await conCarga('Eliminando…', () => api.post('delete', { sheet: 'monedas', id: MONEDAS[cod].id }));
+            await recargar();
+        } catch (err) {
+            alert(err.message);
+        }
     }
 });
 
@@ -1564,7 +1987,22 @@ function productosDemo(ids) {
                 credito: { habilitado: true, cuotas: [4, 12], recargo: 2, inicial: 0 },
             },
         },
-    ].map(p => ({ beneficiarios: 'no', ...p }));
+        {
+            ...base, ramoId: ids.VID, codigo: 'DES-COL', nombre: 'Desgravamen Hipotecario Colectivo',
+            descripcion: 'Póliza madre para cartera de créditos: un certificado por prestatario',
+            tipoPoliza: 'colectiva',
+            monedas: ['BOB', 'USD'], monedaRef: 'USD',
+            prima: { tipo: 'tasa', tasa: 0.45, montoFijo: 0, minima: 10 },
+            sumaMin: 1000, sumaMax: 300000,
+            beneficiarios: 'opcional',
+            coberturas: [{ nombre: 'Muerte e invalidez total', detalle: 'Saldo insoluto de la deuda' }],
+            pago: {
+                medios: ['transferencia', 'debito'],
+                contado: { habilitado: true, descuento: 0 },
+                credito: { habilitado: true, cuotas: [12], recargo: 0, inicial: 0 },
+            },
+        },
+    ].map(p => ({ beneficiarios: 'no', tipoPoliza: 'individual', ...p }));
 }
 
 const CLIENTES_DEMO = [

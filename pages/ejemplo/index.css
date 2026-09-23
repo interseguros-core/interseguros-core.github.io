@@ -30,6 +30,9 @@
 
 * { box-sizing: border-box; }
 
+/* Las reglas de display (label, .grid2…) no deben anular el atributo hidden */
+[hidden] { display: none !important; }
+
 body {
     margin: 0;
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -174,7 +177,8 @@ dialog::backdrop { background: rgba(10, 15, 25, 0.55); }
 .modal-head h3 { margin: 0; }
 .modal-foot { border-top: 1px solid var(--border); justify-content: flex-end; gap: 8px; }
 .modal-body { padding: 18px 20px; overflow-y: auto; max-height: calc(100vh - 200px); }
-#modal-error { padding: 0 20px; }
+.modal-error { padding: 0 20px; }
+dialog.wide { width: min(1000px, calc(100vw - 32px)); }
 
 fieldset { border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px 4px; margin: 0 0 14px; }
 legend { font-weight: 600; font-size: 0.9rem; padding: 0 6px; }
