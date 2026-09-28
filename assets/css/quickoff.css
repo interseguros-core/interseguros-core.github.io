@@ -144,6 +144,28 @@
   margin-bottom: 4px;
 }
 
+.quickoff-acta-pending {
+  font-style: italic;
+}
+
+.quickoff-acta-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-secondary);
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+.quickoff-acta-link:hover {
+  text-decoration: underline;
+}
+.quickoff-acta-link svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
 .quickoff-more {
   margin-top: 10px;
 }
