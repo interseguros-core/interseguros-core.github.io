@@ -152,6 +152,7 @@ class AppSidebar extends HTMLElement {
       label: 'Reuniones',
       submenuId: 'submenu-reuniones',
       submenuItems: [
+        ['Grabación 16 — 02/10/2026', `${QUICKOFF_HREF}#grabacion-16`],
         ['Grabación 15 — 22/09/2026', `${QUICKOFF_HREF}#grabacion-15`],
         ['Grabación 14 — 21/09/2026', `${QUICKOFF_HREF}#grabacion-14`],
         ['Grabación 13 — 18/09/2026', `${QUICKOFF_HREF}#grabacion-13`],
