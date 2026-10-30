@@ -21,12 +21,136 @@
         <div class="quickoff-intro">
             <h1>Reuniones</h1>
         </div>
-        <div class="quickoff-video-card" id="grabacion-18">
+        <div class="quickoff-video-card" id="grabacion-20">
             <div class="quickoff-video-head">
-                <h2 class="quickoff-video-title">Grabación 18 — 28/10/2026</h2>
+                <h2 class="quickoff-video-title">Grabación 20 — 30/10/2026 — Reunión de demostración de la plataforma</h2>
             </div>
             <div class="quickoff-video-body">
-                <button type="button" class="quickoff-poster" data-video-src="http://ftp.uplabsai.com/interseguros/videos/2026-10-28_16-13-22.mp4" data-video-title="Grabación 18 — 28/10/2026">
+                <button type="button" class="quickoff-poster" data-video-src="http://ftp.uplabsai.com/interseguros/videos/2026-10-30_16-24-28.mp4" data-video-title="Grabación 20 — 30/10/2026 — Reunión de demostración de la plataforma">
+                    <span class="quickoff-poster-play" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                    </span>
+                    <span class="quickoff-poster-label">Ver grabación</span>
+                </button>
+                <div class="quickoff-highlights">
+                    <h3>Propósito de la reunión</h3>
+                    <p>Revisar la configuración del producto y definir la lógica de las edades y las renovaciones de pólizas.</p>
+                    <ul>
+                        <li>La lógica de edades debe ser por cobertura: los límites de edad son específicos de cada cobertura (p. ej., Fallecimiento: 18–70 años; Invalidez: 18–65 años), no del producto. El sistema debe aplicar estos límites de forma dinámica para desactivar las coberturas individuales a medida que los asegurados envejecen.</li>
+                        <li>Las renovaciones de pólizas actualizan las condiciones para todos: pueden cambiar las tasas y las condiciones para todos los asegurados, no solo para los nuevos. El sistema debe notificar automáticamente a los clientes sobre estos cambios.</li>
+                        <li>Las tasas se definen por Portafolio: se establecen a nivel de Portafolio, que agrupa coberturas específicas. No es necesario asignar precios individuales a las coberturas.</li>
+                        <li>Se eliminan los campos de vigencia del producto: los campos Vigencia Desde/Hasta se eliminan de la configuración del producto para evitar confusiones con las fechas de las pólizas.</li>
+                    </ul>
+                    <details class="quickoff-more">
+                        <summary>Ver más</summary>
+                        <div class="quickoff-more-body">
+                            <h4>Configuración del producto</h4>
+                            <ul>
+                                <li>Código del producto: un código interno de Holos. Adhemar confirmó que el código APS no es crítico para los reportes, por lo que el campo actual es suficiente.</li>
+                                <li>Tipo de póliza: Colectiva.</li>
+                                <li>Cálculo de la prima: Tasa.</li>
+                                <li>Vigencia predeterminada de la póliza: 36 meses. Establece un valor por defecto para la póliza madre, que suele ser de 3 a 5 años. Esto agiliza la creación de pólizas al evitar la navegación manual por el calendario, pero sigue siendo editable.</li>
+                            </ul>
+                            <h4>Lógica de edades y vigencia</h4>
+                            <ul>
+                                <li>Problema: la configuración actual del producto tiene un único campo de edad, lo que es insuficiente.</li>
+                                <li>Solución: mover la lógica de edades a nivel de cobertura, ya que los límites de edad son específicos de cada cobertura.</li>
+                                <li>Fallecimiento: ingreso 18–70 años; permanencia hasta los 75 años.</li>
+                                <li>Invalidez/Desempleo: ingreso 18–65 años; permanencia hasta los 70 años.</li>
+                                <li>Impacto: el sistema debe desactivar las coberturas individuales a medida que los asegurados alcanzan sus límites de edad específicos.</li>
+                                <li>Definición de "Inclusive": los límites de edad son "inclusive" (p. ej., hasta los 65 años). Un asegurado es elegible hasta un día antes de su cumpleaños número 66, y el sistema debe aplicar esta lógica de forma precisa.</li>
+                            </ul>
+                            <h4>Renovaciones de pólizas y condiciones</h4>
+                            <ul>
+                                <li>Problema: el sistema debe gestionar las renovaciones de pólizas que cambian las condiciones.</li>
+                                <li>Solución: permitir que las renovaciones de pólizas actualicen las tasas y las condiciones para todos los asegurados. Es un escenario operativo común y los certificados de los asegurados incluyen una cláusula que permite estos cambios.</li>
+                                <li>Acción: notificar automáticamente a los clientes sobre los cambios en las condiciones (p. ej., por correo electrónico, WhatsApp, notificaciones push).</li>
+                            </ul>
+                            <h4>Coberturas y Portafolios</h4>
+                            <ul>
+                                <li>Coberturas: se seleccionan de un catálogo global. Acción: crear un catálogo predefinido de coberturas comunes para agilizar la configuración.</li>
+                                <li>Portafolios: agrupan coberturas específicas con una única tasa. Las tasas se definen por Portafolio, no por coberturas individuales.</li>
+                                <li>Ejemplo: un Portafolio puede agrupar Fallecimiento, Invalidez y Sepelio con una tasa del 3%.</li>
+                            </ul>
+                            <h4>Próximos pasos</h4>
+                            <ul>
+                                <li>Eliminar los campos Vigencia Desde/Hasta de la configuración del producto (Ruddy/Exson).</li>
+                                <li>Implementar la lógica de edades a nivel de cobertura (Ruddy/Exson).</li>
+                                <li>Desarrollar la funcionalidad de notificación automática para los cambios en las condiciones de las pólizas (Ruddy/Exson).</li>
+                                <li>Crear un catálogo predefinido de coberturas comunes (Ruddy/Exson).</li>
+                                <li>Reunirse el martes para revisar el progreso (Todos).</li>
+                            </ul>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </div>
+        <div class="quickoff-video-card" id="grabacion-19">
+            <div class="quickoff-video-head">
+                <h2 class="quickoff-video-title">Grabación 19 — 29/10/2026 — Reunión de demostración de la plataforma</h2>
+            </div>
+            <div class="quickoff-video-body">
+                <button type="button" class="quickoff-poster" data-video-src="http://ftp.uplabsai.com/interseguros/videos/2026-10-29_15-57-31.mp4" data-video-title="Grabación 19 — 29/10/2026 — Reunión de demostración de la plataforma">
+                    <span class="quickoff-poster-play" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                    </span>
+                    <span class="quickoff-poster-label">Ver grabación</span>
+                </button>
+                <div class="quickoff-highlights">
+                    <h3>Propósito de la reunión</h3>
+                    <p>Revisar las correcciones de Holos y configurar la estructura de datos de Interseguros.</p>
+                    <ul>
+                        <li>Estructura de datos: Holos debe reflejar la estructura de Interseguros: dos compañías legales (Vida y Salud, Patrimoniales y Fianzas) bajo un único front-end. Esto es esencial para la conciliación financiera, ya que cada compañía tiene un NIT único.</li>
+                        <li>Correcciones de la plataforma: se implementaron las solicitudes de ayer: se agregó la subida de logos para compañías/sponsors y códigos autonumerados configurables para cargos, regiones y sucursales.</li>
+                        <li>Funcionalidad pendiente: se requiere un validador de nombres de sucursales para evitar duplicados (p. ej., "Pampa de la Isla" vs. "pampa de la isla"). También se necesita una función de carga masiva de clientes para sponsors sin integración SFI.</li>
+                        <li>Bloqueo en la configuración del producto: la configuración del producto está bloqueada por la lógica de edad de la póliza (p. ej., "hasta un día antes de cumplir 71"). Esto requiere una revisión con el experto en pólizas Ademar para asegurar una implementación precisa.</li>
+                    </ul>
+                    <details class="quickoff-more">
+                        <summary>Ver más</summary>
+                        <div class="quickoff-more-body">
+                            <h4>Estructura de datos de Interseguros</h4>
+                            <ul>
+                                <li>Problema: determinar cómo modelar las dos compañías legales de Interseguros en Holos.</li>
+                                <li>Decisión: crear dos compañías separadas en el backend de Holos: Nacional Seguro Vida y Salud, y Nacional Seguro Patrimoniales y Fianzas.</li>
+                                <li>Justificación: cada compañía tiene un NIT único, lo que exige una separación clara para la facturación y la conciliación financiera. El front-end unificará los productos según los roles del usuario.</li>
+                            </ul>
+                            <h4>Correcciones de la plataforma y nuevas funcionalidades</h4>
+                            <ul>
+                                <li>Subida de logos: se agregó la funcionalidad para subir logos para compañías y sponsors, mejorando la marca en toda la plataforma.</li>
+                                <li>Códigos autonumerados: se implementó una función para generar códigos secuenciales y configurables para cargos, regiones y sucursales.</li>
+                                <li>Configuración: los administradores definen un patrón (p. ej., REC0001) y una longitud de secuencia.</li>
+                                <li>Generación: Holos genera automáticamente el siguiente código secuencial para cada nueva entrada.</li>
+                                <li>Validación de nombres de sucursales: el sistema permite crear duplicados de sucursales con variaciones de nombre (p. ej., "Pampa de la Isla" vs. "pampa de la isla"), lo que genera datos inconsistentes. Se solicitó implementar un validador que alerte a los usuarios sobre posibles duplicados de nombres.</li>
+                            </ul>
+                            <h4>Configuración del producto y bloqueos</h4>
+                            <ul>
+                                <li>Estructura de productos: Tenant es el broker (Interseguros) que administra el software; Sponsor es una entidad que vende productos (p. ej., Banco Económico, Genex).</li>
+                                <li>Modalidades y ramos: se crearon estructuras de prueba. Se debe confirmar con Ademar si se deben usar los códigos estándar de APS.</li>
+                                <li>Coberturas: se solicitó una biblioteca de coberturas predefinidas para cada ramo para acelerar la configuración.</li>
+                                <li>Producto de prueba: De Gravame Hipotecario (Seguro de Desgravamen Hipotecario), compañía Nacional Seguro Vida y Salud, ramo Desgravamen Hipotecario Corto Plazo.</li>
+                                <li>Portafolios: el producto debe soportar múltiples portafolios (p. ej., cartera licitada, cartera no licitada).</li>
+                                <li>Campos a eliminar: Mínimo de asegurados y Resolución de aprobación.</li>
+                                <li>Bloqueo: la póliza utiliza una lógica de edad compleja (p. ej., "hasta un día antes de cumplir 71"), que no puede modelarse con los campos actuales de edad mínima/máxima. Esto bloquea la configuración del producto, ya que una implementación incorrecta podría dejar a los asegurados sin cobertura.</li>
+                            </ul>
+                            <h4>Próximos pasos</h4>
+                            <ul>
+                                <li>Implementar el validador de nombres de sucursales (Uplabs AI).</li>
+                                <li>Agregar la función de carga masiva de clientes mediante Excel (Uplabs AI).</li>
+                                <li>Agregar un campo de subida de imagen para los productos (Uplabs AI).</li>
+                                <li>Agendar una reunión con Ademar para definir la lógica de edad de la póliza y confirmar los códigos de APS para modalidades/ramos (Juan Fernando).</li>
+                                <li>Reunirse mañana para revisar la lógica de edad de la póliza y continuar con la configuración del producto (Todos).</li>
+                            </ul>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </div>
+        <div class="quickoff-video-card" id="grabacion-18">
+            <div class="quickoff-video-head">
+                <h2 class="quickoff-video-title">Grabación 18 — 28/10/2026 — Reunión de demostración de la plataforma</h2>
+            </div>
+            <div class="quickoff-video-body">
+                <button type="button" class="quickoff-poster" data-video-src="http://ftp.uplabsai.com/interseguros/videos/2026-10-28_16-13-22.mp4" data-video-title="Grabación 18 — 28/10/2026 — Reunión de demostración de la plataforma">
                     <span class="quickoff-poster-play" aria-hidden="true">
                         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                     </span>
@@ -36,10 +160,10 @@
         </div>
         <div class="quickoff-video-card" id="grabacion-17">
             <div class="quickoff-video-head">
-                <h2 class="quickoff-video-title">Grabación 17 — 28/10/2026</h2>
+                <h2 class="quickoff-video-title">Grabación 17 — 28/10/2026 — Reunión de demostración de la plataforma</h2>
             </div>
             <div class="quickoff-video-body">
-                <button type="button" class="quickoff-poster" data-video-src="http://ftp.uplabsai.com/interseguros/videos/2026-10-28_16-21-58.mp4" data-video-title="Grabación 17 — 28/10/2026">
+                <button type="button" class="quickoff-poster" data-video-src="http://ftp.uplabsai.com/interseguros/videos/2026-10-28_16-21-58.mp4" data-video-title="Grabación 17 — 28/10/2026 — Reunión de demostración de la plataforma">
                     <span class="quickoff-poster-play" aria-hidden="true">
                         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                     </span>
